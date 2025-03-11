@@ -14,45 +14,41 @@
  
 # =[ VARIABLES ]==============================================================================================
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
-NAME="minishell"                                                  # ☒ Object's name to test (here our executable)
 SCRIPTNAME=${0##*\/}                                              # ☒ Script's name (no path)
 PARENT_DIR=$(dirname $(realpath ${0}))                            # ☒ Name of parent directory
-LIBFT_DIR=$(dirname ${PARENT_DIR})                                # ☒ Name of libft_enhanced (grandparent folder)
+MS_DIR=$(dirname $(realpath ${PARENT_DIR}))                       # ☒ Name of parent directory
+PROGRAMM="${MS_DIR}/minishell"                                    # ☒ Object's name to test (here our executable)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"           # ☒ Name of the log folder
 BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to BSL folder
 BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
-LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h")) # ☒ Folder that contains to libft.h HEADER
+LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a static library
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
 CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=1"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
+FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
 FUN_TO_TEST=( )                                                   # ☒ List of user created function specific to minishell
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in minishell
-BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function in libft.a
-LIBFT_FUN=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "ft_strlen" "ft_memset" \
-    "ft_bzero" "ft_memcpy" "ft_memmove" "ft_strlcpy" "ft_strlcat" "ft_toupper" "ft_tolower" "ft_strchr" \
-    "ft_strrchr" "ft_strncmp" "ft_memchr" "ft_memcmp" "ft_strnstr" "ft_atoi" "ft_calloc" "ft_strdup" \
-    "ft_substr" "ft_strjoin" "ft_strtrim" "ft_split" "ft_itoa" "ft_strmapi" "ft_striteri" "ft_putchar_fd" \
-    "ft_putstr_fd" "ft_putendl_fd" "ft_putnbr_fd" "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast"
-    "ft_lstadd_back" "ft_lstdelone" "ft_lstclear" "ft_lstiter" "ft_lstmap" "ft_printf" "get_next_line")
+BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function 
+LIBFT_FUN=( )                                                     # ☒ List of user created function in libft.a
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
-LEN=100                                                            # ☑ Width of the box
+LEN=100                                                           # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
-E="\033[0m"                                                        # ☒ END color balise
-N0="\033[0;30m"                                                    # ☒ START BLACK
-R0="\033[0;31m"                                                    # ☒ START RED
-RU="\033[4;31m"                                                    # ☒ START RED UNDERSCORED
-V0="\033[0;32m"                                                    # ☒ START GREEN
-M0="\033[0;33m"                                                    # ☒ START BROWN
-Y0="\033[0;93m"                                                    # ☒ START YELLOW
-B0="\033[0;34m"                                                    # ☒ START BLUE
-BU="\033[4;34m"                                                    # ☒ START BLUE
-BC0="\033[0;36m"                                                   # ☒ START AZURE
-BCU="\033[4;36m"                                                   # ☒ START AZURE UNDERSCORED
-P0="\033[0;35m"                                                    # ☒ START PINK
-G0="\033[0;37m"                                                    # ☒ START GREY
-GU="\033[4;37m"                                                    # ☒ START GREY
+E="\033[0m"                                                       # ☒ END color balise
+N0="\033[0;30m"                                                   # ☒ START BLACK
+R0="\033[0;31m"                                                   # ☒ START RED
+RU="\033[4;31m"                                                   # ☒ START RED UNDERSCORED
+V0="\033[0;32m"                                                   # ☒ START GREEN
+M0="\033[0;33m"                                                   # ☒ START BROWN
+Y0="\033[0;93m"                                                   # ☒ START YELLOW
+B0="\033[0;34m"                                                   # ☒ START BLUE
+BU="\033[4;34m"                                                   # ☒ START BLUE
+BC0="\033[0;36m"                                                  # ☒ START AZURE
+BCU="\033[4;36m"                                                  # ☒ START AZURE UNDERSCORED
+P0="\033[0;35m"                                                   # ☒ START PINK
+G0="\033[0;37m"                                                   # ☒ START GREY
+GU="\033[4;37m"                                                   # ☒ START GREY UNDERSCORED
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
@@ -63,18 +59,15 @@ script_usage()
 {
     echo -e "${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\`${E}"
     echo -e " 🔹 ${V0}${SCRIPTNAME}${E} has as a prerequisites:"
-    echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/libft/${E} to be tested."
-    echo -e "    ${B0}‣ ${R0}ii)${E}: The static lib ${M0}path/libft/*/${B0}libft.a${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
+    echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/minishell/${E} to be tested."
+    echo -e "    ${B0}‣ ${R0}ii)${E}: The programm ${M0}path/minishell/${V0}minishell${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
     echo -e " 🔹 ${V0}${SCRIPTNAME}${E} takes no arguments and will automatically:"
-    echo -e "    ${B0}‣ ${R0}1${E}: Check if ${M0}libft/${E} complies with the 42-norme"
-    echo -e "    ${B0}‣ ${R0}2${E}: Display a list of all function found in the ${B0}libft.a${E} static lib"
-    echo -e "    ${B0}‣ ${R0}3${E}: Display a list of all built-in function called by ${B0}libft.a"
-    echo -e "    ${B0}‣ ${R0}4${E}: Launch at least the tests for the libft (mandatory part)"
-    echo -e "    ${B0}‣ ${R0}5${E}: If libft bonus fun. detected, launch the libft bonus part tests"
-    echo -e "    ${B0}‣ ${R0}6${E}: If ${G0}ft_print()${E} fun. detected, launch the tests for both its mandatory & bonus part)"
-    echo -e "    ${B0}‣ ${R0}7${E}: If ${G0}get_next_line()${E} fun. detected, launch the tests for both its mandatory & bonus part)"
-    echo -e "    ${B0}‣ ${R0}8${E}: If any other ${G0}home-made${E} fun. is detected ${RU}AND${E} if a corresponding test is found (matching name), then it will be test too.${BU}(use for personnal function)${E}"
-    echo -e "    ${B0}‣ ${R0}9${E}: Display a resume."
+    echo -e "    ${B0}‣ ${R0}0${E}: Check if ${M0}minishell/${E} complies with the 42-norme"
+    echo -e "    ${B0}‣ ${R0}1${E}: Set a list of all user-made function called by ${V0}minishell${E} programm.(including ${V0}libft.a${E} functions)"
+    echo -e "    ${B0}‣ ${R0}2${E}: Set a list of all user-made function specific to ${V0}minishell${E} programm.(excluding ${V0}libft.a${E} functions)"
+    echo -e "    ${B0}‣ ${R0}3${E}: Set a list of all built-in function called by ${V0}minishell${E}"
+    echo -e "    ${B0}‣ ${R0}4${E}: for each specific fun of ${V0}minishell${E}, search its unitest, if found launch test, else pass${E}"
+    echo -e "    ${B0}‣ ${R0}5${E}: Display a resume."
     exit ${2}
 }
 # -[ PRINT_RELATIF_PATH() ]-----------------------------------------------------------------------------------
@@ -116,7 +109,7 @@ launch_tests_perso_fun()
     [[ ! -d ${LOG_PERSO_FUN} ]] && mkdir -p ${LOG_PERSO_FUN}
     local DOC_PERSO_FUN="${LOG_PERSO_FUN}/files_generated"
     local nb_err=0
-    for fun in ${PERSO_FUN[@]};do
+    for fun in ${FUN_TO_TEST[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
@@ -174,29 +167,42 @@ launch_tests_perso_fun()
 # MAIN
 # ============================================================================================================
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
-[[ -z ${NAME} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
+[[ -x ${PROGRAMM} ]] || { script_usage "${R0}Programm not found: No ${BC0}${PROGRAMM}${R0} found.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
-print_in_box -t 2 -c y "Start Minishell's Tests"
+# =[ START MESSAGE ]==========================================================================================
+print_in_box -t 2 -c y "🚧${Y0} START Minishell's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
-# =[ LST_FUNUSED ]============================================================================================
-# -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
-if file "${NAME}" | grep -qE 'relocatable|executable|shared NAMEect|ar archive';then
-    for fun in $(nm -C "${NAME}" | awk '$2 == "T" {print $3}' | sort | uniq);do
-        [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
+exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
+# =[ SET LISTS ]==============================================================================================
+# -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
+if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
+    for fun in $(nm -g "${LIBFT_A}" | grep " T " | awk '{print $NF}' | sort | uniq);do
+        [[ ! " ${LIBFT_FUN[@]} " =~ " ${fun} " ]] && LIBFT_FUN+=( "${fun}" )
     done
-    for fun in $(nm -C "${NAME}" | awk '$2 == "U" {print $3}' | sort | uniq);do
-        if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
-            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " $fun " ]] && BUILTIN_FUNUSED+=( "${fun}" )
+else
+    echo -e "LIBFT_A=${BC0}${LIBFT_A}${E} is not an object file\033[m"
+fi
+# -[ SET HOMEMADE_FUNUSED & BUILTIN_FUNUSED ]-----------------------------------------------------------------
+if file "${PROGRAMM}" | grep -qE 'relocatable|executable|shared object|ar archive';then
+    for fun in $(nm -g "${PROGRAMM}" | grep " T " | awk '{print $NF}' | sort | uniq);do
+        [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
+        if [[ " ${FUN_TO_EXCLUDE[@]} " =~ " ${fun} " && " ${fun} " != " main " ]];then
+            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " ${fun} " ]] && BUILTIN_FUNUSED+=( "${fun}" )
+        fi
+    done
+    for fun in $(nm -g "${PROGRAMM}" | grep " U " | awk '{print $NF}' | sort | uniq);do
+        if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]];then
+            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " ${fun} " ]] && BUILTIN_FUNUSED+=( "${fun}" )
         fi
     done
 else
-    echo -e "${BC0}${NAME}${E} is not an NAMEect file\033[m"
+    echo -e "${BC0}${PROGRAMM}${E} is not an object file\033[m"
 fi
 # -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
-FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}")))
-echo "FUN_TO_TEST=${FUN_TO_TEST[@]}"
-echo "HOMEMADE_FUNUSED=${HOMEMADE_FUNUSED[@]}"
-echo "BUILTIN_FUNUSED=${BUILTIN_FUNUSED[@]}"
-#exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
+FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
+exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
+# =[ START MESSAGE ]==========================================================================================
+print_in_box -t 2 -c y \
+    "🚧${Y0} RESUME Minishell's Tests${E}" \
+    "   - 📂${GU}Log files created at:${E} ${M0}$(print_shorter_path ${LOG_DIR})/*${E}"
