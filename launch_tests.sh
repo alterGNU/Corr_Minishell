@@ -177,6 +177,7 @@ launch_tests_perso_fun()
 [[ -z ${NAME} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
+print_in_box -t 2 -c y "Start Minishell's Tests"
 # =[ CHECK NORMINETTE ]=======================================================================================
 exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
