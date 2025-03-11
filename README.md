@@ -12,3 +12,6 @@
         - all our minishell functions **unitests** write in c and launch by a bash script.
 ## Questions❓
 - [ ] ⚠️ Can we organise our project with folders struct:`minishell/{include/*.h,src/*,libft/**/*,build/*.o,minishell}`
+## Notes 📓  
+- [ ] `char **ft_split2(char *src, char **pattern)`
+    - ⚠️  `echo coucou&&` == `echo coucou &&` --> like heredoc, take a command to exec
