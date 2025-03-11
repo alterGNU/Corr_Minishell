@@ -1,7 +1,12 @@
 # Corr_Minishell
 ## Usage
-- This repo contains our Minishell:
-    - documentation (subject, personnal-notes etc)
-    - unitests (all our minishell function tests write in c and launch by a bash script)
-## Notes
-- Before setting Minishell project as finish, don't forget to move **docs/** fodler in this repo.
+- This repo is use to:
+    - **store** our Minishell's project **documentation**:
+        - subject.pdf
+        - correction.pdf
+        - personnal-notes.md
+        - ...etc...
+    - **launch** our Minishell's project **tests**:
+        - all our minishell functions **unitests** write in c and launch by a bash script.
+## Questions❓
+- [ ] ⚠️ Can we organise our project with folders struct:`minishell/{include/*.h,src/*,libft/**/*,build/*.o,minishell}`
