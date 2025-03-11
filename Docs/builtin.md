@@ -1,0 +1,1 @@
+cd : chdir --> export OLDPWD variable in env when cd is called (check at 42-school if behave like macOS or Linux (heritate OLDPWD or not))
