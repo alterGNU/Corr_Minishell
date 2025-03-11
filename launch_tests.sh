@@ -202,7 +202,7 @@ fi
 # -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
 FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
 exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
-# =[ START MESSAGE ]==========================================================================================
+# =[ RESUME ]=================================================================================================
 print_in_box -t 2 -c y \
     "🚧${Y0} RESUME Minishell's Tests${E}" \
     "   - 📂${GU}Log files created at:${E} ${M0}$(print_shorter_path ${LOG_DIR})/*${E}"
