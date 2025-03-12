@@ -1,9 +1,9 @@
-#include "minishell.h"
-#include <string.h>
+#include "minishell.h" // ft_split_enhanced 
+#include <string.h>    // strcmp, strdup
+#include <stdlib.h>    // calloc
 
 int	compare_str_array(char **tab1, char **tab2)
 {
-	int	res;
 	int	i;
 
 	if (!tab1 && !tab2)
@@ -22,13 +22,23 @@ int	compare_str_array(char **tab1, char **tab2)
 	return (1);
 }
 
-int	test(char *str, char **matches, char **res)
+int	test_ft_split_enhanced(char *str, char **matches, char **res)
 {
-/char	**ft_res = ft_split_enhanced(str, matches);
-/return (compare_str_array(res, ft_res));
+	char	**ft_res;
+	int		comp;
+
+	printf("ft_split(\"%s\", ", str);
+	ft_print_str_array(res);
+	printf(")\n");
+	ft_res = ft_split_enhanced(str, matches);
+	comp = compare_str_array(res, ft_res);
+	free(ft_res);
+	if (comp)
+		return (printf("---> FAIL\n"), 1);
+	return (printf("---> PASS\n"), 0);
 }
 
-int	main()
+int	main(void)
 {
 	int	nb_err;
 
@@ -48,12 +58,12 @@ int	main()
 	r2[5] = strdup("||");
 	r2[6] = strdup("!");
 	// CAS PARTICULIERS
-	nb_err += test(NULL, NULL, NULL); // ft_split_enhanced(NULL, NULL)      -->NULL
-	nb_err += test(s1, NULL, NULL);   // ft_split_enhanced("...", NULL)     -->NULL
-	nb_err += test(NULL, t1, NULL);   // ft_split_enhanced(NULL, {NULL})    -->NULL
-	nb_err += test(s1, t1, NULL);     // ft_split_enhanced("...", NULL)     -->NULL
-	nb_err += test(NULL, t2, NULL);   // ft_split_enhanced(NULL, {...,NULL})-->NULL
+	nb_err += test_ft_split_enhanced(NULL, NULL, NULL); // ft_split_enhanced(NULL, NULL)      -->NULL
+	nb_err += test_ft_split_enhanced(s1, NULL, NULL);   // ft_split_enhanced("...", NULL)     -->NULL
+	nb_err += test_ft_split_enhanced(NULL, t1, NULL);   // ft_split_enhanced(NULL, {NULL})    -->NULL
+	nb_err += test_ft_split_enhanced(s1, t1, NULL);     // ft_split_enhanced("...", NULL)     -->NULL
+	nb_err += test_ft_split_enhanced(NULL, t2, NULL);   // ft_split_enhanced(NULL, {...,NULL})-->NULL
 	// CAS CLASSICS
-	nb_err += test(s1, t2, r2);
-	return (nb_err);
+	nb_err += test_ft_split_enhanced(s1, t2, r2);
+	return (ft_free_str_array(&t1), ft_free_str_array(&t2), ft_free_str_array(&r2), nb_err);
 }
