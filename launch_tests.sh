@@ -29,6 +29,7 @@ VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=1"
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
 FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
 FUN_TO_TEST=( )                                                   # ☒ List of user created function specific to minishell
+FUN_TESTED=( )                                                    # ☒ List of user created function specific to minishell that have a test founded
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in minishell
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function 
 LIBFT_FUN=( )                                                     # ☒ List of user created function in libft.a
@@ -49,6 +50,8 @@ BCU="\033[4;36m"                                                  # ☒ START AZ
 P0="\033[0;35m"                                                   # ☒ START PINK
 G0="\033[0;37m"                                                   # ☒ START GREY
 GU="\033[4;37m"                                                   # ☒ START GREY UNDERSCORED
+# -[ COUNT ]--------------------------------------------------------------------------------------------------
+TOT_FAILS=0                                                       # ☒ Count how many fun have failed
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
@@ -107,7 +110,6 @@ launch_tests_perso_fun()
 {
     local DOC_PERSO_FUN="${LOG_DIR}/files_generated"
     local nb_err=0
-    echo ${FUN_TO_TEST[@]}
     for fun in ${FUN_TO_TEST[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
@@ -117,12 +119,12 @@ launch_tests_perso_fun()
             echo -en "  - ⚙️  ${GU}Compilation:${E}"
             if [[ ! -f "${exe}" ]];then
                 local fun_obj=$(find "${MS_DIR}/build" -type f -name "${fun}.o")
-                ${CC} ${test_main} ${fun_obj} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1
-                local res_compile=${?}
+                local res_compile=$(${CC} ${test_main} ${fun_obj} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1)
                 if [[ "${res_compile}" -eq 0 ]];then
                     echo -en " ✅ ${V0} Successfull.${E}\n"
                 else
-                    log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
+                    nb_err=$(( nb_err + 1 ))
+                    local log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
                     echo -en " ❌ ${R0}compilation failed.${E}\n"
                     sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
                     echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
@@ -135,29 +137,30 @@ launch_tests_perso_fun()
                 echo -en "  - 🚀 ${GU}Execution  :${E}"
                 if [[ -f "${PARENT_DIR}/src/unitests/docs/${fun}.txt" ]];then
                     [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
-                    local res_tests=$(${exe} "${PARENT_DIR}/src/unitests/docs" "${DOC_PERSO_FUN}" > "${LOG_DIR}/${fun}.log" 2>&1 && echo $? || echo $?)
+                    local res_tests=$(${exe} "${PARENT_DIR}/src/unitests/docs" "${DOC_PERSO_FUN}" > "${LOG_DIR}/${fun}.log" 2>&1)
                 else
-                    local res_tests=$(${exe} > "${LOG_DIR}/${fun}.log" 2>&1 && echo $? || echo $?)
-                fi
-                nb_err=$((nb_err + res_tests))
+                    local res_tests=$(${exe} > "${LOG_DIR}/${fun}.log" 2>&1)
+                fi 
                 if [[ ${res_tests} -eq 0 ]];then
                     echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
                 else
+                    nb_err=$(( nb_err + 1 ))
                     echo -en " ❌${R0} ${res_tests} error(s) detected\n"
+
                     echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_DIR}/${fun}.log)${E}"
                 fi
                 echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                 if [[ -f "${PARENT_DIR}/src/unitests/docs/${fun}.txt" ]];then
                     [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
-                    res_tests=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/unitests/docs" "${DOC_PERSO_FUN}" > "${LOG_DIR}/${fun}.val" 2>&1 && echo $? || echo $?)
+                    res_val=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/unitests/docs" "${DOC_PERSO_FUN}" > "${LOG_DIR}/${fun}.val" 2>&1)
                 else
-                    res_tests=$(${VALGRIND} ${exe} > "${LOG_DIR}/${fun}.val" 2>&1 && echo $? || echo $?)
+                    res_val=$(${VALGRIND} ${exe} > "${LOG_DIR}/${fun}.val" 2>&1)
                 fi
-                nb_err=$((nb_err + res_tests))
-                if [[ ${res_tests} -eq 0 ]];then
-                    echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
+                if [[ ${res_val} -eq 0 ]];then
+                    echo -en " ✅ ${V0} no leaks detected.${E}\n"
                 else
-                    echo -en " ❌ ${R0} ${res_tests} leak(s) detected\n"
+                    nb_err=$(( nb_err + 1 ))
+                    echo -en " ❌ ${R0} leaks detected\n"
                     echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_DIR}/${fun}.val)${E}"
                 fi
             else
@@ -180,7 +183,7 @@ launch_tests_perso_fun()
 # =[ START MESSAGE ]==========================================================================================
 print_in_box -t 2 -c y "🚧${Y0} START Minishell's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-#exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
+exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
 # =[ SET LISTS ]==============================================================================================
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
@@ -207,9 +210,19 @@ else
     echo -e "${BC0}${PROGRAMM}${E} is not an object file\033[m"
 fi
 # -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
-FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
+FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
+for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")" ]] && FUN_TESTED+=( "${fun}" );done
 exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
+last_cmd=${?}
+TOT_FAILS=$(( TOT_FAILS + last_cmd ))
 # =[ RESUME ]=================================================================================================
+short_log_dir=$(print_shorter_path ${LOG_DIR})
 print_in_box -t 2 -c y \
-    "🚧${Y0} RESUME Minishell's Tests${E}" \
-    "   - 📂${GU}Log files created at:${E} ${M0}$(print_shorter_path ${LOG_DIR})/*${E}"
+    "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
+    "   - 🚀 ${GU}${#FUN_TESTED[@]}/${#FUN_TO_TEST[@]} functions have been tested:${E}" \
+    "      - $(( "${#FUN_TESTED[@]}" - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
+    "      - ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
+    "   - 📂 ${GU}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
+    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) ${M0}exec log files${E} where created." \
+    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) ${M0}valgrind log files${E} where created." \
+    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) ${M0}outputs files${E} where produce by test."
