@@ -15,3 +15,32 @@
 ## Notes 📓  
 - [ ] `char **ft_split2(char *src, char **pattern)`
     - ⚠️  `echo coucou&&` == `echo coucou &&` --> like heredoc, take a command to exec
+### Handle unclosed quotes (double or single)
+```bash
+$> ls | cat && echo "pop
+> op" | cat | ls
+include
+libft
+Makefile
+src
+include  libft	Makefile  src
+```
+```bash
+$> bash-5.2$ echo '1
+> ' && echo "2
+> " && echo "'3"
+1
+
+2
+
+'3
+```
+- Pseudo-code
+    - split --> ["ls", "|", "cat", "&&", "echo \"pop", NULL]
+    - build_struct:
+        - if last node not quote_terminated (closed)
+            - give prompt back, and cmd_to_add=get_next_line(0)
+            - store in a tempory file (heredoc) the cmd_to_add until all quote(even the on given in heredoc) are closed.
+            - split(concatenate(heredoc))
+            - ADD_TO_STRUCT new commandes
+    - run trought struct conditionnaly (each leaf == fork)
