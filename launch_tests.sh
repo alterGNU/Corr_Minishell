@@ -117,9 +117,17 @@ launch_tests_perso_fun()
             exe="${BIN_DIR}/test_${fun}"
             echo -en "  - ⚙️  ${GU}Compilation:${E}"
             if [[ ! -f "${exe}" ]];then
-                ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd
+                ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_PERSO_FUN}/${fun}.compile" 2>&1
                 local res_compile=${?}
-                [[ "${res_compile}" -eq 0 ]] && echo -en " ✅ ${V0} Successfull.${E}\n" || echo " ❌ ${R0}compilation failed.${E}\n"
+                if [[ "${res_compile}" -eq 0 ]];then
+                    echo -en " ✅ ${V0} Successfull.${E}\n"
+                else
+                    log_comp_fail=$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.compile)
+                    echo -en " ❌ ${R0}compilation failed.${E}\n"
+                    sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
+                    echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
+                    continue
+                fi
             else
                 echo -en " ☑️  ${BC0} Not needed.\n${E}"
             fi
