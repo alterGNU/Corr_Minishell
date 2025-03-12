@@ -23,7 +23,7 @@ BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to 
 BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
 LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a static library
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
-CC="cc -Wall -Wextra -Werror -I${MS_DIR}/libft/include -I${MS_DIR}/include"
+CC="cc -Wall -Wextra -Werror -I${MS_DIR}/libft/include -I${MS_DIR}/include -I${MS_DIR}/build/*.o"
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=1"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
@@ -105,10 +105,9 @@ exec_anim_in_box()
 # Launch tests for all my personnal functions
 launch_tests_perso_fun()
 {
-    local LOG_PERSO_FUN="${LOG_DIR}/other_functions"
-    [[ ! -d ${LOG_PERSO_FUN} ]] && mkdir -p ${LOG_PERSO_FUN}
-    local DOC_PERSO_FUN="${LOG_PERSO_FUN}/files_generated"
+    local DOC_PERSO_FUN="${LOG_DIR}/files_generated"
     local nb_err=0
+    echo ${FUN_TO_TEST[@]}
     for fun in ${FUN_TO_TEST[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
@@ -117,12 +116,13 @@ launch_tests_perso_fun()
             exe="${BIN_DIR}/test_${fun}"
             echo -en "  - ⚙️  ${GU}Compilation:${E}"
             if [[ ! -f "${exe}" ]];then
-                ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_PERSO_FUN}/${fun}.compile" 2>&1
+                local fun_obj=$(find "${MS_DIR}/build" -type f -name "${fun}.o")
+                ${CC} ${test_main} ${fun_obj} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1
                 local res_compile=${?}
                 if [[ "${res_compile}" -eq 0 ]];then
                     echo -en " ✅ ${V0} Successfull.${E}\n"
                 else
-                    log_comp_fail=$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.compile)
+                    log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
                     echo -en " ❌ ${R0}compilation failed.${E}\n"
                     sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
                     echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
@@ -133,33 +133,32 @@ launch_tests_perso_fun()
             fi
             if [[ -f "${exe}" ]];then
                 echo -en "  - 🚀 ${GU}Execution  :${E}"
-                if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                if [[ -f "${PARENT_DIR}/src/unitests/docs/${fun}.txt" ]];then
                     [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
-                    ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
+                    local res_tests=$(${exe} "${PARENT_DIR}/src/unitests/docs" "${DOC_PERSO_FUN}" > "${LOG_DIR}/${fun}.log" 2>&1 && echo $? || echo $?)
                 else
-                    ${exe} > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
+                    local res_tests=$(${exe} > "${LOG_DIR}/${fun}.log" 2>&1 && echo $? || echo $?)
                 fi
-                local res_tests=$?
+                nb_err=$((nb_err + res_tests))
                 if [[ ${res_tests} -eq 0 ]];then
                     echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
                 else
                     echo -en " ❌${R0} ${res_tests} error(s) detected\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.log)${E}"
+                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_DIR}/${fun}.log)${E}"
+                fi
+                echo -en "  - 🚰 ${GU}Valgrind   :${E}"
+                if [[ -f "${PARENT_DIR}/src/unitests/docs/${fun}.txt" ]];then
+                    [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
+                    res_tests=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/unitests/docs" "${DOC_PERSO_FUN}" > "${LOG_DIR}/${fun}.val" 2>&1 && echo $? || echo $?)
+                else
+                    res_tests=$(${VALGRIND} ${exe} > "${LOG_DIR}/${fun}.val" 2>&1 && echo $? || echo $?)
                 fi
                 nb_err=$((nb_err + res_tests))
-                echo -en "  - 🚰 ${GU}Valgrind   :${E}"
-                if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
-                    [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
-                    ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
-                else
-                    ${VALGRIND} ${exe} > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
-                fi
-                local res_tests=$?
                 if [[ ${res_tests} -eq 0 ]];then
                     echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
                 else
                     echo -en " ❌ ${R0} ${res_tests} leak(s) detected\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.val)${E}"
+                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_DIR}/${fun}.val)${E}"
                 fi
             else
                 echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
