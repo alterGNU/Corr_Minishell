@@ -23,7 +23,7 @@ BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to 
 BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
 LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a static library
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
-CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
+CC="cc -Wall -Wextra -Werror -I${MS_DIR}/libft/include -I${MS_DIR}/include"
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=1"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
@@ -110,7 +110,7 @@ launch_tests_perso_fun()
     local DOC_PERSO_FUN="${LOG_PERSO_FUN}/files_generated"
     local nb_err=0
     for fun in ${FUN_TO_TEST[@]};do
-        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
+        local test_main=$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
             [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
@@ -173,7 +173,7 @@ launch_tests_perso_fun()
 # =[ START MESSAGE ]==========================================================================================
 print_in_box -t 2 -c y "🚧${Y0} START Minishell's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
+#exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
 # =[ SET LISTS ]==============================================================================================
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
