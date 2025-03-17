@@ -23,9 +23,6 @@ LOG_FAIL="${LOG_DIR}/list_errors.log"                             # ☒ File con
 BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to BSL folder
 BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
 LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a static library
-# -[ COMMANDS ]-----------------------------------------------------------------------------------------------
-CC="cc -Wall -Wextra -Werror -I${MS_DIR}/libft/include -I${MS_DIR}/include -I${MS_DIR}/build/*.o"
-VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=1"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
 FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
@@ -34,6 +31,11 @@ FUN_TESTED=( )                                                    # ☒ List of 
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in minishell
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function 
 LIBFT_FUN=( )                                                     # ☒ List of user created function in libft.a
+OBJ=( )                                                           # ☒ List of object.o (no main function in it)
+for obj in $(ls ${MS_DIR}/build/*.o);do if ! nm "${obj}" | grep -qE '\<main\>';then OBJ+=( "${obj}" );fi;done
+# -[ COMMANDS ]-----------------------------------------------------------------------------------------------
+CC="cc -Wall -Wextra -Werror -I${MS_DIR}/include -I${MS_DIR}/libft/include ${OBJ[@]}"
+VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=1"
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                           # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
@@ -136,7 +138,7 @@ exec_anim_in_box()
 #        - (1.2) EXEC if compilation succed, redir stdout && stderr to exec.log, if exec failed --> nb_err++
 #        - (1.3) VALGRIND if compilation succed, redir stdout && stderr to leaks.log, if valgrind failed --> nb_err++
 #        - (1.4) If ../log/<date>/<time>/<fun_name>/ empty, remove the directory
-launch_unitest()
+launch_unitests()
 {
     # INPUT VALIDATION
     [[ ${#} -eq 0 || ${#} -gt 2 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():wrong number of argument" && exit 2 ; }
@@ -161,18 +163,18 @@ launch_unitest()
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
                 # cases where compilation needed: (1:no binary),(2:sources newer than binary),(3:text exist and newer than binary)
+                # TODO: handle when OBJ file are newer that exe too
                 if [[ ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) ]];then
-                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
+                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
                         echo -en " ✅ ${V0} Successfull.${E}\n"
-                        rm "${LOG_DIR}/comp_stderr.txt"
+                        rm "${FUN_LOG_DIR}/comp_stderr.log"
                     else
+                        local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
                         nb_err=$(( nb_err + 1 ))
-                        echo -e "${fun}\tcompilation" >> ${LOG_FAIL}
-                        local log_comp_fail=$(print_shorter_path ${LOG_DIR}/comp_stderr.txt)
+                        echo -e "${fun}\tcompilation\t${log_comp_fail}" >> ${LOG_FAIL}
                         echo -en " ❌ ${R0}Compilation failed.${E}\n"
                         sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
-                        echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
                         continue
                     fi
                 else
@@ -189,10 +191,11 @@ launch_unitest()
                 if [[ ${res_tests} -eq 0 ]];then
                     echo -en " ✅ ${V0} No error detected.${E}\n"
                 else
+                    local exec_log_file=$(print_shorter_path ${FUN_LOG_DIR}/exec.log)
                     nb_err=$(( nb_err + 1 ))
-                    echo -e "${fun}\terrors" >> ${LOG_FAIL}
+                    echo -e "${fun}\terrors\t${exec_log_file}" >> ${LOG_FAIL}
                     echo -en " ❌ ${R0} Error detected (exec return value=${res_tests})\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${FUN_LOG_DIR}/exec.log)${E}"
+                    echo "      🔸${Y0}check log file 👉 ${M0}${exec_log_file}${E}"
                 fi
                 # STEP 3 : VALGRIND
                 echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
@@ -204,17 +207,18 @@ launch_unitest()
                 if [[ ${res_val} -ne ${VAL_ERR} ]];then
                     echo -en " ✅ ${V0} No leak detected.${E}\n"
                 else
+                    local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
                     nb_err=$(( nb_err + 1 ))
-                    echo -e "${fun}\tleaks" >> ${LOG_FAIL}
+                    echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
                     echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)${E}"
+                    echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
                 fi
             else
                 echo " ${BC0} ⤷${E} ✖️  ${G0}Tests not found.${E}"
                 rmdir "${FUN_LOG_DIR}" > /dev/null 2>&1
             fi
         else
-            echo -e "${fun}\tmissing" >> ${LOG_FAIL}
+            echo -e "${fun}\tmissing\t⭙" >> ${LOG_FAIL}
             nb_err=$(( nb_err + 1 ))
             echo " ${BC0} ⤷${E} ❌ ${R0}Function not found in object.${E}"
         fi
