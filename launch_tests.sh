@@ -232,37 +232,33 @@ launch_unitests()
 display_resume()
 {
     [[ -n "${1}" ]] && local args=( "🔶 ${YU}RESUME ${1}:${E}" ) || local args=( "🔶 ${YU}RESUME :${E}" )
+    [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}Norminette:${V0} ✅ PASS${E}" ) || args+=( " 🔸 ${YU}Norminette:${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
     local short_log_dir=$(print_shorter_path ${LOG_DIR})
-    local c_com=$(find ${short_log_dir} -type f | grep '.compile$' | wc -l)
-    local c_log=$(find ${short_log_dir} -type f | grep '.log$' | wc -l)
-    local c_val=$(find ${short_log_dir} -type f | grep '.val$' | wc -l)
-    local c_txt=$(find ${short_log_dir} -type f | grep '.txt$' | wc -l)
-    local tot_tested=$(( c_com + c_log ))
+    local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
     local lst_fail=( )
-    for ff in $(cat ${LOG_DIR}/fun_{fails,leaks,missing}.lst 2>/dev/null | sort -u);do lst_fail+=( "${ff}" );done
-    [[ ${res_normi} -eq 0 ]] && args+=( "  🔸 ${Y0}Norminette:${V0} ✅ PASS${E}" ) || args+=( "  🔸 ${Y0}Norminette:${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
+    local causes=( )
+    local causes=( )
+    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! " ${lst_fail[@]} " =~ " ${ff} " ]] && lst_fail+=( "${ff}" );done
     if [[ ${#lst_fail[@]} -eq 0 ]];then
-        args+=( "  🔸 ${Y0}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
+        args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
     else
-        args+=( "  🔸 ${Y0}${tot_tested} functions have been tested:${E}" )
-        if [[ ${c_com} -ne 0 ]];then
-            args+=( "     • ${c_com} functions ${R0}FAILLED TO COMPILE${E}." )
-            for f2c in $(find ${short_log_dir} -type f | grep '.compile$');do args+=( "      👉 ${f2c}");done
-        fi
+        args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${E}" )
         args+=( \
-            "     • $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED${E}." \
-            "     • ${#lst_fail[@]} functions ${R0}FAILLED${E}:" \
+            "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
+            "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
         )
-        for ff in ${lst_fail[@]};do args+=( "       👉 ${BC0}${ff}()${E}" );done
+        for fun in "${lst_fail[@]}";do
+            args+=( "      ${R0}✘ ${RU}${fun}():${E}" )
+            local link1=$(awk -v f="${fun}" '$1 == f &&  $2 == "compilation" {print $3}' ${LOG_FAIL})
+            local link2=$(awk -v f="${fun}" '$1 == f &&  $2 == "errors" {print $3}' ${LOG_FAIL})
+            local link3=$(awk -v f="${fun}" '$1 == f &&  $2 == "leaks" {print $3}' ${LOG_FAIL})
+            local link4=$(awk -v f="${fun}" '$1 == f &&  $2 == "missing" {print $3}' ${LOG_FAIL})
+            [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling ${M0}👉 ${link1}${E}" )
+            [[ -n "${link2}" ]] && args+=( "      ${R0}⤷ Error detected ${M0}👉 ${link2}${E}" )
+            [[ -n "${link3}" ]] && args+=( "      ${R0}⤷ Leaks detected ${M0}👉 ${link3}${E}" )
+            [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
+        done
     fi
-
-    args+=( \
-        "  🔸 ${Y0}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
-        "     • ${c_com} ${M0}compilation log files${E} where created(*.compile ext-->failed compilation commands returns)" \
-        "     • ${c_log} ${M0}exec log files${E} where created (*.log ext-->tests returns)" \
-        "     • ${c_val} ${M0}valgrind log files${E} where created (*.val ext-->valgrind returns)" \
-        "     • ${c_txt} ${M0}outputs files${E} where produced by the tests execution (*.txt ext-->created by test)" \
-    )
     print_in_box -t 2 -c y "${args[@]}"
 }
 
@@ -308,4 +304,4 @@ FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%
 for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")" ]] && FUN_TESTED+=( "${fun}" );done
 exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
 # =[ RESUME ]=================================================================================================
-#display_resume "Minishell's tests"
+display_resume "Minishell's tests"
