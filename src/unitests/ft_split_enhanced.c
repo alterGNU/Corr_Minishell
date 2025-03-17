@@ -27,10 +27,14 @@ int	test_ft_split_enhanced(char *str, char **matches, char **res)
 	char	**ft_res;
 	int		comp;
 
-	printf("ft_split(\"%s\", ", str);
-	ft_print_str_array(res);
-	printf(")\n");
 	ft_res = ft_split_enhanced(str, matches);
+	ft_printf("ft_split(\"%s\", ", str);
+	ft_print_str_array(matches);
+	ft_printf("):\n   res=");
+	ft_print_str_array(res);
+	ft_printf("\nft_res=");
+	ft_print_str_array(ft_res);
+	ft_printf("\n");
 	comp = compare_str_array(res, ft_res);
 	free(ft_res);
 	if (comp)
@@ -49,7 +53,7 @@ int	main(void)
 	t2[0] = strdup("&&");
 	t2[1] = strdup("||");
 	t2[2] = strdup("|");
-	char	**r2 = (char **)calloc(5, sizeof(char *)) ;  // {"  coucou", "&&", "petite", "|", "perruche", "||", "!", NULL}
+	char	**r2 = (char **)calloc(8, sizeof(char *)) ;  // {"  coucou", "&&", "petite", "|", "perruche", "||", "!", NULL}
 	r2[0] = strdup("  coucou");
 	r2[1] = strdup("&&");
 	r2[2] = strdup("petite");
@@ -65,5 +69,5 @@ int	main(void)
 	nb_err += test_ft_split_enhanced(NULL, t2, NULL);   // ft_split_enhanced(NULL, {...,NULL})-->NULL
 	// CAS CLASSICS
 	nb_err += test_ft_split_enhanced(s1, t2, r2);
-	return (ft_free_str_array(&t1), ft_free_str_array(&t2), ft_free_str_array(&r2), nb_err);
+	return (ft_free_str_array(&t1), ft_free_str_array(&t2), ft_free_str_array(&r2), ft_free((void **)&s1), nb_err);
 }
