@@ -35,7 +35,8 @@ OBJ=( )                                                           # ☒ List of 
 for obj in $(ls ${MS_DIR}/build/*.o);do if ! nm "${obj}" | grep -qE '\<main\>';then OBJ+=( "${obj}" );fi;done
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
 CC="cc -Wall -Wextra -Werror -I${MS_DIR}/include -I${MS_DIR}/libft/include ${OBJ[@]}"
-VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=1"
+VAL_ERR=42
+VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}"
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                           # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
