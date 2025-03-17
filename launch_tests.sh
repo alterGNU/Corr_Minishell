@@ -40,20 +40,21 @@ VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                           # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
-E="\033[0m"                                                       # ☒ END color balise
-N0="\033[0;30m"                                                   # ☒ START BLACK
-R0="\033[0;31m"                                                   # ☒ START RED
-RU="\033[4;31m"                                                   # ☒ START RED UNDERSCORED
-V0="\033[0;32m"                                                   # ☒ START GREEN
-M0="\033[0;33m"                                                   # ☒ START BROWN
-Y0="\033[0;93m"                                                   # ☒ START YELLOW
-B0="\033[0;34m"                                                   # ☒ START BLUE
-BU="\033[4;34m"                                                   # ☒ START BLUE
-BC0="\033[0;36m"                                                  # ☒ START AZURE
-BCU="\033[4;36m"                                                  # ☒ START AZURE UNDERSCORED
-P0="\033[0;35m"                                                   # ☒ START PINK
-G0="\033[0;37m"                                                   # ☒ START GREY
-GU="\033[4;37m"                                                   # ☒ START GREY UNDERSCORED
+E="\033[0m"                                                        # ☒ END color balise
+N0="\033[0;30m"                                                    # ☒ START BLACK
+R0="\033[0;31m"                                                    # ☒ START RED
+RU="\033[4;31m"                                                    # ☒ START RED UNDERSCORED
+V0="\033[0;32m"                                                    # ☒ START GREEN
+M0="\033[0;33m"                                                    # ☒ START BROWN
+Y0="\033[0;93m"                                                    # ☒ START YELLOW
+YU="\033[4;93m"                                                    # ☒ START YELLOW UNDERSCORED
+B0="\033[0;34m"                                                    # ☒ START BLUE
+BU="\033[4;34m"                                                    # ☒ START BLUE
+BC0="\033[0;36m"                                                   # ☒ START AZURE
+BCU="\033[4;36m"                                                   # ☒ START AZURE UNDERSCORED
+P0="\033[0;35m"                                                    # ☒ START PINK
+G0="\033[2;37m"                                                    # ☒ START GREY
+GU="\033[4;37m"                                                    # ☒ START GREY
 # -[ COUNT ]--------------------------------------------------------------------------------------------------
 TOT_FAILS=0                                                       # ☒ Count how many fun have failed
 # =[ SOURCES ]================================================================================================
