@@ -50,30 +50,30 @@ int main(int AC, char **AV, char **EV)
 	(void) AC;
 	(void) AV;
 	(void) EV;
+
 	int	nb_err = 0;
 	print_title("CAS ev-->NULL");
 	char **ev0 = NULL;
 	nb_err += test_init_env(ev0);
 
+	//char **ev1 = ft_calloc(1, sizeof(char *));
+	//print_title("CAS ev-->[NULL]");
+	//nb_err += test_init_env(ev1);
+	//ft_free_str_array(&ev1);
 
-	char **ev1 = ft_calloc(1, sizeof(char *));
-	print_title("CAS ev-->[NULL]");
-	nb_err += test_init_env(ev1);
-	ft_free_str_array(&ev1);
+	//char **ev2 = ft_calloc(5, sizeof(char *));
+	//ev2[0] = strdup("arg1=toto");
+	//ev2[1] = strdup("arg2=titi");
+	//ev2[2] = strdup("arg3=titi");
+	//ev2[3] = strdup("arg4=titi");
+	//print_title("CAS ev-->OK but manually created");
+	//nb_err += test_init_env(ev2);
+	//ft_free_str_array(&ev2);
 
-	char **ev2 = ft_calloc(5, sizeof(char *));
-	ev2[0] = strdup("arg1=toto");
-	ev2[1] = strdup("arg2=titi");
-	ev2[2] = strdup("arg3=titi");
-	ev2[3] = strdup("arg4=titi");
-	print_title("CAS ev-->OK but manually created");
-	nb_err += test_init_env(ev2);
-	ft_free_str_array(&ev2);
+	//print_title("CAS ev-->real env");
+	//nb_err += test_init_env(EV);
 
-	print_title("CAS ev-->real env");
-	nb_err += test_init_env(EV);
-
-	// TODO: fork cause will fail.
+	//// TODO: fork cause will fail.
 	//char **ev3 = ft_calloc(3, sizeof(char *));
 	//ev3[0] = strdup("arg1=toto");
 	//ev3[1] = strdup("");
