@@ -1,4 +1,15 @@
 # Corr_Minishell
+
+## TODO
+- [.] Unitests : utils_env.c/init_env() --> test if ev==NULL, and else.
+    - [X] Create simple visual tests
+    - [ ] Create automatics tests that pass
+    - [ ] Create automatics tests that fail (fork needed)
+- [ ] Function : main.c/main() --> write loop
+- [ ] Structs  : minishell.h --> `t_struct *token` (`.->char *str`, `.->int type`)
+- [ ] Function : lexer.c/lexer() `char *line` --> `t_struct *token`
+- [ ] Unitests : lexer.c/lexer() --> tests
+
 ## Usage
 - This repo is use to:
     - **store** our Minishell's project **documentation**:
