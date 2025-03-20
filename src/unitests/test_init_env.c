@@ -39,10 +39,10 @@ int	test_init_env(char **ev)
 	if (!ev)
 	{
 		if (!res)
-			return (printntime('=', LEN-3), printf(" ❌\n"), 1);
-		return (printntime('=', LEN-3), printf("> ✅\n"), 0);
+			return (ft_lstclear(&res, ft_free_env), printntime('=', LEN-3), printf(" ❌\n"), 1);
+		return (ft_lstclear(&res, ft_free_env), printntime('=', LEN-3), printf("> ✅\n"), 0);
 	}
-	return (printntime('=', LEN-3), printf(" ✅\n"), 0);
+	return (ft_lstclear(&res, ft_free_env), printntime('=', LEN-3), printf(" ✅\n"), 0);
 }
 
 int main(int AC, char **AV, char **EV)
