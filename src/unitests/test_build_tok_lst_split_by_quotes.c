@@ -23,9 +23,10 @@ void print_title(const char *title)
  //	- TO	: t_list *res = {v:"    echo ", t:-1, q:-1}->{v:"\"toto tutu\"", t:-1, q:-1}->{v:"|echo\ttutu     ", t:-1, q:-1}->NULL
 int	test(char *str, char **res_att)
 {
-	int	i = 0;
-	t_list	*act;
+	//int	i = 0;
+	//t_list	*act;
 	int print_sofar = printf("%s(<%s>)", f_name, str);
+	(void) print_sofar;
 	t_list	*res = build_tok_lst_split_by_quotes(str);
 	//if (!str)
 	//{
@@ -33,10 +34,12 @@ int	test(char *str, char **res_att)
 	//		return (printntime('=', LEN - print_sofar - 3), printf("> ✅\n"), 0);
 	//	return (printntime('=', LEN - print_sofar - 3), printf(" ❌\n"), 1); 
 	//}
-	act = res;
-	printf("\n");
+	//act = res;
+	ft_printf("\n");
+	ft_print_str_array(res_att);
+	ft_printf("\n");
 	print_tok_lst(res); // TODO rm then add print_sofar to print_n_time => oneline result
-	printf("\n");
+	ft_printf("\n");
 	//while (res_att[i] && act && strcmp(res_att[i], ((t_token *)(act->content))->str))
 	//{
 	//	act = act->next;
