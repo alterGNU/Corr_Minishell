@@ -25,14 +25,14 @@ int	test(char *str, char **res_att)
 {
 	//int	i = 0;
 	//t_list	*act;
-	int print_sofar = printf("%s(<%s>)", f_name, str);
+	int print_sofar = ft_printf("%s(<%s>)", f_name, str);
 	(void) print_sofar;
 	t_list	*res = build_tok_lst_split_by_quotes(str);
 	//if (!str)
 	//{
 	//	if (!res)
-	//		return (printntime('=', LEN - print_sofar - 3), printf("> ✅\n"), 0);
-	//	return (printntime('=', LEN - print_sofar - 3), printf(" ❌\n"), 1); 
+	//		return (printntime('=', LEN - print_sofar - 3), ft_printf("> ✅\n"), 0);
+	//	return (printntime('=', LEN - print_sofar - 3), ft_printf(" ❌\n"), 1); 
 	//}
 	//act = res;
 	ft_printf("\n");
@@ -46,13 +46,13 @@ int	test(char *str, char **res_att)
 	//	i++;
 	//}
 	//if (!res_att[i] && !act)
-	//	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), printf("> ✅\n"), 0);
+	//	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), ft_printf("> ✅\n"), 0);
 	//if ((!res_att[i] && act) || (res_att[i] && !act))
-	//	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), printf(" ❌\n"), 1);
+	//	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), ft_printf(" ❌\n"), 1);
 	//if (strcmp(res_att[i], ((t_token *)(act->content))->str))
-	//	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), printf(" ❌\n"), 1);
-	//return (ft_lstclear(&res, free_token), printntime('=', LEN-3), printf("> ✅\n"), 0);
-	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), printf(" ❌\n"), 1);
+	//	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), ft_printf(" ❌\n"), 1);
+	//return (ft_lstclear(&res, free_token), printntime('=', LEN-3), ft_printf("> ✅\n"), 0);
+	return (ft_lstclear(&res, free_token), printntime('=', LEN-3), ft_printf(" ❌\n"), 1);
 }
 
 int main()
