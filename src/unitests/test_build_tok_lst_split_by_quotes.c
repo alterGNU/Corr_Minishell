@@ -8,15 +8,15 @@
 int	printntime(char c, int n)
 {
 	for (int i = 0 ; i < n; i++)
-		printf("%c", c);
+		ft_printf("%c", c);
 	return (n);
 }
 
 void print_title(const char *title)
 {
-	int print_sofar = printf("=[ %s ]", title);
+	int print_sofar = ft_printf("=[ %s ]", title);
 	printntime('=', LEN - print_sofar);
-	printf("\n");
+	ft_printf("\n");
 }
 
  //	- FROM	: char *str = "    echo "toto tutu"|echo\ttutu     "
