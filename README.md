@@ -1,5 +1,8 @@
 # Corr_Minishell
 
+## REMARQUES
+- in struct t_token, token->quote kind of useless since == token->str[0], same for ended == token->str[ft_strlen(token->str)]
+
 ## TODO
 - [.] Unitests : utils_env.c/init_env() --> test if ev==NULL, and else.
     - [X] Create simple visual tests
@@ -12,11 +15,11 @@
     - [X] `static void	free_token(void *ptr)`
     - [ ] `char **build_str_arr_from_str(char *str)`
         - [ ] add token->quotes char:{0,'\'','\"'} // should we add another one that says if a quotes is ended?
-	    - [ ] t_lst *tok_lst = build_tok_lst_split_by_quotes(char *str) --from str to t_lst *tok_lst;
-	    - [ ] t_lst *tok_lst = build_tok_lst_split_by_sep(char *str, char *sep, int include)
+	    - [ ] `t_lst *tok_lst = build_tok_lst_split_by_quotes(char *str)`
+	    - [ ] `t_lst *tok_lst = build_tok_lst_split_by_sep(char *str, char *sep, int include)`
             - include = 0 --> do not include sep as token => sep=" \t\n\r"
             - include = 1 --> include sep as token => sep="&|<>"
-	    - [ ] void set_token_type(t_list *res) /
+	    - [ ] `void set_token_type(t_list *res)`
     - [ ] `static t_list *create_tok_lst_node()`
     - [ ] `t_list *build_tok_lst_from_str_arr(char **str)`
     - [ ] `void	check_lexical_rules(t_list **tok_lst)`
