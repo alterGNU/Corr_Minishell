@@ -66,30 +66,19 @@ int	test(char *str, char **tab_res)
 		act = act->next;
 		i++;
 	}
+	printf("-----\ntab_res=");
+	fflush(stdout);
+	ft_print_str_array(tab_res);
+	printf("\ntok_lst=");
+	fflush(stdout);
+	print_tok_lst(res);
+	printf("\n");
 	if (!tab_res[i] && !act)
-		return (ft_lstclear(&res, free_token), printf("> ✅\n"), 0);
+		return (ft_lstclear(&res, free_token), printntime('-', LEN - 3), printf("> ✅\n"), 0);
 	if ((!tab_res[i] && act) || (tab_res[i] && !act))
-	{
-		printf("-----\ntab_res=%d",count_char_in_str('\t', str));
-		fflush(stdout);
-		ft_print_str_array(tab_res);
-		printf("\ntok_len=");
-		fflush(stdout);
-		print_tok_lst(res);
-		printf("\n");
 		return (ft_lstclear(&res, free_token), printntime('-', LEN - 3), printf("> ❌\n"), 1);
-	}
 	if (strcmp(tab_res[i], ((t_token *)(act->content))->str))
-	{
-		printf("-----\ntab_res=%d",count_char_in_str('\t', str));
-		fflush(stdout);
-		ft_print_str_array(tab_res);
-		printf("\ntok_len=");
-		fflush(stdout);
-		print_tok_lst(res);
-		printf("\n");
 		return (ft_lstclear(&res, free_token), printntime('-', LEN - 3), printf("> ❌\n"), 1);
-	}
 	return (ft_lstclear(&res, free_token), printf("> ✅\n"), 0);
 }
 
@@ -118,10 +107,12 @@ int main()
 	nb_err += test("     'ec'ho \'toto hello world\' ", t5);
 	char *t6[] = {"'ec'","'ho'","' hello'","world", NULL};
 	nb_err += test("'ec''ho'' hello'world", t6);
+	char *t7[] = {"echo ","'super'","aaaaaaaa", NULL};
+	nb_err += test("echo 'super'aaaaaaaa", t7);
 
 	print_title("CAS IMBRICATION QUOTES");
-	char *t7[] = {"'ec'", "'ho'"," ", "\" hello 'world'\"", "&&echo ", "'\"salut\" monde\'"," | cat toto", NULL};
-	nb_err += test("'ec''ho' \" hello 'world'\"&&echo '\"salut\" monde\' | cat toto", t7);
+	char *t8[] = {"'ec'", "'ho'"," ", "\" hello 'world'\"", "&&echo ", "'\"salut\" monde\'"," | cat toto", NULL};
+	nb_err += test("'ec''ho' \" hello 'world'\"&&echo '\"salut\" monde\' | cat toto", t8);
 
 	return (nb_err);
 }

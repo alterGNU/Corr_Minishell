@@ -57,11 +57,15 @@ int main(int AC, char **AV, char **EV)
 	nb_err += test_build_env_lst(ev0);
 
 	char **ev1 = ft_calloc(1, sizeof(char *));
+	if (!ev1)
+		return (nb_err);
 	print_title("CAS ev-->[NULL]");
 	nb_err += test_build_env_lst(ev1);
 	ft_free_str_array(&ev1);
 
 	char **ev2 = ft_calloc(5, sizeof(char *));
+	if (!ev2)
+		return (nb_err);
 	ev2[0] = strdup("arg1=toto");
 	ev2[1] = strdup("arg2=titi");
 	ev2[2] = strdup("arg3=titi");
