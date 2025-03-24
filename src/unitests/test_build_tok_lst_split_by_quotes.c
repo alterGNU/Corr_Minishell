@@ -96,6 +96,26 @@ int main()
 	char *t1[] = {" echo toto hello world",NULL};
 	nb_err += test(" echo toto hello world", t1);
 
+	print_title("CAS CLASSIC ONLY QUOTES");
+	char *tt0[] = {"''", "''",NULL};
+	nb_err += test("''''", tt0);
+	char *tt1[] = {"''", "'", NULL};
+	nb_err += test("'''", tt1);
+	char *tt2[] = {"''", "''",NULL};
+	nb_err += test("''''", tt2);
+
+	print_title("CAS CLASSIC QUOTES");
+	char *tt3[] = {"''", "'echo'", " toto", NULL};
+	nb_err += test("'''echo' toto", tt3);
+	char *tt4[] = {"''", "'echo", NULL};
+	nb_err += test("'''echo", tt4);
+	char *tt5[] = {"''", "'ec'", "'ho'", " ", "'t'", "oto", NULL};
+	nb_err += test("'''ec''ho' 't'oto", tt5);
+	char *tt6[] = {"''", "'ec'", "'ho toto", NULL};
+	nb_err += test("'''ec''ho toto", tt6);
+	char *tt7[] = {"''", "''", "echo", NULL};
+	nb_err += test("''''echo", tt7);
+
 	print_title("CAS CLASSIC WITH QUOTES");
 	char *t2[] = {"echo ", "\"hello world\"", NULL};
 	nb_err += test("echo \"hello world\"", t2);
