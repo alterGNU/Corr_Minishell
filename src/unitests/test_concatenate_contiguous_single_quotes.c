@@ -28,8 +28,8 @@ int	count_char_in_str(char c, char *str)
 
 void print_title(const char *title)
 {
-	int print_sofar = ft_printf("=[ %s ]", title);
-	printntime('=', LEN - print_sofar + 1);
+	int print_sofar = ft_printf("\n=[ %s ]", title);
+	printntime('=', LEN - print_sofar + 2);
 	ft_printf("\n");
 }
 
@@ -98,17 +98,17 @@ int main()
 	nb_err += test(NULL, NULL);
 	nb_err += test("", NULL);
 
-	print_title("\nA|SIMPLE CAS NO QUOTES:");
+	print_title("A| SIMPLE CAS NO QUOTES:");
 	char *a0[] = {" ", "echo"," ","toto"," ","|","ls",NULL};
 	nb_err += test(" echo toto |ls", a0);
 	char *a1[] = {"super=echo", "&&", "$super", " ", "toto", NULL};
 	nb_err += test("super=echo&&$super toto", a1); // ⚠️  --> echo toto --> toto;
 
-	print_title("\nB|SIMPLE CASES WITH QUOTES BUT NO NEED TO CONCATENATE:");
+	print_title("B| SIMPLE CASES WITH QUOTES BUT NO NEED TO CONCATENATE:");
 	char *b0[] = {" ", "'ec'", " ", "'ho'"," ","toto"," ","|","ls",NULL};
 	nb_err += test(" 'ec' 'ho' toto |ls", b0);
 
-	print_title("\nC|SIMPLE CASES WITH QUOTES THAT NEED TO BE CONCATENATE:");
+	print_title("C| SIMPLE CASES WITH QUOTES THAT NEED TO BE CONCATENATE:");
 	char *c0[] = {" ", "'echo'"," ","toto"," ","|","ls",NULL};
 	nb_err += test(" 'ec''ho' toto |ls", c0);
 	char *c1[] = {"'echo'"," ","toto"," ","|","ls",NULL};
@@ -116,7 +116,7 @@ int main()
 	char *c2[] = {"'echo'"," ","'toto'"," ","|","ls",NULL};
 	nb_err += test("'e''c''h'o' 't''o''t'o' |ls", c2);
 
-	print_title("\nD|COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE:");
+	print_title("D| COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE:");
 	char *d0[] = {"echo"," ","'o\"\"i'", NULL};
 	nb_err += test("echo 'o\"''\"i'", d0);
 	char *d1[] = {"echo"," ","'tototiti", NULL}; // ⚠️  --> exec open quotes (~ heredoc << ')
