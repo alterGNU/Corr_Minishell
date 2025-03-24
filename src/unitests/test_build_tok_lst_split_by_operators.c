@@ -118,5 +118,17 @@ int main()
 	char *t10[] = {"<", ">", "<", ">", NULL};
 	nb_err += test("<><>", t10);
 
+	print_title("CAS SIMPLE-OPERATORS WITH COMMANDS");
+	char *t11[] = {"<", " echo titi", "|", "cat", NULL};
+	nb_err += test("< echo titi|cat", t11);
+	char *t12[] = {"  ","<", " echo titi", "|", "cat", NULL};
+	nb_err += test("  < echo titi|cat", t12);
+
+	print_title("CAS MULTIPLE-OPERATORS WITH COMMANDS");
+	char *t13[] = {"<<<", " $titi ", "|", " cat", NULL};
+	nb_err += test("<<< $titi | cat", t13);
+	char *t14[] = {"tutu=titi", "&&", "<<<", "$titi cat ", "&", NULL};
+	nb_err += test("tutu=titi&&<<<$titi cat &", t14);
+
 	return (nb_err);
 }
