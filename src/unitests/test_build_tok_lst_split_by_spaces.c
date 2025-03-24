@@ -120,9 +120,9 @@ int main()
 	nb_err += test("echo'toto'", t2);
 
 	print_title("CAS CLASSIC WITH SPACES");
-	char *t3[] = {"echo", "\"hello", "world\"", NULL};
+	char *t3[] = {"echo", " ", "\"hello", " ", "world\"", NULL};
 	nb_err += test("echo \"hello world\"", t3);
-	char *t4[] = {"echo", "hello","world", NULL};
+	char *t4[] = {" ", "echo", " ", "hello", " ", "world", " ", NULL};
 	nb_err += test("	 echo   	   hello	world	  ", t4);
 
 	return (nb_err);
