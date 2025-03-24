@@ -123,6 +123,8 @@ int main()
 	nb_err += test("< echo titi|cat", t11);
 	char *t12[] = {"  ","<", " echo titi", "|", "cat", NULL};
 	nb_err += test("  < echo titi|cat", t12);
+	char *tt12[] = {"  ","<", " echo titi ", "|", "ls", NULL};
+	nb_err += test("  < echo titi |ls", tt12);
 
 	print_title("CAS MULTIPLE-OPERATORS WITH COMMANDS");
 	char *t13[] = {"<<<", " $titi ", "|", " cat", NULL};
