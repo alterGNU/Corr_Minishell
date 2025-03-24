@@ -115,6 +115,8 @@ int main()
 	print_title("COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE");
 	char *tt0[] = {"echo"," ","'o\"\"i'", NULL};
 	nb_err += test("echo 'o\"''\"i'", tt0);
+	char *tt1[] = {"echo"," ","'tototiti", NULL}; // --> exec open quotes (~ heredoc << ')
+	nb_err += test("echo 'toto''titi", tt1);
 
 	return (nb_err);
 }
