@@ -46,15 +46,22 @@ int	test(char *str, char **tab_res)
 		if (c)
 			print_sofar+=c*4;
 	}
-	t_list	*tok_lst;
-	tok_lst = build_tok_lst_split_by_quotes(str);                                // STEP1: split_by_quote(str, "\'\"") 
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_spaces);     // STEP2: split_by_space(str, "\t\r\s\n")
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_operators);  // STEP3: split_by_separator(str, "|&<>","")
-	concatenate_contiguous_single_quotes(&tok_lst);
-
+	t_list	*res;
+	res = build_tok_lst_split_by_quotes(str);                                // STEP1: split_by_quote(str, "\'\"") 
+	ft_printf("\nafter split by quote=");
+	print_tok_lst(res);
+	map_tok_lst_if_node_not_quoted(&res, build_tok_lst_split_by_spaces);     // STEP2: split_by_space(str, "\t\r\s\n")
+	ft_printf("\nafter split by spaces=");
+	print_tok_lst(res);
+	map_tok_lst_if_node_not_quoted(&res, build_tok_lst_split_by_operators);  // STEP3: split_by_separator(str, "|&<>","")
+	ft_printf("\nafter split by operators=");
+	print_tok_lst(res);
+	concatenate_contiguous_single_quotes(&res);
+	ft_printf("\nafter split by contiguous single quotes=");
+	print_tok_lst(res);
+	ft_printf("\n");
 	printntime('-', LEN - print_sofar - 3);
 	fflush(stdout);
-	t_list	*res = build_tok_lst_split_by_spaces(str);
 	if (!res)
 	{
 		if (!tab_res)
