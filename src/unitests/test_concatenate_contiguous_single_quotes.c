@@ -105,10 +105,12 @@ int main()
 	nb_err += test(" 'ec' 'ho' toto |ls", t1);
 
 	print_title("SIMPLE CASES WITH QUOTES NEED TO CONCATENATE");
-	char *t2[] = {"'echo'"," ","toto"," ","|","ls",NULL};
-	nb_err += test("'ec''ho' toto |ls", t2);
-	char *t3[] = {" ", "'echo'"," ","toto"," ","|","ls",NULL};
-	nb_err += test(" 'ec''ho' toto |ls", t3);
+	char *t2[] = {" ", "'echo'"," ","toto"," ","|","ls",NULL};
+	nb_err += test(" 'ec''ho' toto |ls", t2);
+	char *t3[] = {"'echo'"," ","toto"," ","|","ls",NULL};
+	nb_err += test("'ec''ho' toto |ls", t3);
+	char *t4[] = {"'echo'"," ","'toto'"," ","|","ls",NULL};
+	nb_err += test("'e''c''h'o' 't''o''t'o' |ls", t4);
 
 	print_title("COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE");
 	char *tt0[] = {"echo"," ","'o\"\"i'", NULL};
