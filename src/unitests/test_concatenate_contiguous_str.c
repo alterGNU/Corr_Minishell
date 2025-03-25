@@ -1,9 +1,9 @@
-#include "minishell.h"  // build_tok_lst_split_by_quotes build_tok_lst_split_by_spaces build_tok_lst_split_by_operators concatenate_contiguous_single_quotes
+#include "minishell.h"  // build_tok_lst_split_by_quotes build_tok_lst_split_by_spaces build_tok_lst_split_by_operators concatenate_contiguous_str
 #include <string.h>     // strncmp
 #include <stdio.h>      // printf
 
 #define LEN 90
-#define f_name "concatenate_contiguous_single_quotes"
+#define f_name "concatenate_contiguous_str"
 
 int	printntime(char c, int n)
 {
@@ -58,7 +58,7 @@ int	test(char *str, char **tab_res)
 	ft_printf("\nafter split_by_operators=");
 	print_tok_lst(tok_lst);
 	// STEP4: concatenate
-	concatenate_contiguous_single_quotes(&tok_lst);
+	concatenate_contiguous_str(&tok_lst);
 	ft_printf("\nafter split_by_contiguous_single_quotes=");
 	print_tok_lst(tok_lst);
 	ft_printf("\n");
@@ -99,28 +99,40 @@ int main()
 	nb_err += test("", NULL);
 
 	print_title("A| SIMPLE CAS NO QUOTES:");
-	char *a0[] = {" ", "echo"," ","toto"," ","|","ls",NULL};
-	nb_err += test(" echo toto |ls", a0);
-	char *a1[] = {"super=echo", "&&", "$super", " ", "toto", NULL};
-	nb_err += test("super=echo&&$super toto", a1); // ⚠️  --> echo toto --> toto;
+	char *a1[] = {" ", "echo"," ","toto"," ","|","ls",NULL};
+	nb_err += test(" echo toto |ls", a1);
+	char *a2[] = {"super=echo", "&&", "$super", " ", "toto", NULL};
+	nb_err += test("super=echo&&$super toto", a2); // ⚠️  --> echo toto --> toto;
 
 	print_title("B| SIMPLE CASES WITH QUOTES BUT NO NEED TO CONCATENATE:");
-	char *b0[] = {" ", "'ec'", " ", "'ho'", " ", "toto", " ", "|", "ls", NULL};
-	nb_err += test("     'ec'   'ho'  toto |ls", b0);
+	char *b1[] = {" ", "'ec'", " ", "'ho'", " ", "toto", " ", "|", "ls", NULL};
+	nb_err += test("     'ec'   'ho'  toto |ls", b1);
 
 	print_title("C| SIMPLE CASES WITH QUOTES THAT NEED TO BE CONCATENATE:");
-	char *c0[] = {" ", "'echo'"," ","toto"," ","|","ls",NULL};
-	nb_err += test(" 'ec''ho' toto |ls", c0);
-	//char *c1[] = {"'echo'"," ","toto"," ","|","ls",NULL};
-	//nb_err += test("'ec''ho' toto |ls", c1);
-	//char *c2[] = {"'echo'"," ","'toto'"," ","|","ls",NULL};
-	//nb_err += test("'e''c''h'o' 't''o''t'o' |ls", c2);
+	char *c1[] = {"'ec''ho'"," ","toto"," ","|","ls",NULL};
+	nb_err += test("'ec''ho' toto |ls", c1);
+	char *c2[] = {"'e''c''h''o'"," ","'t''o''t''o'"," ","|","ls",NULL};
+	nb_err += test("'e''c''h''o' 't''o''t''o' |ls", c2);
+	char *c3[] = {"\"\"''", " ", "echo", " ", "\"t\"u't '''\"\"u", NULL};
+	nb_err += test("\"\"'' echo \"t\"u't '''\"\"u", c3);
+	char *c4[] = {"echo", " ", "tutu", " ", "\"\"", " ", "''", " ", "titi", NULL};
+	nb_err += test("echo tutu    \"\"  ''  titi", c4);
+	char *c5[] = {"c'a'\"t\"", " ", "\"fi\"l'e'", "'c'a\"t\"", ">", "'f'ile\"2\"", NULL};
+	nb_err += test("c'a'\"t\"   \"fi\"l'e'|'c'a\"t\">'f'ile\"2\"", c5);
+	char *c6[] = {" ", "'ec''ho'"," ","toto"," ","|","ls",NULL};
+	nb_err += test(" 'ec''ho' toto |ls", c6);
 
-	//print_title("D| COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE:");
-	//char *d0[] = {"echo"," ","'o\"\"i'", NULL};
-	//nb_err += test("echo 'o\"''\"i'", d0);
-	//char *d1[] = {"echo"," ","'tototiti", NULL}; // ⚠️  --> exec open quotes (~ heredoc << ')
-	//nb_err += test("echo 'toto''titi", d1);
+	print_title("D| COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE:");
+	char *d1[] = {"echo", " ", "'o\"''\"i'", NULL};
+	nb_err += test("echo 'o\"''\"i'", d1);
+	char *d2[] = {"'\"\"'echo"," ","toto", NULL};
+	nb_err += test("'\"\"'echo toto", d2);
+
+	print_title("E| NOT TERMINATED QUOTES");
+	char *e1[] = {"echo"," ","'toto''titi", NULL}; // ⚠️  --> exec open quotes (~ heredoc << ')
+	nb_err += test("echo 'toto''titi", e1);
+	char *e2[] = {"\"'e'''cho ", NULL};            // ⚠️  --> exec open quotes (~ heredoc << ")
+	nb_err += test("\"'e'''cho ", e2);
 
 	return (nb_err);
 }
