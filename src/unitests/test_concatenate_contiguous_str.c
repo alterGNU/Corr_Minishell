@@ -117,7 +117,7 @@ int main()
 	nb_err += test("\"\"'' echo \"t\"u't '''\"\"u", c3);
 	char *c4[] = {"echo", " ", "tutu", " ", "\"\"", " ", "''", " ", "titi", NULL};
 	nb_err += test("echo tutu    \"\"  ''  titi", c4);
-	char *c5[] = {"c'a'\"t\"", " ", "\"fi\"l'e'", "'c'a\"t\"", ">", "'f'ile\"2\"", NULL};
+	char *c5[] = {"c'a'\"t\"", " ", "\"fi\"l'e'", "|", "'c'a\"t\"", ">", "'f'ile\"2\"", NULL};
 	nb_err += test("c'a'\"t\"   \"fi\"l'e'|'c'a\"t\">'f'ile\"2\"", c5);
 	char *c6[] = {" ", "'ec''ho'"," ","toto"," ","|","ls",NULL};
 	nb_err += test(" 'ec''ho' toto |ls", c6);
