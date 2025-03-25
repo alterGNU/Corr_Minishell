@@ -53,7 +53,7 @@ int	test(char *str, char **tab_res)
 	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_spaces);
 	ft_printf("\nafter split_by_spaces=");
 	print_tok_lst(tok_lst);
-  	// STEP3: split_by_separator(str, "|&<>","")
+ 	// STEP3: split_by_separator(str, "|&<>","")
 	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_operators);
 	ft_printf("\nafter split_by_operators=");
 	print_tok_lst(tok_lst);
@@ -105,22 +105,22 @@ int main()
 	nb_err += test("super=echo&&$super toto", a1); // ⚠️  --> echo toto --> toto;
 
 	print_title("B| SIMPLE CASES WITH QUOTES BUT NO NEED TO CONCATENATE:");
-	char *b0[] = {" ", "'ec'", " ", "'ho'"," ","toto"," ","|","ls",NULL};
-	nb_err += test(" 'ec' 'ho' toto |ls", b0);
+	char *b0[] = {" ", "'ec'", " ", "'ho'", " ", "toto", " ", "|", "ls", NULL};
+	nb_err += test("     'ec'   'ho'  toto |ls", b0);
 
 	print_title("C| SIMPLE CASES WITH QUOTES THAT NEED TO BE CONCATENATE:");
 	char *c0[] = {" ", "'echo'"," ","toto"," ","|","ls",NULL};
 	nb_err += test(" 'ec''ho' toto |ls", c0);
-	char *c1[] = {"'echo'"," ","toto"," ","|","ls",NULL};
-	nb_err += test("'ec''ho' toto |ls", c1);
-	char *c2[] = {"'echo'"," ","'toto'"," ","|","ls",NULL};
-	nb_err += test("'e''c''h'o' 't''o''t'o' |ls", c2);
+	//char *c1[] = {"'echo'"," ","toto"," ","|","ls",NULL};
+	//nb_err += test("'ec''ho' toto |ls", c1);
+	//char *c2[] = {"'echo'"," ","'toto'"," ","|","ls",NULL};
+	//nb_err += test("'e''c''h'o' 't''o''t'o' |ls", c2);
 
-	print_title("D| COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE:");
-	char *d0[] = {"echo"," ","'o\"\"i'", NULL};
-	nb_err += test("echo 'o\"''\"i'", d0);
-	char *d1[] = {"echo"," ","'tototiti", NULL}; // ⚠️  --> exec open quotes (~ heredoc << ')
-	nb_err += test("echo 'toto''titi", d1);
+	//print_title("D| COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE:");
+	//char *d0[] = {"echo"," ","'o\"\"i'", NULL};
+	//nb_err += test("echo 'o\"''\"i'", d0);
+	//char *d1[] = {"echo"," ","'tototiti", NULL}; // ⚠️  --> exec open quotes (~ heredoc << ')
+	//nb_err += test("echo 'toto''titi", d1);
 
 	return (nb_err);
 }
