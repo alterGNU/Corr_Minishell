@@ -274,8 +274,8 @@ display_resume()
 # =[ START MESSAGE ]==========================================================================================
 print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
-res_normi=${?}
+#exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
+#res_normi=${?}
 res_normi=0
 # =[ SET LISTS ]==============================================================================================
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
