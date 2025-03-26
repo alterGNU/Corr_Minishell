@@ -53,8 +53,8 @@ BU="\033[4;34m"                                                    # ☒ START B
 BC0="\033[0;36m"                                                   # ☒ START AZURE
 BCU="\033[4;36m"                                                   # ☒ START AZURE UNDERSCORED
 P0="\033[0;35m"                                                    # ☒ START PINK
-G0="\033[2;47m"                                                    # ☒ START GREY
-GU="\033[4;47m"                                                    # ☒ START GREY
+G0="\033[2;37m"                                                    # ☒ START GREY
+GU="\033[4;37m"                                                    # ☒ START GREY
 # -[ COUNT ]--------------------------------------------------------------------------------------------------
 TOT_FAILS=0                                                       # ☒ Count how many fun have failed
 # =[ SOURCES ]================================================================================================
@@ -274,8 +274,8 @@ display_resume()
 # =[ START MESSAGE ]==========================================================================================
 print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-#exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
-#res_normi=${?}
+exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
+res_normi=${?}
 res_normi=0
 # =[ SET LISTS ]==============================================================================================
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
