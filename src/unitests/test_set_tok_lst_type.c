@@ -140,8 +140,26 @@ int main()
 	//char *e2[] = {"\"'e'''cho ", NULL};            // ⚠️  --> exec open quotes (~ heredoc << ")
 	//nb_err += test("\"'e'''cho ", e2);
 
-	int *int_xx[] = {ESP, -1, ESP, -1, OPA, -1, ESP, -1, OPO, -1, ESP, -1};
-	char *char_xx[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
-	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", char_xx, int_xx);
+	print_title("F| ONLY OPERATOR");
+	int int_f1[11] =  {RLS, ESP, RLD, ESP, RLT, ESP, ERR, ESP, ERR, ESP, ERR};
+	char *char_f1[] = {"<", " ", "<<", " ", "<<<", " ", "<<<<", " ", "<<<<<"," ", "<<<<<<", NULL};
+	nb_err += test("< << <<< <<<< <<<<< <<<<<<", char_f1, int_f1);
+	int int_f2[12] =  {RRS, ESP, RRD, ESP, ERR, ESP, ERR, ESP, ERR, ESP, ERR};
+	char *char_f2[] = {">", " ", ">>", " ", ">>>", " ", ">>>>", " ", ">>>>>"," ", ">>>>>>", NULL};
+	nb_err += test("> >> >>> >>>> >>>>> >>>>>>", char_f2, int_f2);
+	int int_f3[12] =  {PIP, ESP, OPO, ESP, ERR, ESP, ERR, ESP, ERR, ESP, ERR};
+	char *char_f3[] = {"|", " ", "||", " ", "|||", " ", "||||", " ", "|||||"," ", "||||||", NULL};
+	nb_err += test("| || ||| |||| ||||| ||||||", char_f3, int_f3);
+	int int_f4[12] =  {ERR, ESP, OPA, ESP, ERR, ESP, ERR, ESP, ERR, ESP, ERR};
+	char *char_f4[] = {"&", " ", "&&", " ", "&&&", " ", "&&&&", " ", "&&&&&"," ", "&&&&&&", NULL};
+	nb_err += test("& && &&& &&&& &&&&& &&&&&&", char_f4, int_f4);
+	int int_f5[12] = {ESP, RLS, RRS, ERR, ESP, RLS, ESP, ERR, ESP, ERR, ESP, ERR};
+	char *char_f5[] = {" ", "<", ">", "<<<<", " ", "<", " ", "|||", " ", "&", " ", "&&&", NULL};
+	nb_err += test(" <><<<< < ||| & &&&", char_f5, int_f5);
+
+	print_title("D| WITH OPERATOR");
+	int int_1[12] = {ESP, -1, ESP, -1, OPA, -1, ESP, -1, OPO, -1, ESP, -1};
+	char *char_1[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
+	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", char_1, int_1);
 	return (nb_err);
 }
