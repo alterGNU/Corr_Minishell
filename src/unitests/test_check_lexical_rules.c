@@ -67,10 +67,8 @@ int	test(char *str, char **tab_res, int *type_res)
 	ft_printf("\nafter set_tok_lst_type=");
 	print_tok_lst(tok_lst);
 	// STEP 6: check_lexical_rules
-	last_cmd_exit_status = check_lexical_rules(tok_lst);
-	if (last_cmd_exit_status)
-		ft_lstclear(&tok_lst, free_token);
-	ft_printf("\nafter check_lexical_rules=");
+	last_cmd_exit_status = check_lexical_rules(&tok_lst);
+	ft_printf("\nafter check_lexical_rules:[%d]=", last_cmd_exit_status);
 	print_tok_lst(tok_lst);
 	ft_printf("\n");
 
@@ -111,40 +109,6 @@ int main()
 	nb_err += test(NULL, NULL, NULL);
 	nb_err += test("", NULL, NULL);
 
-	//print_title("A| SIMPLE CAS NO QUOTES:");
-	//char *a1[] = {" ", "echo"," ","toto"," ","|","ls",NULL};
-	//nb_err += test(" echo toto |ls", a1);
-	//char *a2[] = {"super=echo", "&&", "$super", " ", "toto", NULL};
-	//nb_err += test("super=echo&&$super toto", a2); // ⚠️  --> echo toto --> toto;
-
-	//print_title("B| SIMPLE CASES WITH QUOTES BUT NO NEED TO CONCATENATE:");
-	//char *b1[] = {" ", "'ec'", " ", "'ho'", " ", "toto", " ", "|", "ls", NULL};
-	//nb_err += test("     'ec'   'ho'  toto |ls", b1);
-
-	//print_title("C| SIMPLE CASES WITH QUOTES THAT NEED TO BE CONCATENATE:");
-	//char *c1[] = {"'ec''ho'"," ","toto"," ","|","ls",NULL};
-	//nb_err += test("'ec''ho' toto |ls", c1);
-	//char *c2[] = {"'e''c''h''o'"," ","'t''o''t''o'"," ","|","ls",NULL};
-	//nb_err += test("'e''c''h''o' 't''o''t''o' |ls", c2);
-	//char *c3[] = {"\"\"''", " ", "echo", " ", "\"t\"u't '''\"\"u", NULL};
-	//nb_err += test("\"\"'' echo \"t\"u't '''\"\"u", c3);
-	//char *c4[] = {"echo", " ", "tutu", " ", "\"\"", " ", "''", " ", "titi", NULL};
-	//nb_err += test("echo tutu    \"\"  ''  titi", c4);
-	//char *c5[] = {"c'a'\"t\"", " ", "\"fi\"l'e'", "|", "'c'a\"t\"", ">", "'f'ile\"2\"", NULL};
-	//nb_err += test("c'a'\"t\"   \"fi\"l'e'|'c'a\"t\">'f'ile\"2\"", c5);
-	//char *c6[] = {" ", "'ec''ho'"," ","toto"," ","|","ls",NULL};
-	//nb_err += test(" 'ec''ho' toto |ls", c6);
-
-	//print_title("D| COMPLEXE IMBRICATION CASES WITH QUOTES NEED TO CONCATENATE:");
-	//char *d1[] = {"echo", " ", "'o\"''\"i'", NULL};
-	//nb_err += test("echo 'o\"''\"i'", d1);
-	//char *d2[] = {"'\"\"'echo"," ","toto", NULL};
-	//nb_err += test("'\"\"'echo toto", d2);
-
-	//print_title("E| NOT TERMINATED QUOTES");
-	//char *e1[] = {"echo"," ","'toto''titi", NULL}; // ⚠️  --> exec open quotes (~ heredoc << ')
-	//nb_err += test("echo 'toto''titi", e1);
-	
 	print_title("A| PASS COMMANDS");
 	int ai1[13] = {RLS, ESP, UNSET, ESP, UNSET, ESP, PIP, ESP, UNSET, ESP, RRS, ESP, UNSET};
 	char *as1[] = {"<", " ", "file1", " ", "cat", " ", "|", " ", "cat", " ", ">", " ", "file2", NULL};
@@ -157,9 +121,6 @@ int main()
 	int ai3[12] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET};
 	char *as3[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
 	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", as3, ai3);
-
-	//char *c6[] = {" ", "'ec''ho'"," ","toto"," ","|","ls",NULL};
-	//nb_err += test(" 'ec''ho' toto |ls", c6);
 
 	print_title("B| FAIL MULTIPLES");
 	nb_err += test("< << <<< <<<< <<<<< <<<<<<", NULL, NULL);
