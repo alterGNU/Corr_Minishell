@@ -3,7 +3,7 @@
 #include <stdio.h>      // printf
 
 #define LEN 90
-#define f_name "set_tok_lst_type"
+#define f_name "check_lexical_rules"
 
 int	printntime(char c, int n)
 {
@@ -35,6 +35,7 @@ void print_title(const char *title)
 
 int	test(char *str, char **tab_res, int *type_res)
 {
+	int	last_cmd_exit_status = 0;
 	// Print test header
 	int print_sofar = ft_printf("%s(<%s>)", f_name, str);
 	if (str)
@@ -64,6 +65,12 @@ int	test(char *str, char **tab_res, int *type_res)
 	// STEP 5: set_tok_lst_type
 	set_tok_lst_type(tok_lst);
 	ft_printf("\nafter set_tok_lst_type=");
+	print_tok_lst(tok_lst);
+	// STEP 6: check_lexical_rules
+	last_cmd_exit_status = check_lexical_rules(tok_lst);
+	if (last_cmd_exit_status)
+		ft_lstclear(tok_lst, free_token);
+	ft_printf("\nafter check_lexical_rules=");
 	print_tok_lst(tok_lst);
 	ft_printf("\n");
 
@@ -137,29 +144,77 @@ int main()
 	//print_title("E| NOT TERMINATED QUOTES");
 	//char *e1[] = {"echo"," ","'toto''titi", NULL}; // ⚠️  --> exec open quotes (~ heredoc << ')
 	//nb_err += test("echo 'toto''titi", e1);
-	//char *e2[] = {"\"'e'''cho ", NULL};            // ⚠️  --> exec open quotes (~ heredoc << ")
-	//nb_err += test("\"'e'''cho ", e2);
+	
+	print_title("A| PASS COMMANDS");
+	int ai1[13] = {RLS, ESP, UNSET, ESP, UNSET, ESP, PIP, ESP, UNSET, ESP, RRS, ESP, UNSET};
+	char *as1[] = {"<", " ", "file1", " ", "cat", " ", "|", " ", "cat", " ", ">", " ", "file2", NULL};
+	nb_err += test("< file1 cat | cat > file2", as1, ai1);
+	
+	int ai2[5] = {UNSET, ESP, UNSET, RRD, UNSET};
+	char *as2[] = {"'e'''cho", " ", "toto", ">>", "file1", NULL};
+	nb_err += test("'e'''cho toto>>file1", as2, ai2);
+	
+	int ai3[12] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET};
+	char *as3[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
+	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", as3, ai3);
 
-	print_title("F| ONLY OPERATOR");
-	int int_f1[11] =  {RLS, ESP, RLD, ESP, RLT, ESP, ERR, ESP, ERR, ESP, ERR};
-	char *char_f1[] = {"<", " ", "<<", " ", "<<<", " ", "<<<<", " ", "<<<<<"," ", "<<<<<<", NULL};
-	nb_err += test("< << <<< <<<< <<<<< <<<<<<", char_f1, int_f1);
-	int int_f2[12] =  {RRS, ESP, RRD, ESP, ERR, ESP, ERR, ESP, ERR, ESP, ERR};
-	char *char_f2[] = {">", " ", ">>", " ", ">>>", " ", ">>>>", " ", ">>>>>"," ", ">>>>>>", NULL};
-	nb_err += test("> >> >>> >>>> >>>>> >>>>>>", char_f2, int_f2);
-	int int_f3[12] =  {PIP, ESP, OPO, ESP, ERR, ESP, ERR, ESP, ERR, ESP, ERR};
-	char *char_f3[] = {"|", " ", "||", " ", "|||", " ", "||||", " ", "|||||"," ", "||||||", NULL};
-	nb_err += test("| || ||| |||| ||||| ||||||", char_f3, int_f3);
-	int int_f4[12] =  {ERR, ESP, OPA, ESP, ERR, ESP, ERR, ESP, ERR, ESP, ERR};
-	char *char_f4[] = {"&", " ", "&&", " ", "&&&", " ", "&&&&", " ", "&&&&&"," ", "&&&&&&", NULL};
-	nb_err += test("& && &&& &&&& &&&&& &&&&&&", char_f4, int_f4);
-	int int_f5[12] = {ESP, RLS, RRS, ERR, ESP, RLS, ESP, ERR, ESP, ERR, ESP, ERR};
-	char *char_f5[] = {" ", "<", ">", "<<<<", " ", "<", " ", "|||", " ", "&", " ", "&&&", NULL};
-	nb_err += test(" <><<<< < ||| & &&&", char_f5, int_f5);
+	//char *c6[] = {" ", "'ec''ho'"," ","toto"," ","|","ls",NULL};
+	//nb_err += test(" 'ec''ho' toto |ls", c6);
 
-	print_title("D| WITH OPERATOR");
-	int int_1[12] = {ESP, -1, ESP, -1, OPA, -1, ESP, -1, OPO, -1, ESP, -1};
-	char *char_1[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
-	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", char_1, int_1);
+	print_title("B| FAIL MULTIPLES");
+	nb_err += test("< << <<< <<<< <<<<< <<<<<<", NULL, NULL);
+	nb_err += test("> >> >>> >>>> >>>>> >>>>>>", NULL, NULL);
+	nb_err += test("| || ||| |||| ||||| ||||||", NULL, NULL);
+	nb_err += test("& && &&& &&&& &&&&& &&&&&&", NULL, NULL);
+	nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
+	nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
+
+	print_title("C| FAIL <");
+	nb_err += test("cat < |", NULL, NULL);
+	nb_err += test("cat < ", NULL, NULL);
+	nb_err += test("cat <", NULL, NULL);
+
+	print_title("D| FAIL <<");
+	nb_err += test("cat << |", NULL, NULL);
+	nb_err += test("cat << ", NULL, NULL);
+	nb_err += test("cat <<", NULL, NULL);
+
+	print_title("E| FAIL <<<");
+	nb_err += test("<<< |", NULL, NULL);
+	nb_err += test("<<< ", NULL, NULL);
+	nb_err += test("<<<", NULL, NULL);
+
+	print_title("E| FAIL >");
+	nb_err += test("echo toto >|", NULL, NULL);
+	nb_err += test("echo toto >", NULL, NULL);
+	nb_err += test("echo toto > ", NULL, NULL);
+
+	print_title("G| FAIL >>");
+	nb_err += test("echo toto >>|", NULL, NULL);
+	nb_err += test("echo toto >>", NULL, NULL);
+	nb_err += test("echo toto >> ", NULL, NULL);
+
+	print_title("H| FAIL &&");
+	nb_err += test("&&", NULL, NULL);
+	nb_err += test("echo toto&&", NULL, NULL);
+	nb_err += test("&&echo toto", NULL, NULL);
+
+	print_title("I| FAIL ||");
+	nb_err += test("||", NULL, NULL);
+	nb_err += test("echo toto||", NULL, NULL);
+	nb_err += test("||echo toto", NULL, NULL);
+
+	print_title("J| FAIL |");
+	nb_err += test("|", NULL, NULL);
+	nb_err += test("ls|", NULL, NULL);
+	nb_err += test("|ls", NULL, NULL);
+
+	print_title("K| FAIL ERR_TYPE");
+	nb_err += test("<<<<", NULL, NULL);
+	nb_err += test(">>>", NULL, NULL);
+	nb_err += test("|||", NULL, NULL);
+	nb_err += test("&&&", NULL, NULL);
+	nb_err += test("&", NULL, NULL);
+	nb_err += test("&&&&", NULL, NULL);
 	return (nb_err);
 }
