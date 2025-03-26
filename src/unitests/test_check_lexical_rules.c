@@ -69,7 +69,7 @@ int	test(char *str, char **tab_res, int *type_res)
 	// STEP 6: check_lexical_rules
 	last_cmd_exit_status = check_lexical_rules(tok_lst);
 	if (last_cmd_exit_status)
-		ft_lstclear(tok_lst, free_token);
+		ft_lstclear(&tok_lst, free_token);
 	ft_printf("\nafter check_lexical_rules=");
 	print_tok_lst(tok_lst);
 	ft_printf("\n");
