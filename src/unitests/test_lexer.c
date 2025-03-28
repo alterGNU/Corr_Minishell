@@ -47,6 +47,7 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 	}
 	printntime('-', LEN - print_sofar);
 	ft_printf("\n");
+	// LEXING
 	t_list	*tok_lst = lexer(str, &last_cmd_exit_status, &env_lst);
 	ft_printf("\nafter lexer:[%d]=", last_cmd_exit_status);
 	print_tok_lst(tok_lst);
@@ -55,9 +56,10 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 	if (!tok_lst)
 	{
 		if (!tab_res)
-			return (printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
-		return (ft_printf("tab_res=", f_name), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+			return (ft_lstclear(&env_lst, free_env), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
+		return (ft_lstclear(&env_lst, free_env), ft_printf("tab_res=", f_name), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
 	}
+	printf("\nEXIT 1\n");
 	int	i = 0;
 	t_list	*act = tok_lst;
 	while (tab_res[i] && act && !strcmp(tab_res[i], ((t_token *)(act->content))->str))
@@ -87,6 +89,7 @@ int	main(int ac, char **av, char **ev)
 	(void) av;
 	int	nb_err = 0;
 
+	// TODO: find a way to test this without cause exit() kill testeur
 	//print_title("CAS:NULL");
 	//nb_err += test(NULL, NULL, NULL, ev);
 	//nb_err += test("", NULL, NULL, ev);
