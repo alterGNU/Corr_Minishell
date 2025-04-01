@@ -31,16 +31,22 @@
             - `make test-libft OPT="-n -a -b"` 🢥 Launch both testers for all functions, bonus part include, without norminette-check step.
             - `make test-libft OPT="-g"`       🢥 Launch both testers only on get_next_line() function.
 
-## REMARQUES
-- in struct t_token, token->quote kind of useless since == token->str[0], same for ended == token->str[ft_strlen(token->str)]
-
 ## TODO
 ### Corr_Minishell
 - [ ] Create parser() unitests.
 ### Minishell
 - [ ] Create parser().
 
-## Questions❓
+## Notes 📓  
+### Questions❓
 - [ ] ⚠️ Can we organise our project with folders struct:`minishell/{include/*.h,src/*,libft/**/*,build/*.o,minishell}`
 
-## Notes 📓  
+### REMARQUES
+- in struct t_token, token->quote kind of useless since == token->str[0], same for ended == token->str[ft_strlen(token->str)]
+
+#### Checking-Lexical-Rules such as Detect-Unclosed-{Quotes,Parenthesis} happen before exec:
+```bash
+$> gaa && gc -m'ce nez PAS fini
+'
+```
+- `gaa` not done at all
