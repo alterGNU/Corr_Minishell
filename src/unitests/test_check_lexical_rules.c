@@ -105,82 +105,82 @@ int main()
 {
 	int	nb_err = 0;
 
-	//print_title("CAS:NULL");
-	//nb_err += test(NULL, NULL, NULL);
-	//nb_err += test("", NULL, NULL);
+	print_title("CAS:NULL");
+	nb_err += test(NULL, NULL, NULL);
+	nb_err += test("", NULL, NULL);
 
-	//print_title("A| PASS COMMANDS");
-	//int ai1[13] = {RLS, ESP, UNSET, ESP, UNSET, ESP, PIP, ESP, UNSET, ESP, RRS, ESP, UNSET};
-	//char *as1[] = {"<", " ", "file1", " ", "cat", " ", "|", " ", "cat", " ", ">", " ", "file2", NULL};
-	//nb_err += test("< file1 cat | cat > file2", as1, ai1);
-	//
-	//int ai2[5] = {UNSET, ESP, UNSET, RRD, UNSET};
-	//char *as2[] = {"'e'''cho", " ", "toto", ">>", "file1", NULL};
-	//nb_err += test("'e'''cho toto>>file1", as2, ai2);
-	//
-	//int ai3[12] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET};
-	//char *as3[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
-	//nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", as3, ai3);
+	print_title("A| PASS COMMANDS");
+	int ai1[13] = {RLS, ESP, UNSET, ESP, UNSET, ESP, PIP, ESP, UNSET, ESP, RRS, ESP, UNSET};
+	char *as1[] = {"<", " ", "file1", " ", "cat", " ", "|", " ", "cat", " ", ">", " ", "file2", NULL};
+	nb_err += test("< file1 cat | cat > file2", as1, ai1);
+	
+	int ai2[5] = {UNSET, ESP, UNSET, RRD, UNSET};
+	char *as2[] = {"'e'''cho", " ", "toto", ">>", "file1", NULL};
+	nb_err += test("'e'''cho toto>>file1", as2, ai2);
+	
+	int ai3[12] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET};
+	char *as3[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
+	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", as3, ai3);
 
-	//int ai4[13] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET, ESP};
-	//char *as4[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", " ", NULL};
-	//nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO    ", as4, ai4);
+	int ai4[13] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET, ESP};
+	char *as4[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", " ", NULL};
+	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO    ", as4, ai4);
 
-	//print_title("B| FAIL MULTIPLES");
-	//nb_err += test("< << <<< <<<< <<<<< <<<<<<   ", NULL, NULL);
-	//nb_err += test("< << <<< <<<< <<<<< <<<<<<", NULL, NULL);
-	//nb_err += test("> >> >>> >>>> >>>>> >>>>>>", NULL, NULL);
-	//nb_err += test("| || ||| |||| ||||| ||||||", NULL, NULL);
-	//nb_err += test("& && &&& &&&& &&&&& &&&&&&", NULL, NULL);
-	//nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
-	//nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
+	print_title("B| FAIL MULTIPLES");
+	nb_err += test("< << <<< <<<< <<<<< <<<<<<   ", NULL, NULL);
+	nb_err += test("< << <<< <<<< <<<<< <<<<<<", NULL, NULL);
+	nb_err += test("> >> >>> >>>> >>>>> >>>>>>", NULL, NULL);
+	nb_err += test("| || ||| |||| ||||| ||||||", NULL, NULL);
+	nb_err += test("& && &&& &&&& &&&&& &&&&&&", NULL, NULL);
+	nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
+	nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
 
 	print_title("C| FAIL <");
-	//nb_err += test("cat < |", NULL, NULL);
+	nb_err += test("cat < |", NULL, NULL);
 	nb_err += test("cat < ", NULL, NULL); //TODO->funcheck 3 fails
-	//nb_err += test("cat <", NULL, NULL);
+	nb_err += test("cat <", NULL, NULL);
 
-	//print_title("D| FAIL <<");
-	//nb_err += test("cat << |", NULL, NULL);
-	//nb_err += test("cat << ", NULL, NULL); //TODO->funcheck 3 fails
-	//nb_err += test("cat <<", NULL, NULL);
+	print_title("D| FAIL <<");
+	nb_err += test("cat << |", NULL, NULL);
+	nb_err += test("cat << ", NULL, NULL); //TODO->funcheck 3 fails
+	nb_err += test("cat <<", NULL, NULL);
 
-	//print_title("E| FAIL <<<");
-	//nb_err += test("<<< |", NULL, NULL);
-	//nb_err += test("<<< ", NULL, NULL); //TODO->funcheck 3 fails
-	//nb_err += test("<<<", NULL, NULL);
+	print_title("E| FAIL <<<");
+	nb_err += test("<<< |", NULL, NULL);
+	nb_err += test("<<< ", NULL, NULL); //TODO->funcheck 3 fails
+	nb_err += test("<<<", NULL, NULL);
 
-	//print_title("E| FAIL >");
-	//nb_err += test("echo toto >|", NULL, NULL);
-	//nb_err += test("echo toto >", NULL, NULL);
-	//nb_err += test("echo toto > ", NULL, NULL);
+	print_title("E| FAIL >");
+	nb_err += test("echo toto >|", NULL, NULL);
+	nb_err += test("echo toto >", NULL, NULL);
+	nb_err += test("echo toto > ", NULL, NULL);
 
-	//print_title("G| FAIL >>");
-	//nb_err += test("echo toto >>|", NULL, NULL);
-	//nb_err += test("echo toto >>", NULL, NULL);
-	//nb_err += test("echo toto >> ", NULL, NULL);
+	print_title("G| FAIL >>");
+	nb_err += test("echo toto >>|", NULL, NULL);
+	nb_err += test("echo toto >>", NULL, NULL);
+	nb_err += test("echo toto >> ", NULL, NULL);
 
-	//print_title("H| FAIL &&");
-	//nb_err += test("&&", NULL, NULL);
-	//nb_err += test("echo toto&&", NULL, NULL);
-	//nb_err += test("&&echo toto", NULL, NULL);
+	print_title("H| FAIL &&");
+	nb_err += test("&&", NULL, NULL);
+	nb_err += test("echo toto&&", NULL, NULL);
+	nb_err += test("&&echo toto", NULL, NULL);
 
-	//print_title("I| FAIL ||");
-	//nb_err += test("||", NULL, NULL);
-	//nb_err += test("echo toto||", NULL, NULL);
-	//nb_err += test("||echo toto", NULL, NULL);
+	print_title("I| FAIL ||");
+	nb_err += test("||", NULL, NULL);
+	nb_err += test("echo toto||", NULL, NULL);
+	nb_err += test("||echo toto", NULL, NULL);
 
-	//print_title("J| FAIL |");
-	//nb_err += test("|", NULL, NULL);
-	//nb_err += test("ls|", NULL, NULL);
-	//nb_err += test("|ls", NULL, NULL);
+	print_title("J| FAIL |");
+	nb_err += test("|", NULL, NULL);
+	nb_err += test("ls|", NULL, NULL);
+	nb_err += test("|ls", NULL, NULL);
 
-	//print_title("K| FAIL ERR_TYPE");
-	//nb_err += test("<<<<", NULL, NULL);
-	//nb_err += test(">>>", NULL, NULL);
-	//nb_err += test("|||", NULL, NULL);
-	//nb_err += test("&&&", NULL, NULL);
-	//nb_err += test("&", NULL, NULL);
-	//nb_err += test("&&&&", NULL, NULL);
+	print_title("K| FAIL ERR_TYPE");
+	nb_err += test("<<<<", NULL, NULL);
+	nb_err += test(">>>", NULL, NULL);
+	nb_err += test("|||", NULL, NULL);
+	nb_err += test("&&&", NULL, NULL);
+	nb_err += test("&", NULL, NULL);
+	nb_err += test("&&&&", NULL, NULL);
 	return (nb_err);
 }
