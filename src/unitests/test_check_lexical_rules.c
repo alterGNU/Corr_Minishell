@@ -122,11 +122,12 @@ int main()
 	//char *as3[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
 	//nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", as3, ai3);
 
-	int ai4[13] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET, ESP};
-	char *as4[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", " ", NULL};
-	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO    ", as4, ai4);
+	//int ai4[13] = {ESP, UNSET, ESP, UNSET, OPA, UNSET, ESP, UNSET, OPO, UNSET, ESP, UNSET, ESP};
+	//char *as4[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", " ", NULL};
+	//nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO    ", as4, ai4);
 
 	//print_title("B| FAIL MULTIPLES");
+	//nb_err += test("< << <<< <<<< <<<<< <<<<<<   ", NULL, NULL);
 	//nb_err += test("< << <<< <<<< <<<<< <<<<<<", NULL, NULL);
 	//nb_err += test("> >> >>> >>>> >>>>> >>>>>>", NULL, NULL);
 	//nb_err += test("| || ||| |||| ||||| ||||||", NULL, NULL);
@@ -134,9 +135,9 @@ int main()
 	//nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
 	//nb_err += test(" <><<<< < ||| & &&&", NULL, NULL);
 
-	//print_title("C| FAIL <");
+	print_title("C| FAIL <");
 	//nb_err += test("cat < |", NULL, NULL);
-	//nb_err += test("cat < ", NULL, NULL); //TODO->funcheck 3 fails
+	nb_err += test("cat < ", NULL, NULL); //TODO->funcheck 3 fails
 	//nb_err += test("cat <", NULL, NULL);
 
 	//print_title("D| FAIL <<");
