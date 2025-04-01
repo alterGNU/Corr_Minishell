@@ -35,8 +35,7 @@ void print_title(const char *title)
 
 int	test(char *str, char **tab_res, int *type_res, char **ev)
 {
-	t_list *env_lst = build_env_lst(ev);
-	int	last_cmd_exit_status = 0;
+	t_data	*data = init_data(ev);
 	// Print test header
 	int print_sofar = ft_printf("%s(<%s>)", f_name, str);
 	if (str)
@@ -48,39 +47,39 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 	printntime('-', LEN - print_sofar);
 	ft_printf("\n");
 	// LEXING
-	t_list	*tok_lst = lexer(str, &last_cmd_exit_status, &env_lst);
-	ft_printf("\nafter lexer:[%d]=", last_cmd_exit_status);
-	print_tok_lst(tok_lst);
+	lexer(str, &data);
+	ft_printf("\nafter lexer:[%d]=", data->last_cmd_exit_status);
+	print_tok_lst(data->tok_lst);
 	ft_printf("\n");
 
-	if (!tok_lst)
+	if (!data->tok_lst)
 	{
 		if (!tab_res)
-			return (ft_lstclear(&env_lst, free_env), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
-		return (ft_lstclear(&env_lst, free_env), ft_printf("tab_res=", f_name), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+			return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
+		return (free_data(&data), ft_printf("tab_res=", f_name), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
 	}
 	printf("\nEXIT 1\n");
 	int	i = 0;
-	t_list	*act = tok_lst;
+	t_list	*act = data->tok_lst;
 	while (tab_res[i] && act && !strcmp(tab_res[i], ((t_token *)(act->content))->str))
 	{
 		if (type_res[i] != ((t_token *)act->content)->type)
-			return (ft_lstclear(&tok_lst, free_token), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+			return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
 		act = act->next;
 		i++;
 	}
 	ft_printf("tab_res=");
 	ft_print_str_array(tab_res);
 	ft_printf("\ntok_lst=");
-	print_tok_lst(tok_lst);
+	print_tok_lst(data->tok_lst);
 	ft_printf("\n");
 	if (!tab_res[i] && !act)
-		return (ft_lstclear(&tok_lst, free_token), ft_lstclear(&env_lst, free_env), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
+		return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
 	if ((!tab_res[i] && act) || (tab_res[i] && !act))
-		return (ft_lstclear(&tok_lst, free_token), ft_lstclear(&env_lst, free_env), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+		return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
 	if (strcmp(tab_res[i], ((t_token *)(act->content))->str))
-		return (ft_lstclear(&tok_lst, free_token), ft_lstclear(&env_lst, free_env), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
-	return (ft_lstclear(&tok_lst, free_token), ft_lstclear(&env_lst, free_env), ft_printf("> ✅\n"), 0);
+		return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+	return (free_data(&data), ft_printf("> ✅\n"), 0);
 }
 
 int	main(int ac, char **av, char **ev)
