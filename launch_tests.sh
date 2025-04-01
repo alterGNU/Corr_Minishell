@@ -165,8 +165,7 @@ launch_unitests()
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
                 # cases where compilation needed: (1:no binary),(2:sources newer than binary),(3:text exist and newer than binary)
-                # TODO: handle when OBJ file are newer that exe too
-                if [[ ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) ]];then
+                if [[ ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || "${LIBFT_A}" -nt "${exe}" ]];then
                     local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
                         echo -en " ✅ ${V0} Successfull.${E}\n"
@@ -274,9 +273,8 @@ display_resume()
 # =[ START MESSAGE ]==========================================================================================
 print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-#exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
-#res_normi=${?}
-res_normi=0
+exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
+res_normi=${?}
 # =[ SET LISTS ]==============================================================================================
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
