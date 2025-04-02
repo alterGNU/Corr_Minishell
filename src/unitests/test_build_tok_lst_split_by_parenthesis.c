@@ -114,5 +114,8 @@ int main()
 	char *t9[] = {"(","(","cmd1",")"," && " ,"(", "cmd2", ")", " || cmd3", ")", NULL};
 	nb_err += test("((cmd1) && (cmd2) || cmd3)", t9);
 
+	char *t10[] = {"(","cmd1",")","&&","(","(","cmd2",")","||cmd3",")", NULL};
+	nb_err += test("(cmd1)&&((cmd2)||cmd3)", t10);
+
 	return (nb_err);
 }

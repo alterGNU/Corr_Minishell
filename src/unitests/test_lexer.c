@@ -50,9 +50,9 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 	ft_printf("\n");
 	// LEXING
 	lexer(str, &data);
-	ft_printf("\nafter lexer:[%d]=", data->last_cmd_exit_status);
-	print_tok_lst(data->tok_lst);
-	ft_printf("\n");
+	//ft_printf("\nafter lexer:data->parenthesis[%d]=", data->last_cmd_parenthesis);
+	//print_tok_lst(data->tok_lst);
+	//ft_printf("\n");
 
 	if (!data->tok_lst)
 	{
@@ -90,7 +90,7 @@ int	main(int ac, char **av, char **ev)
 	(void) av;
 	int	nb_err = 0;
 
-	// TODO: find a way to test this without cause exit() kill testeur
+	////TODO: find a way to test this without cause exit() kill testeur
 	//print_title("CAS:NULL");
 	//nb_err += test(NULL, NULL, NULL, ev);
 	//nb_err += test("", NULL, NULL, ev);
@@ -108,6 +108,25 @@ int	main(int ac, char **av, char **ev)
 	char *as3[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", NULL};
 	nb_err += test("    'e'\"c\"ho  toto&&echo OK||echo  KO", as3, ai3, ev);
 
+	int ai4[31] = {ESP,PARO,ESP,UNSET,ESP,UNSET,ESP,OPA,ESP,UNSET,ESP,UNSET,ESP,PARC,ESP,OPO,ESP,PARO,ESP,UNSET,ESP,UNSET,ESP,OPA,ESP,UNSET,ESP,UNSET,ESP,PARC,ESP};
+	char *as4[] = {" ","("," ","echo"," ","1"," ","&&"," ","echo"," ","2"," ",")"," ","||"," ","("," ", "echo"," ", "3"," ","&&"," ","echo"," ","4"," ",")"," ",NULL};
+	nb_err += test("   ( echo 1 && echo 2 ) || ( echo 3 && echo 4 )   ", as4, ai4, ev);
+
+	int ai5[17] = {UNSET, ESP, OPA, ESP, PARO, UNSET, ESP, OPO, ESP, PARO, UNSET, ESP, OPA, ESP, UNSET, PARC, PARC};
+	char *as5[] = {"cmd1", " ", "&&", " ", "(", "cmd2", " ", "||", " ", "(", "cmd3", " ", "&&", " ", "cmd4", ")", ")", NULL};
+	nb_err += test("cmd1 && (cmd2 || (cmd3 && cmd4))", as5, ai5, ev);
+
+	int ai6[11] = {UNSET, OPA, PARO, UNSET, OPO, PARO, UNSET, OPA, UNSET, PARC, PARC};
+	char *as6[] = {"cmd1", "&&", "(", "cmd2", "||", "(", "cmd3", "&&", "cmd4", ")", ")", NULL};
+	nb_err += test("cmd1&&(cmd2||(cmd3&&cmd4))", as6, ai6, ev);
+
+	int ai7[11] = {PARO, PARO, UNSET, OPA, UNSET, PARC, OPO, UNSET, PARC, OPA, UNSET};
+	char *as7[] = {"(","(","cmd1", "&&","cmd2", ")", "||", "cmd3", ")", "&&", "cmd4", NULL};
+	nb_err += test("((cmd1&&cmd2)||cmd3)&&cmd4", as7, ai7, ev);
+
+	nb_err += test("diff <(echo toto) <(echo toto)", NULL, NULL, ev);
+	nb_err += test("cat >(echo toto)", NULL, NULL, ev);
+
 	print_title("B| FAIL MULTIPLES");
 	nb_err += test("< << <<< <<<< <<<<< <<<<<<", NULL, NULL, ev);
 	nb_err += test("> >> >>> >>>> >>>>> >>>>>>", NULL, NULL, ev);
@@ -120,26 +139,40 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test("cat < |", NULL, NULL, ev);
 	nb_err += test("cat < ", NULL, NULL, ev);
 	nb_err += test("cat <", NULL, NULL, ev);
+	nb_err += test("(cat < )", NULL, NULL, ev);
+	nb_err += test("(cat <)", NULL, NULL, ev);
 
 	print_title("D| FAIL <<");
 	nb_err += test("cat << |", NULL, NULL, ev);
 	nb_err += test("cat << ", NULL, NULL, ev);
 	nb_err += test("cat <<", NULL, NULL, ev);
+	nb_err += test("(cat <<)", NULL, NULL, ev);
+	nb_err += test("(cat << )", NULL, NULL, ev);
 
 	print_title("E| FAIL <<<");
 	nb_err += test("<<< |", NULL, NULL, ev);
 	nb_err += test("<<< ", NULL, NULL, ev);
 	nb_err += test("<<<", NULL, NULL, ev);
+	nb_err += test("( <<<)", NULL, NULL, ev);
+	nb_err += test("( <<< )", NULL, NULL, ev);
 
 	print_title("E| FAIL >");
 	nb_err += test("echo toto >|", NULL, NULL, ev);
 	nb_err += test("echo toto >", NULL, NULL, ev);
 	nb_err += test("echo toto > ", NULL, NULL, ev);
+	nb_err += test("(echo toto >)", NULL, NULL, ev);
+	nb_err += test("(echo toto > )", NULL, NULL, ev);
+	nb_err += test("echo toto >(f2)", NULL, NULL, ev);
+	nb_err += test("echo toto > (f2)", NULL, NULL, ev);
 
 	print_title("G| FAIL >>");
 	nb_err += test("echo toto >>|", NULL, NULL, ev);
 	nb_err += test("echo toto >>", NULL, NULL, ev);
 	nb_err += test("echo toto >> ", NULL, NULL, ev);
+	nb_err += test("(echo toto >>)", NULL, NULL, ev);
+	nb_err += test("(echo toto >> )", NULL, NULL, ev);
+	nb_err += test("echo toto >>(f2)", NULL, NULL, ev);
+	nb_err += test("echo toto >> (f2)", NULL, NULL, ev);
 
 	print_title("H| FAIL &&");
 	nb_err += test("&&", NULL, NULL, ev);
@@ -163,5 +196,20 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test("&&&", NULL, NULL, ev);
 	nb_err += test("&", NULL, NULL, ev);
 	nb_err += test("&&&&", NULL, NULL, ev);
+
+	print_title("K| FAIL PARENTHESIS LEXICAL RULES");
+	nb_err += test("()", NULL, NULL, ev);
+	nb_err += test("(())", NULL, NULL, ev);
+	nb_err += test("( echo toto", NULL, NULL, ev);
+	nb_err += test("echo toto)", NULL, NULL, ev);
+	nb_err += test("(< file1 cat |) cat >> file2", NULL, NULL, ev);
+	nb_err += test("(< file1 cat | ) cat >> file2", NULL, NULL, ev);
+	nb_err += test("< file1 cat ( | cat >> file2)", NULL, NULL, ev);
+	nb_err += test("< file1 cat (| cat >> file2)", NULL, NULL, ev);
+	nb_err += test("(echo toto && ) echo tata", NULL, NULL, ev);
+	nb_err += test("echo toto ( && echo tata)", NULL, NULL, ev);
+	nb_err += test("(echo toto || ) echo tata", NULL, NULL, ev);
+	nb_err += test("echo toto ( || echo tata)", NULL, NULL, ev);
+
 	return (nb_err);
 }
