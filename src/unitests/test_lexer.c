@@ -36,6 +36,8 @@ void print_title(const char *title)
 int	test(char *str, char **tab_res, int *type_res, char **ev)
 {
 	t_data	*data = init_data(ev);
+	if (!data)
+		return (1);
 	// Print test header
 	int print_sofar = ft_printf("%s(<%s>)", f_name, str);
 	if (str)
