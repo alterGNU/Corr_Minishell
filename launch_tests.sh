@@ -5,13 +5,13 @@
 # - This script take multiples options as arguments:
 #   - TODO: enable fun name as argument => test only what given
 #   - ARGS ∈ {+-h, +-help}      :        🢥  Display this script usage
-#   - ARGS ∈ {-n, --no-norm}    :        🢥  Desable the Norme-checker
-#   - ARGS ∈ {+n, --norm}       :        🢥  Enable the Norme-checker
-#   - ARGS ∈ {-o, --no-opti}    :        🢥  Desable: RUN tests on ALL Minishell's function
-#   - ARGS ∈ {+o, --opti}       :        🢥  Enable: RUN tests ONLY on Minishell's functions with unitests
 #   - ARGS ∈ {-b, --no-built-in}:        🢥  Desable the listing of Minishell's built-in function found
 #   - ARGS ∈ {+b, --built-in}   :        🢥  Enable the listing of Minishell's built-in function found
+#   - ARGS ∈ {-n, --no-norm}    :        🢥  Desable the Norme-checker
+#   - ARGS ∈ {+n, --norm}       :        🢥  Enable the Norme-checker
 #   - ARGS ∈ {+c, --comp}       :        🢥  Force compilation
+#   - ARGS ∈ {-o, --no-opti}    :        🢥  Desable: RUN tests on ALL Minishell's function
+#   - ARGS ∈ {+o, --opti}       :        🢥  Enable: RUN tests ONLY on Minishell's functions with unitests
 # - Steps:
 #   - START ) List-Options      :        🢥  Display the list of enabled/desabled options.
 #   - STEP 1) List-Builtin      :        🢥  Display the minishell buit-in functions used.
@@ -75,29 +75,35 @@ source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
 # =[ FUNCTIONS ]==============================================================================================
 # -[ USAGE ]--------------------------------------------------------------------------------------------------
-# Display usage with arg1 as error_msg and arg2 as exit_code
+# Display usage with arg1 as error_msg and arg2 as exit_code both optionnal
 script_usage()
 {
-    echo -e "${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\`${E}"
-    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} has as a prerequisites:"
-    echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/minishell/${E} to be tested."
-    echo -e "    ${B0}‣ ${R0}ii)${E}: The programm ${M0}path/minishell/${V0}minishell${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
-    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} takes multiples arguments that (+)enable or (-)desable options:"
-    echo -e "    ${B0}‣ ${M0}[+-h, +-help]       ${BC0} 🢥  ${E}Display this script usage"
-    echo -e "    ${B0}‣ ${M0}[-b, --no-built-in] ${BC0} 🢥  ${E}Desable the list-of built-in step"
-    echo -e "    ${B0}‣ ${M0}[+b, --built-in]    ${BC0} 🢥  ${E}Enable the list-of built-in step"
-    echo -e "    ${B0}‣ ${M0}[-n, --no-norm]     ${BC0} 🢥  ${E}Desable the Norme-checker step"
-    echo -e "    ${B0}‣ ${M0}[+n, --norm]        ${BC0} 🢥  ${E}Enable the Norme-checker step"
-    echo -e "    ${B0}‣ ${M0}[-o, --no-opti]     ${BC0} 🢥  ${E}Desable: RUN tests on ${GU}ALL${E} Minishell's functions"
-    echo -e "    ${B0}‣ ${M0}[+o, --opti]        ${BC0} 🢥  ${E}Enable: RUN tests ${GU}ONLY${E} on Minishell's functions with unitests"
-    echo -e "    ${B0}‣ ${M0}[+c, --comp]        ${BC0} 🢥  ${E}Force compilation"
-    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} STEPS:"
-    echo -e "    ${B0}‣ START ) ${GU}List-Options :${E}  ${BC0} 🢥  ${E}Display the list of enabled/desabled options."
-    echo -e "    ${B0}‣ STEP 1) ${GU}List-Builtin :${E}  ${BC0} 🢥  ${E}Display the minishell buit-in functions used."
-    echo -e "    ${B0}‣ STEP 2) ${GU}Norme-checker:${E}  ${BC0} 🢥  ${E}Run the norminette."
-    echo -e "    ${B0}‣ STEP 3) ${GU}Unitests     :${E}  ${BC0} 🢥  ${E}Run unitests on minishell user-made functions."
-    echo -e "    ${B0}‣ STOP  ) ${GU}Resume       :${E}  ${BC0} 🢥  ${E}Display a resume of failed/passed unitests."
-    exit ${2}
+    local exit_value=0
+    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[-+h, -+b, -+n, -+c, -+o]${R0}\`${E}"
+    if [[ ${#} -eq 2 ]];then
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[-+h, -+b, -+n, -+c, -+o]${R0}\`${E}"
+        local exit_value=${2}
+    fi
+    echo -e "${entete}"
+    echo -e " 🔹 ${BCU}PRE-REQUISITES:${E}"
+    echo -e "    ${BC0}‣ ${BCU}i)${E} : To be cloned inside the project ${M0}path/minishell/${E} to be tested."
+    echo -e "    ${BC0}‣ ${RCU}ii)${E}: The programm ${M0}path/minishell/${V0}minishell${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
+    echo -e " 🔹 ${BCU}OPTIONS:${E}"
+    echo -e "    ${BC0}‣ ${M0}[+-h, --help]      ${BC0} 🢥  ${E}Display this script usage"
+    echo -e "    ${BC0}‣ ${M0}[-b, --no-built-in]${BC0} 🢥  ${E}Desable the list-of built-in step"
+    echo -e "    ${BC0}‣ ${M0}[+b, --built-in]   ${BC0} 🢥  ${E}Enable the list-of built-in step"
+    echo -e "    ${BC0}‣ ${M0}[-n, --no-norm]    ${BC0} 🢥  ${E}Desable the Norme-checker step"
+    echo -e "    ${BC0}‣ ${M0}[+n, --norm]       ${BC0} 🢥  ${E}Enable the Norme-checker step"
+    echo -e "    ${BC0}‣ ${M0}[+c, --comp]       ${BC0} 🢥  ${E}Force compilation"
+    echo -e "    ${BC0}‣ ${M0}[-o, --no-opti]    ${BC0} 🢥  ${E}Desable: RUN tests on ${GU}ALL${E} Minishell's functions"
+    echo -e "    ${BC0}‣ ${M0}[+o, --opti]       ${BC0} 🢥  ${E}Enable: RUN tests ${GU}ONLY${E} on Minishell's functions with unitests"
+    echo -e " 🔹 ${BCU}STEPS:${E}"
+    echo -e "   ${BC0}|START | ${GU}List-Options${E} ${BC0} 🢥  ${E}Display the list of enabled/desabled options."
+    echo -e "   ${BC0}|STEP 1| ${GU}List-Builtin${E} ${BC0} 🢥  ${E}Display the minishell buit-in functions used."
+    echo -e "   ${BC0}|STEP 2| ${GU}Norme-checker${E}${BC0} 🢥  ${E}Run the norminette."
+    echo -e "   ${BC0}|STEP 3| ${GU}Unitests${E}     ${BC0} 🢥  ${E}Run unitests on minishell user-made functions."
+    echo -e "   ${BC0}|STOP  | ${GU}Resume${E}       ${BC0} 🢥  ${E}Display a resume of failed/passed unitests."
+    exit ${exit_value}
 }
 # -[ PRINT_RELATIF_PATH() ]-----------------------------------------------------------------------------------
 # substract pwd from arg1 abs-path given
@@ -289,16 +295,12 @@ display_resume()
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
-# =[ HELP ]===================================================================================================
-[[ ${HELP} -ne 0 ]] && script_usage "${V0}Help asked${E}" 0 
-# =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
-[[ -x ${PROGRAMM} ]] || { script_usage "${R0}Programm not found: No ${BC0}${PROGRAMM}${R0} found.${E}" 2; }
 # =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
 # TODO handle functions names
 for args in "$@";do
     shift
     case "${args}" in
-        --[Hh]elp | [+-][Hh] ) HELP=$(( HELP - 1 )) ;;
+        --[Hh]elp | [+-][Hh] ) HELP=$(( HELP + 1 )) ;;
         --[Nn]o-[Nn]orm | -[Nn] ) NORM=$(( NORM - 1 )) ;;
         --[Nn]orm | +[Nn] ) NORM=$(( NORM + 1 )) ;;
         --[Oo]pti | +[Oo] ) OPTI=$(( OPTI + 1 )) ;;
@@ -308,6 +310,10 @@ for args in "$@";do
         --[cC]omp | -[Cc] ) COMP=$(( COMP + 1 )) ;;
     esac
 done
+# =[ HELP ]===================================================================================================
+[[ ${HELP} -ne 0 ]] && script_usage
+# =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
+[[ -x ${PROGRAMM} ]] || { script_usage "${R0}Programm not found: No ${BC0}${PROGRAMM}${R0} found.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ SET LISTS ]==============================================================================================
