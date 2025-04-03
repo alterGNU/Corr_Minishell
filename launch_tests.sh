@@ -34,9 +34,9 @@ LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a 
 # -[ SCRIPT OPTION ]------------------------------------------------------------------------------------------
 NB_ARG="${#}"                                                     # ☒ Number of script's arguments
 HELP=0                                                            # ☒ Display script usage
-NORM=0                                                            # ☒ Norminette-checker (<=0:Desable,>0:Enable)
+NORM=1                                                            # ☒ Norminette-checker (<=0:Desable,>0:Enable)
 OPTI=0                                                            # ☒ Run test only on fun with unitests
-BUIN=0                                                            # ☒ Display list of built-in fun used
+BUIN=1                                                            # ☒ Display list of built-in fun used
 COMP=0                                                            # ☒ Force compilation
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
@@ -192,7 +192,7 @@ launch_unitests()
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
                 # cases where compilation needed: (1:no binary),(2:unitests source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:
-                if [[ ${COMP} -gt 0 || ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || "${LIBFT_A}" -nt "${exe}" ]];then
+                if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || ( "${test_main}" -nt "${exe}" ) || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || ( "${LIBFT_A}" -nt "${exe}" ) ]];then
                     local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
                         [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
@@ -307,7 +307,7 @@ for args in "$@";do
         --[Nn]o-[Oo]pti | -[Oo] ) OPTI=$(( OPTI - 1 )) ;;
         --[Bb]uil[td]-in | +[Bb] ) BUIN=$(( BUIN + 1 )) ;;
         --[Nn]o-[Bb]uil[td]-in | -[Bb] ) BUIN=$(( BUIN - 1 )) ;;
-        --[cC]omp | -[Cc] ) COMP=$(( COMP + 1 )) ;;
+        --[cC]omp | [-+][Cc] ) COMP=$(( COMP + 1 )) ;;
     esac
 done
 # =[ HELP ]===================================================================================================
