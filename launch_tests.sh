@@ -2,14 +2,22 @@
 
 # ============================================================================================================
 # Launch minishell unitests
-# This script take no argument (for now) and will automatically:
-#   - 1: check norminette for libft folder, excluding Corr_Minishell folder, tests dont comply with norme
-#   - 2: list all home-made fun in libft.a
-#   - 3: list all build-in fun in libft.a
-#   - 4: launch libft mandatory functions tests.
-#   - 5: if detected at least one fun of libft_bonus part, launch test for all libft_bonus functions.
-#   - 6: if detected ft_printf() in libft.a, launch tests for ft_printf() tests (bonus too, auto)
-#   - 7: if detected get_next_line() in libft.a, launch tests for get_next_line() tests (bonus too, auto)
+# - This script take multiples options as arguments:
+#   - TODO: enable fun name as argument => test only what given
+#   - ARGS ∈ {+-h, +-help}      :        🢥  Display this script usage
+#   - ARGS ∈ {-n, --no-norm}    :        🢥  Desable the Norme-checker
+#   - ARGS ∈ {+n, --norm}       :        🢥  Enable the Norme-checker
+#   - ARGS ∈ {-o, --no-opti}    :        🢥  Desable: RUN tests on ALL Minishell's function
+#   - ARGS ∈ {+o, --opti}       :        🢥  Enable: RUN tests ONLY on Minishell's functions with unitests
+#   - ARGS ∈ {-b, --no-built-in}:        🢥  Desable the listing of Minishell's built-in function found
+#   - ARGS ∈ {+b, --built-in}   :        🢥  Enable the listing of Minishell's built-in function found
+#   - ARGS ∈ {+c, --comp}       :        🢥  Force compilation
+# - Steps:
+#   - START ) List-Options      :        🢥  Display the list of enabled/desabled options.
+#   - STEP 1) List-Builtin      :        🢥  Display the minishell buit-in functions used.
+#   - STEP 2) Norme-checker     :        🢥  Run the norminette.
+#   - STEP 3) Unitests          :        🢥  Run unitests on minishell user-made functions.
+#   - STOP  ) Resume            :        🢥  Display a resume of failed/passed unitests.
 # ============================================================================================================
  
 # =[ VARIABLES ]==============================================================================================
@@ -23,11 +31,18 @@ LOG_FAIL="${LOG_DIR}/list_errors.log"                             # ☒ File con
 BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to BSL folder
 BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
 LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a static library
+# -[ SCRIPT OPTION ]------------------------------------------------------------------------------------------
+NB_ARG="${#}"                                                     # ☒ Number of script's arguments
+HELP=0                                                            # ☒ Display script usage
+NORM=0                                                            # ☒ Norminette-checker (<=0:Desable,>0:Enable)
+OPTI=0                                                            # ☒ Run test only on fun with unitests
+BUIN=0                                                            # ☒ Display list of built-in fun used
+COMP=0                                                            # ☒ Force compilation
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
 FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
-FUN_TO_TEST=( )                                                   # ☒ List of user created function specific to minishell
-FUN_TESTED=( )                                                    # ☒ List of user created function specific to minishell that have a test founded
+FUN_TESTED=( )                                                    # ☒ List of user created function specific to minishell
+FUN_WITH_UNITEST=( )                                              # ☒ List of user created function specific to minishell that have a test founded
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in minishell
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function 
 LIBFT_FUN=( )                                                     # ☒ List of user created function in libft.a
@@ -38,7 +53,7 @@ CC="cc -Wall -Wextra -Werror -I${MS_DIR}/include -I${MS_DIR}/libft/include ${OBJ
 VAL_ERR=42
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}"
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
-LEN=100                                                           # ☑ Width of the box
+LEN=100                                                            # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
 E="\033[0m"                                                        # ☒ END color balise
 N0="\033[0;30m"                                                    # ☒ START BLACK
@@ -55,8 +70,6 @@ BCU="\033[4;36m"                                                   # ☒ START A
 P0="\033[0;35m"                                                    # ☒ START PINK
 G0="\033[2;37m"                                                    # ☒ START GREY
 GU="\033[4;37m"                                                    # ☒ START GREY
-# -[ COUNT ]--------------------------------------------------------------------------------------------------
-TOT_FAILS=0                                                       # ☒ Count how many fun have failed
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
@@ -69,13 +82,21 @@ script_usage()
     echo -e " 🔹 ${V0}${SCRIPTNAME}${E} has as a prerequisites:"
     echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/minishell/${E} to be tested."
     echo -e "    ${B0}‣ ${R0}ii)${E}: The programm ${M0}path/minishell/${V0}minishell${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
-    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} takes no arguments and will automatically:"
-    echo -e "    ${B0}‣ ${R0}0${E}: Check if ${M0}minishell/${E} complies with the 42-norme"
-    echo -e "    ${B0}‣ ${R0}1${E}: Set a list of all user-made function called by ${V0}minishell${E} programm.(including ${V0}libft.a${E} functions)"
-    echo -e "    ${B0}‣ ${R0}2${E}: Set a list of all user-made function specific to ${V0}minishell${E} programm.(excluding ${V0}libft.a${E} functions)"
-    echo -e "    ${B0}‣ ${R0}3${E}: Set a list of all built-in function called by ${V0}minishell${E}"
-    echo -e "    ${B0}‣ ${R0}4${E}: for each specific fun of ${V0}minishell${E}, search its unitest, if found launch test, else pass${E}"
-    echo -e "    ${B0}‣ ${R0}5${E}: Display a resume."
+    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} takes multiples arguments that (+)enable or (-)desable options:"
+    echo -e "    ${B0}‣ ${M0}[+-h, +-help]       ${BC0} 🢥  ${E}Display this script usage"
+    echo -e "    ${B0}‣ ${M0}[-b, --no-built-in] ${BC0} 🢥  ${E}Desable the list-of built-in step"
+    echo -e "    ${B0}‣ ${M0}[+b, --built-in]    ${BC0} 🢥  ${E}Enable the list-of built-in step"
+    echo -e "    ${B0}‣ ${M0}[-n, --no-norm]     ${BC0} 🢥  ${E}Desable the Norme-checker step"
+    echo -e "    ${B0}‣ ${M0}[+n, --norm]        ${BC0} 🢥  ${E}Enable the Norme-checker step"
+    echo -e "    ${B0}‣ ${M0}[-o, --no-opti]     ${BC0} 🢥  ${E}Desable: RUN tests on ${GU}ALL${E} Minishell's functions"
+    echo -e "    ${B0}‣ ${M0}[+o, --opti]        ${BC0} 🢥  ${E}Enable: RUN tests ${GU}ONLY${E} on Minishell's functions with unitests"
+    echo -e "    ${B0}‣ ${M0}[+c, --comp]        ${BC0} 🢥  ${E}Force compilation"
+    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} STEPS:"
+    echo -e "    ${B0}‣ START ) ${GU}List-Options :${E}  ${BC0} 🢥  ${E}Display the list of enabled/desabled options."
+    echo -e "    ${B0}‣ STEP 1) ${GU}List-Builtin :${E}  ${BC0} 🢥  ${E}Display the minishell buit-in functions used."
+    echo -e "    ${B0}‣ STEP 2) ${GU}Norme-checker:${E}  ${BC0} 🢥  ${E}Run the norminette."
+    echo -e "    ${B0}‣ STEP 3) ${GU}Unitests     :${E}  ${BC0} 🢥  ${E}Run unitests on minishell user-made functions."
+    echo -e "    ${B0}‣ STOP  ) ${GU}Resume       :${E}  ${BC0} 🢥  ${E}Display a resume of failed/passed unitests."
     exit ${2}
 }
 # -[ PRINT_RELATIF_PATH() ]-----------------------------------------------------------------------------------
@@ -136,7 +157,7 @@ exec_anim_in_box()
 #     - if <fun> not in FUN_FOUND --> nb_err++;
 #     - else check if an unitests exist:
 #        - (1.0) Create directory ../log/<date>/<time>/<fun_name>/
-#        - (1.1) COMPILE if compilation needed, if compilation fail --> nb_err++ && create comp_stderr.txt
+#        - (1.1) COMPILE if compilation needed or forced, if compilation fail --> nb_err++ && create comp_stderr.txt
 #        - (1.2) EXEC if compilation succed, redir stdout && stderr to exec.log, if exec failed --> nb_err++
 #        - (1.3) VALGRIND if compilation succed, redir stdout && stderr to leaks.log, if valgrind failed --> nb_err++
 #        - (1.4) If ../log/<date>/<time>/<fun_name>/ empty, remove the directory
@@ -164,11 +185,11 @@ launch_unitests()
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
-                # cases where compilation needed: (1:no binary),(2:sources newer than binary),(3:text exist and newer than binary)
-                if [[ ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || "${LIBFT_A}" -nt "${exe}" ]];then
+                # cases where compilation needed: (1:no binary),(2:unitests source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:
+                if [[ ${COMP} -ne 0 || ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || "${LIBFT_A}" -nt "${exe}" ]];then
                     local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
-                        echo -en " ✅ ${V0} Successfull.${E}\n"
+                        [[ ${COMP} -ne 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
                         rm "${FUN_LOG_DIR}/comp_stderr.log"
                     else
                         local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
@@ -233,12 +254,14 @@ launch_unitests()
 display_resume()
 {
     [[ -n "${1}" ]] && local args=( "🔶 ${YU}RESUME ${1}:${E}" ) || local args=( "🔶 ${YU}RESUME :${E}" )
-    [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}Norminette:${V0} ✅ PASS${E}" ) || args+=( " 🔸 ${YU}Norminette:${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
+    if [[ ${NORM} -gt 0 ]];then
+        [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}Norminette:${V0} ✅ PASS${E}" ) || args+=( " 🔸 ${YU}Norminette:${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
+    else
+        args+=( " 🔸 ${YU}Norminette:${G0} ✖️  Test Desabled${E}" )
+    fi
     local short_log_dir=$(print_shorter_path ${LOG_DIR})
     local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
     local lst_fail=( )
-    local causes=( )
-    local causes=( )
     [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! " ${lst_fail[@]} " =~ " ${ff} " ]] && lst_fail+=( "${ff}" );done
     if [[ ${#lst_fail[@]} -eq 0 ]];then
         args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
@@ -266,15 +289,27 @@ display_resume()
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
+# =[ HELP ]===================================================================================================
+[[ ${HELP} -ne 0 ]] && script_usage "${V0}Help asked${E}" 0 
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
 [[ -x ${PROGRAMM} ]] || { script_usage "${R0}Programm not found: No ${BC0}${PROGRAMM}${R0} found.${E}" 2; }
+# =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
+# TODO handle functions names
+for args in "$@";do
+    shift
+    case "${args}" in
+        --[Hh]elp | [+-][Hh] ) HELP=$(( HELP - 1 )) ;;
+        --[Nn]o-[Nn]orm | -[Nn] ) NORM=$(( NORM - 1 )) ;;
+        --[Nn]orm | +[Nn] ) NORM=$(( NORM + 1 )) ;;
+        --[Oo]pti | +[Oo] ) OPTI=$(( OPTI + 1 )) ;;
+        --[Nn]o-[Oo]pti | -[Oo] ) OPTI=$(( OPTI - 1 )) ;;
+        --[Bb]uil[td]-in | +[Bb] ) BUIN=$(( BUIN + 1 )) ;;
+        --[Nn]o-[Bb]uil[td]-in | -[Bb] ) BUIN=$(( BUIN - 1 )) ;;
+        --[cC]omp | -[Cc] ) COMP=$(( COMP + 1 )) ;;
+    esac
+done
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
-# =[ START MESSAGE ]==========================================================================================
-print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
-# =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
-res_normi=${?}
 # =[ SET LISTS ]==============================================================================================
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
@@ -300,9 +335,28 @@ if file "${PROGRAMM}" | grep -qE 'relocatable|executable|shared object|ar archiv
 else
     echo -e "${BC0}${PROGRAMM}${E} is not an object file\033[m"
 fi
-# -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
+# -[ SET FUN_TO_TEST && FUN_WITH_UNITEST ]--------------------------------------------------------------------
 FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
-for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")" ]] && FUN_TESTED+=( "${fun}" );done
-exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
-# =[ RESUME ]=================================================================================================
+for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")" ]] && FUN_WITH_UNITEST+=( "${fun}" );done
+# =[ START ]==================================================================================================
+print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
+#TODO add listing of enabled options
+# =[ STEPS ]==================================================================================================
+# -[ STEP 1 | LIST_BUILTIN ]----------------------------------------------------------------------------------
+#TODO
+if [[ ${BUIN} -gt 0 ]];then
+    print_in_box -t 1 -c b "${BUILTIN_FUNUSED[@]}"
+fi
+# -[ STEP 2 | NORM-CHECK ]------------------------------------------------------------------------------------
+if [[ ${NORM} -gt 0 ]];then
+    exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
+    res_normi=${?}
+fi
+# -[ STEP 3 | UNITESTS ]--------------------------------------------------------------------------------------
+if [[ ${OPTI} -gt 0 ]];then
+    exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
+else
+    exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions"
+fi
+# =[ STOP ]===================================================================================================
 display_resume "Minishell's tests"
