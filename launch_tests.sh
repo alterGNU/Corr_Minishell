@@ -46,6 +46,13 @@ FUN_WITH_UNITEST=( )                                              # ☒ List of 
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in minishell
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function 
 LIBFT_FUN=( )                                                     # ☒ List of user created function in libft.a
+ALLOWED_FUN=( )                                                   # ☒ List of user created function in libft.a
+ALLOWED_FUN+=( "readline" "rl_clear_history" "rl_on_new_line" "rl_replace_line" "rl_redisplay" "add_history" \
+    "printf" "malloc" "free" "write" "access" "open" "read" "close" "fork" "wait" "waitpid" "wait3" "wait4" \
+    "signal" "sigaction" "sigemptyset" "sigaddset" "kill" "exit" "getcwd" "chdir" "stat" "lstat" "fstat" \
+    "unlink" "execve" "dup" "dup2" "pipe" "opendir" "readdir" "closedir" "strerror" "perror" "isatty" \
+    "ttyname" "ttyslot" "ioctl" "getenv" "tcsetattr" "tcgetattr" "tgetent" "tgetflag" "tgetnum" "tgetstr" \
+    "tgoto" "tputs" )
 OBJ=( )                                                           # ☒ List of object.o (no main function in it)
 for obj in $(ls ${MS_DIR}/build/*.o);do if ! nm "${obj}" | grep -qE '\<main\>';then OBJ+=( "${obj}" );fi;done
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
@@ -254,6 +261,42 @@ launch_unitests()
     return ${nb_err}
 }
 
+# -[ DISPLAY_BUILTIN_USED ]-----------------------------------------------------------------------------------
+# Display built-in function detected in minishell with coloration:
+# - Grey if called by main() function
+# - Green if allowed
+# - RED if not allowed
+display_builtin_used()
+{
+    local tot=0
+    #local args=( "🔵 ${BU}BUILT-IN FUN. USED:${E}" )
+    local args=( )
+    local main_calls=( )
+    local glibc_calls=( )
+    for function in "${BUILTIN_FUNUSED[@]}";do
+        local fun="${function%%\@*}"
+        if [[ "${fun}" == "_"* ]];then
+            main_calls+=( "${G0}• ${fun%%\@*}()${E}" )
+        else
+            if [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]];then
+                glibc_calls+=( "${V0}✓ ${fun}()${E}" )
+            else
+                glibc_calls+=( "${R0}✗ ${fun}()${E}" )
+                tot=$(( tot + 1 ))
+            fi
+        fi
+    done
+    if [[ "${#main_calls[@]}" -ne 0 ]];then
+        echo "🔹 ${BCU}main() built_in calls:${E}"
+        for fun in "${main_calls[@]}";do echo "   ${fun}";done
+        echo "🔹 ${BCU}GLIBC built_in calls:${E}"
+        for fun in "${glibc_calls[@]}";do echo "   ${fun}";done
+    else
+        for fun in "${glibc_calls[@]}";do echo " ${fun}";done
+    fi
+    return ${tot}
+}
+
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
 # Display the resume of test (norminette, tests results, log files produces ...)
 # Take on optionnal argument, text to add between the <🔶 RESUME> and the <:>.
@@ -291,7 +334,6 @@ display_resume()
     fi
     print_in_box -t 2 -c y "${args[@]}"
 }
-
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
@@ -349,10 +391,7 @@ print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
 #TODO add listing of enabled options
 # =[ STEPS ]==================================================================================================
 # -[ STEP 1 | LIST_BUILTIN ]----------------------------------------------------------------------------------
-#TODO
-if [[ ${BUIN} -gt 0 ]];then
-    print_in_box -t 1 -c b "${BUILTIN_FUNUSED[@]}"
-fi
+[[ ${BUIN} -gt 0 ]] && exec_anim_in_box "display_builtin_used" "Display built-in function used"
 # -[ STEP 2 | NORM-CHECK ]------------------------------------------------------------------------------------
 if [[ ${NORM} -gt 0 ]];then
     exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
