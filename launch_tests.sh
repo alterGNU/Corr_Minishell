@@ -41,7 +41,7 @@ COMP=0                                                            # ☒ Force co
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
 FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
-FUN_TESTED=( )                                                    # ☒ List of user created function specific to minishell
+FUN_TO_TEST=( )                                                   # ☒ List of user created function specific to minishell
 FUN_WITH_UNITEST=( )                                              # ☒ List of user created function specific to minishell that have a test founded
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in minishell
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function 
@@ -192,10 +192,10 @@ launch_unitests()
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
                 # cases where compilation needed: (1:no binary),(2:unitests source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:
-                if [[ ${COMP} -ne 0 || ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || "${LIBFT_A}" -nt "${exe}" ]];then
+                if [[ ${COMP} -gt 0 || ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || "${LIBFT_A}" -nt "${exe}" ]];then
                     local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
-                        [[ ${COMP} -ne 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
+                        [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
                         rm "${FUN_LOG_DIR}/comp_stderr.log"
                     else
                         local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
@@ -343,7 +343,7 @@ else
 fi
 # -[ SET FUN_TO_TEST && FUN_WITH_UNITEST ]--------------------------------------------------------------------
 FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
-for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name "${fun}.c")" ]] && FUN_WITH_UNITEST+=( "${fun}" );done
+for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")" ]] && FUN_WITH_UNITEST+=( "${fun}" );done
 # =[ START ]==================================================================================================
 print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
 #TODO add listing of enabled options
@@ -360,7 +360,7 @@ if [[ ${NORM} -gt 0 ]];then
 fi
 # -[ STEP 3 | UNITESTS ]--------------------------------------------------------------------------------------
 if [[ ${OPTI} -gt 0 ]];then
-    exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions"
+    exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
 else
     exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
 fi
