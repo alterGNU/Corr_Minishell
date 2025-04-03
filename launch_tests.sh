@@ -360,9 +360,9 @@ if [[ ${NORM} -gt 0 ]];then
 fi
 # -[ STEP 3 | UNITESTS ]--------------------------------------------------------------------------------------
 if [[ ${OPTI} -gt 0 ]];then
-    exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
-else
     exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions"
+else
+    exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
 fi
 # =[ STOP ]===================================================================================================
 display_resume "Minishell's tests"
