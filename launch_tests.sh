@@ -281,7 +281,7 @@ display_builtin_used()
             if [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]];then
                 glibc_calls+=( "${V0}✓ ${fun}()${E}" )
             else
-                glibc_calls+=( "${R0}✗ ${fun}()${E}" )
+                glibc_calls+=( "${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E}" )
                 tot=$(( tot + 1 ))
             fi
         fi
@@ -303,19 +303,43 @@ display_builtin_used()
 display_resume()
 {
     [[ -n "${1}" ]] && local args=( "🔶 ${YU}RESUME ${1}:${E}" ) || local args=( "🔶 ${YU}RESUME :${E}" )
-    if [[ ${NORM} -gt 0 ]];then
-        [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}Norminette:${V0} ✅ PASS${E}" ) || args+=( " 🔸 ${YU}Norminette:${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
+    # -[ BUILT-IN STEP ]--------------------------------------------------------------------------------------
+    if [[ ${BUIN} -gt 0 ]];then
+        local OK_BI=( )
+        local KO_BI=( )
+        for function in "${BUILTIN_FUNUSED[@]}";do
+            local fun="${function%%\@*}"
+            if [[ "${fun}" != "_"* ]];then
+                [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]] && OK_BI+=( " ${fun} " ) || KO_BI+=( "       ${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E} " )
+            fi
+        done
+        if [[ ${#KO_BI[@]} -eq 0 ]];then
+            args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${#OK_BI[@]} built-in fun. detected:${V0} ✅ ALL PASS${E}" )
+        else
+            local TOT_BI=$(( ${#OK_BI[@]} + ${#KO_BI[@]} ))
+            args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${TOT_BI} built-in fun. detected:${E}" )
+            args+=( "    ✅ ${V0}${#OK_BI[@]} Allowed${E}" )
+            args+=( "    ❌ ${R0}${#KO_BI[@]} NOT Allowed${E}" )
+            args+=( "${KO_BI[@]}" )
+        fi
     else
-        args+=( " 🔸 ${YU}Norminette:${G0} ✖️  Test Desabled${E}" )
+        args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${G0} ✖️  Step Desabled${E}" )
     fi
+    # -[ NORMINETTE STEP ]------------------------------------------------------------------------------------
+    if [[ ${NORM} -gt 0 ]];then
+        [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${V0} ✅ ALL PASS${E}" ) || args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
+    else
+        args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${G0} ✖️  Step Desabled${E}" )
+    fi
+    # -[ UNITESTS STEP ]--------------------------------------------------------------------------------------
     local short_log_dir=$(print_shorter_path ${LOG_DIR})
     local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
     local lst_fail=( )
     [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! " ${lst_fail[@]} " =~ " ${ff} " ]] && lst_fail+=( "${ff}" );done
     if [[ ${#lst_fail[@]} -eq 0 ]];then
-        args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
+        args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} ${tot_tested} user-made fun. have been tested:${V0} ✅ ALL PASS${E}" ) 
     else
-        args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${E}" )
+        args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} ${tot_tested} user-made fun. have been tested:${E}" )
         args+=( \
             "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
             "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
