@@ -143,6 +143,61 @@ exec_anim_in_box()
     return ${exit_code}
 }
 
+# -[ DISPLAY_START ]------------------------------------------------------------------------------------------
+display_start()
+{
+    local OPTIONS=( " ${YU}Minishell's OPTIONS:${E}" )
+    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER:       ${R0}✘ Desable${E}" )
+    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER:    ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER:    ${R0}✘ Desable${E}" )
+    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} UNITESTS OPTIONS:${E}" )
+    [[ ${COMP} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Forced compilation:        ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Forced compilation:        ${R0}✘ Desable${E}" )
+    [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Run only fun with unitests:${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Run only fun with unitests:${R0}✘ Desable${E}" )
+    print_in_box -t 2 -c y \
+        "     ${Y0}  __  __  _        _      _          _  _    _   _        _  _             _       ${E}" \
+        "     ${Y0} |  \/  |(_) _ _  (_) ___| |_   ___ | || |  | | | | _ _  (_)| |_  ___  ___| |_  ___${E}" \
+        "     ${Y0} | |\/| || || ' \ | |(_-<| ' \ / -_)| || |  | |_| || ' \ | ||  _|/ -_)(_-<|  _|(_-<${E}" \
+        "     ${Y0} |_|  |_||_||_||_||_|/__/|_||_|\___||_||_|   \___/ |_||_||_| \__|\___|/__/ \__|/__/${E}" \
+        "   " \
+        "  🔶 ${OPTIONS[@]}"
+}
+
+# -[ DISPLAY_BUILTIN_USED ]-----------------------------------------------------------------------------------
+# Display built-in function detected in minishell with coloration:
+# - Grey if called by main() function
+# - Green if allowed
+# - RED if not allowed
+display_builtin_used()
+{
+    local tot=0
+    #local args=( "🔵 ${BU}BUILT-IN FUN. USED:${E}" )
+    local args=( )
+    local main_calls=( )
+    local glibc_calls=( )
+    for function in "${BUILTIN_FUNUSED[@]}";do
+        local fun="${function%%\@*}"
+        if [[ "${fun}" == "_"* ]];then
+            main_calls+=( "${G0}• ${fun%%\@*}()${E}" )
+        else
+            if [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]];then
+                glibc_calls+=( "${V0}✓ ${fun}()${E}" )
+            else
+                glibc_calls+=( "${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E}" )
+                tot=$(( tot + 1 ))
+            fi
+        fi
+    done
+    if [[ "${#main_calls[@]}" -ne 0 ]];then
+        echo "🔹 ${BCU}main() built_in calls:${E}"
+        for fun in "${main_calls[@]}";do echo "   ${fun}";done
+        echo "🔹 ${BCU}GLIBC built_in calls:${E}"
+        for fun in "${glibc_calls[@]}";do echo "   ${fun}";done
+    else
+        for fun in "${glibc_calls[@]}";do echo " ${fun}";done
+    fi
+    return ${tot}
+}
+
+
 # -[ LAUNCH_UNITESTS() ]--------------------------------------------------------------------------------------
 # Function that launch unitests for each <function_name> found in <list_name> given as arg1 or arg2.
 # Compile then Exec unitests will creating log_files then returns the numbers of errors encountred.
@@ -261,42 +316,6 @@ launch_unitests()
     return ${nb_err}
 }
 
-# -[ DISPLAY_BUILTIN_USED ]-----------------------------------------------------------------------------------
-# Display built-in function detected in minishell with coloration:
-# - Grey if called by main() function
-# - Green if allowed
-# - RED if not allowed
-display_builtin_used()
-{
-    local tot=0
-    #local args=( "🔵 ${BU}BUILT-IN FUN. USED:${E}" )
-    local args=( )
-    local main_calls=( )
-    local glibc_calls=( )
-    for function in "${BUILTIN_FUNUSED[@]}";do
-        local fun="${function%%\@*}"
-        if [[ "${fun}" == "_"* ]];then
-            main_calls+=( "${G0}• ${fun%%\@*}()${E}" )
-        else
-            if [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]];then
-                glibc_calls+=( "${V0}✓ ${fun}()${E}" )
-            else
-                glibc_calls+=( "${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E}" )
-                tot=$(( tot + 1 ))
-            fi
-        fi
-    done
-    if [[ "${#main_calls[@]}" -ne 0 ]];then
-        echo "🔹 ${BCU}main() built_in calls:${E}"
-        for fun in "${main_calls[@]}";do echo "   ${fun}";done
-        echo "🔹 ${BCU}GLIBC built_in calls:${E}"
-        for fun in "${glibc_calls[@]}";do echo "   ${fun}";done
-    else
-        for fun in "${glibc_calls[@]}";do echo " ${fun}";done
-    fi
-    return ${tot}
-}
-
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
 # Display the resume of test (norminette, tests results, log files produces ...)
 # Take on optionnal argument, text to add between the <🔶 RESUME> and the <:>.
@@ -323,13 +342,13 @@ display_resume()
             args+=( "${KO_BI[@]}" )
         fi
     else
-        args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${G0} ✖️  Step Desabled${E}" )
+        args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${E}${G0} ✖️  Step Desabled${E}" )
     fi
     # -[ NORMINETTE STEP ]------------------------------------------------------------------------------------
     if [[ ${NORM} -gt 0 ]];then
         [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${V0} ✅ ALL PASS${E}" ) || args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
     else
-        args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${G0} ✖️  Step Desabled${E}" )
+        args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${E}${G0} ✖️  Step Desabled${E}" )
     fi
     # -[ UNITESTS STEP ]--------------------------------------------------------------------------------------
     local short_log_dir=$(print_shorter_path ${LOG_DIR})
@@ -411,8 +430,7 @@ fi
 FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
 for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")" ]] && FUN_WITH_UNITEST+=( "${fun}" );done
 # =[ START ]==================================================================================================
-print_in_box -t 2 -c y "🔶 ${Y0}START Minishell's Tests${E}"
-#TODO add listing of enabled options
+display_start
 # =[ STEPS ]==================================================================================================
 # -[ STEP 1 | LIST_BUILTIN ]----------------------------------------------------------------------------------
 [[ ${BUIN} -gt 0 ]] && exec_anim_in_box "display_builtin_used" "Display built-in function used"
