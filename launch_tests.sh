@@ -243,7 +243,7 @@ launch_unitests()
     local nb_err=0
     for fun in ${FUN_MANDA[@]};do
         echo "🔹${BCU}${fun}():${E}"
-        if [[ " ${FUN_FOUND[@]} " =~ " ${fun} " ]];then
+        if [[ "${FUN_FOUND[@]}" =~ "${fun}" ]];then
             local FUN_LOG_DIR="${LOG_DIR}/${fun}"
             [[ ! -d ${FUN_LOG_DIR} ]] && mkdir -p ${FUN_LOG_DIR}
             local test_main=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")
@@ -283,25 +283,32 @@ launch_unitests()
                 else
                     local exec_log_file=$(print_shorter_path ${FUN_LOG_DIR}/exec.log)
                     nb_err=$(( nb_err + 1 ))
-                    echo -e "${fun}\terrors\t${exec_log_file}" >> ${LOG_FAIL}
-                    echo -en " ❌ ${R0} Error detected (exec return value=${res_tests})\n"
+                    if [[ ${res_tests} == 139 ]];then
+                        echo -e "${fun}\tsegfault\t${exec_log_file}" >> ${LOG_FAIL}
+                        echo -en " ❌ ${R0} Error detected = 🚩SEGMENTATION FAULT🚩 (exec return value=${res_tests})\n"
+                    else
+                        echo -e "${fun}\terrors\t${exec_log_file}" >> ${LOG_FAIL}
+                        echo -en " ❌ ${R0} Error detected (exec return value=${res_tests})\n"
+                    fi
                     echo "      🔸${Y0}check log file 👉 ${M0}${exec_log_file}${E}"
                 fi
                 # STEP 3 : VALGRIND
-                echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
-                if [[ -f "${test_txt}" ]];then
-                    local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
-                else
-                    local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
-                fi
-                if [[ ${res_val} -ne ${VAL_ERR} ]];then
-                    echo -en " ✅ ${V0} No leak detected.${E}\n"
-                else
-                    local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
-                    nb_err=$(( nb_err + 1 ))
-                    echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
-                    echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
+                if [[ ${res_tests} -ne 139 ]];then
+                    echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
+                    if [[ -f "${test_txt}" ]];then
+                        local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
+                    else
+                        local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
+                    fi
+                    if [[ ${res_val} -ne ${VAL_ERR} ]];then
+                        echo -en " ✅ ${V0} No leak detected.${E}\n"
+                    else
+                        local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
+                        nb_err=$(( nb_err + 1 ))
+                        echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
+                        echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
+                        echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
+                    fi
                 fi
             else
                 echo " ${BC0} ⤷${E} ✖️  ${G0}Tests not found.${E}"
@@ -329,7 +336,7 @@ display_resume()
         for function in "${BUILTIN_FUNUSED[@]}";do
             local fun="${function%%\@*}"
             if [[ "${fun}" != "_"* ]];then
-                [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]] && OK_BI+=( " ${fun} " ) || KO_BI+=( "       ${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E} " )
+                [[ "${ALLOWED_FUN[@]}" =~ "${fun}" ]] && OK_BI+=( " ${fun} " ) || KO_BI+=( "       ${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E} " )
             fi
         done
         if [[ ${#KO_BI[@]} -eq 0 ]];then
@@ -354,7 +361,7 @@ display_resume()
     local short_log_dir=$(print_shorter_path ${LOG_DIR})
     local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
     local lst_fail=( )
-    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! " ${lst_fail[@]} " =~ " ${ff} " ]] && lst_fail+=( "${ff}" );done
+    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! "${lst_fail[@]}" =~ "${ff}" ]] && lst_fail+=( "${ff}" );done
     if [[ ${#lst_fail[@]} -eq 0 ]];then
         args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} ${tot_tested} user-made fun. have been tested:${V0} ✅ ALL PASS${E}" ) 
     else
@@ -369,10 +376,12 @@ display_resume()
             local link2=$(awk -v f="${fun}" '$1 == f &&  $2 == "errors" {print $3}' ${LOG_FAIL})
             local link3=$(awk -v f="${fun}" '$1 == f &&  $2 == "leaks" {print $3}' ${LOG_FAIL})
             local link4=$(awk -v f="${fun}" '$1 == f &&  $2 == "missing" {print $3}' ${LOG_FAIL})
+            local link5=$(awk -v f="${fun}" '$1 == f &&  $2 == "segfault" {print $3}' ${LOG_FAIL})
             [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling ${M0}👉 ${link1}${E}" )
             [[ -n "${link2}" ]] && args+=( "      ${R0}⤷ Error detected ${M0}👉 ${link2}${E}" )
             [[ -n "${link3}" ]] && args+=( "      ${R0}⤷ Leaks detected ${M0}👉 ${link3}${E}" )
             [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
+            [[ -n "${link5}" ]] && args+=( "      ${R0}⤷ Segmentation Fault${M0}👉 ${link5}${E}" )
         done
     fi
     print_in_box -t 2 -c y "${args[@]}"
@@ -405,7 +414,7 @@ done
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
     for fun in $(nm -g "${LIBFT_A}" | grep " T " | awk '{print $NF}' | sort | uniq);do
-        [[ ! " ${LIBFT_FUN[@]} " =~ " ${fun} " ]] && LIBFT_FUN+=( "${fun}" )
+        [[ ! "${LIBFT_FUN[@]}" =~ "${fun}" ]] && LIBFT_FUN+=( "${fun}" )
     done
 else
     echo -e "LIBFT_A=${BC0}${LIBFT_A}${E} is not an object file\033[m"
@@ -413,14 +422,14 @@ fi
 # -[ SET HOMEMADE_FUNUSED & BUILTIN_FUNUSED ]-----------------------------------------------------------------
 if file "${PROGRAMM}" | grep -qE 'relocatable|executable|shared object|ar archive';then
     for fun in $(nm -g "${PROGRAMM}" | grep " T " | awk '{print $NF}' | sort | uniq);do
-        [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
-        if [[ " ${FUN_TO_EXCLUDE[@]} " =~ " ${fun} " && " ${fun} " != " main " ]];then
-            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " ${fun} " ]] && BUILTIN_FUNUSED+=( "${fun}" )
+        [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]] && HOMEMADE_FUNUSED+=( "${fun}" )
+        if [[ "${FUN_TO_EXCLUDE[@]}" =~ "${fun}" && " ${fun} " != " main " ]];then
+            [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
         fi
     done
     for fun in $(nm -g "${PROGRAMM}" | grep " U " | awk '{print $NF}' | sort | uniq);do
-        if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]];then
-            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " ${fun} " ]] && BUILTIN_FUNUSED+=( "${fun}" )
+        if [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]];then
+            [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
         fi
     done
 else
