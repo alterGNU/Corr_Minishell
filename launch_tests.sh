@@ -178,7 +178,7 @@ display_builtin_used()
         if [[ "${fun}" == "_"* ]];then
             main_calls+=( "${G0}• ${fun%%\@*}()${E}" )
         else
-            if [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]];then
+            if [[ "${ALLOWED_FUN[@]}" =~ "${fun}" ]];then
                 glibc_calls+=( "${V0}✓ ${fun}()${E}" )
             else
                 glibc_calls+=( "${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E}" )
