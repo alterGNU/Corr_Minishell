@@ -131,6 +131,13 @@ int main(int ac, char **av, char **ev)
 	char *as4[] = {" ","'e'\"c\"ho", " ", "toto", "&&", "echo", " ", "OK", "||", "echo"," ", "KO", " ", NULL};
 	nb_err += test(dt, "    'e'\"c\"ho  toto&&echo OK||echo  KO    ", as4, ai4);
 
+	int ai5[8] = {UNSET, PIP, UNSET, OPA, UNSET, OPO, UNSET};
+	char *as5[] = {"cmd1", "|", "cmd2", "&&", "cmd3", "||", "cmd4", NULL};
+	nb_err += test(dt, "cmd1|cmd2&&cmd3||cmd4", as5, ai5);
+	int ai6[15] = {ESP, UNSET, ESP, PIP, ESP, UNSET, ESP, OPA, ESP, UNSET, ESP, OPO, ESP, UNSET, ESP};
+	char *as6[] = {" ", "cmd1", " ",  "|", " ",  "cmd2", " ",  "&&", " ",  "cmd3", " ",  "||", " ",  "cmd4", " ",  NULL};
+	nb_err += test(dt, "   cmd1   |   cmd2   &&   cmd3   ||   cmd4   ", as6, ai6);
+
 	print_title("B| FAIL MULTIPLES");
 	nb_err += test(dt, "< << <<< <<<< <<<<< <<<<<<   ", NULL, NULL);
 	nb_err += test(dt, "< << <<< <<<< <<<<< <<<<<<", NULL, NULL);
@@ -142,17 +149,17 @@ int main(int ac, char **av, char **ev)
 
 	print_title("C| FAIL <");
 	nb_err += test(dt, "cat < |", NULL, NULL);
-	nb_err += test(dt, "cat < ", NULL, NULL); //TODO->funcheck 3 fails
+	nb_err += test(dt, "cat < ", NULL, NULL);
 	nb_err += test(dt, "cat <", NULL, NULL);
 
 	print_title("D| FAIL <<");
 	nb_err += test(dt, "cat << |", NULL, NULL);
-	nb_err += test(dt, "cat << ", NULL, NULL); //TODO->funcheck 3 fails
+	nb_err += test(dt, "cat << ", NULL, NULL);
 	nb_err += test(dt, "cat <<", NULL, NULL);
 
 	print_title("E| FAIL <<<");
 	nb_err += test(dt, "<<< |", NULL, NULL);
-	nb_err += test(dt, "<<< ", NULL, NULL); //TODO->funcheck 3 fails
+	nb_err += test(dt, "<<< ", NULL, NULL);
 	nb_err += test(dt, "<<<", NULL, NULL);
 
 	print_title("E| FAIL >");

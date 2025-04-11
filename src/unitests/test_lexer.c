@@ -56,6 +56,7 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 
 	if (!data->tok_lst)
 	{
+		ft_printf("\n");
 		if (!tab_res)
 			return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
 		return (free_data(&data), ft_printf("tab_res=", f_name), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
@@ -198,8 +199,16 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test("&&&&", NULL, NULL, ev);
 
 	print_title("K| FAIL PARENTHESIS LEXICAL RULES");
+	nb_err += test("(", NULL, NULL, ev);
+	nb_err += test(" ( ", NULL, NULL, ev);
+	nb_err += test(")", NULL, NULL, ev);
+	nb_err += test(" ) ", NULL, NULL, ev);
+	nb_err += test(")(", NULL, NULL, ev);
+	nb_err += test(" ) ( ", NULL, NULL, ev);
 	nb_err += test("()", NULL, NULL, ev);
+	nb_err += test(" ( ) ", NULL, NULL, ev);
 	nb_err += test("(())", NULL, NULL, ev);
+	nb_err += test(" ( ( ) ) ", NULL, NULL, ev);
 	nb_err += test("( echo toto", NULL, NULL, ev);
 	nb_err += test("echo toto)", NULL, NULL, ev);
 	nb_err += test("(< file1 cat |) cat >> file2", NULL, NULL, ev);
