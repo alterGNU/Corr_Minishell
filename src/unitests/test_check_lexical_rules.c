@@ -86,35 +86,54 @@ int	test(t_data *dt, char *str, char **tab_res, int *type_res)
 	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_parenthesis);
 	// STEP5: concatenate
 	concatenate_contiguous_str(&dt->tok_lst);
-	// STEP 6: set_tok_lst_type
+	// STEP6: set_tok_lst_type
 	set_tok_lst_type(dt->tok_lst);
-	// STEP 7: set_tok_lst_parenthesis
+	// STEP7: set_tok_lst_parenthesis
 	set_tok_lst_parenthesis(dt);
-	// STEP 8: check_lexical_rules
+	// STEP8: check_lexical_rules
 	check_lexical_rules(dt);
+	//ft_printf("tok_lst=");
+	//print_tok_lst(dt->tok_lst);
 	ft_printf("\n");
-
+	
+	// NULL Cases
 	if (!dt->tok_lst)
 	{
 		if (!tab_res)
 			return (printntime('-', LEN - 5), ft_printf(PASS), 0);
-		return (ft_printf("tab_res=", f_name), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+		return (ft_printf("tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 	}
-	int	i = 0;
-	t_list	*act = dt->tok_lst;
-	while (tab_res[i] && act && !strcmp(tab_res[i], ((t_token *)(act->content))->str))
+	else
 	{
-		if (type_res[i] != ((t_token *)act->content)->type)
-			return (ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+		if (!tab_res)
+			return (ft_printf("tab_res=NULL"), ft_printf("\ntok_lst="),print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+		if (!type_res)
+			return (ft_printf("type_res=NULL"), ft_printf("\ntok_lst="),print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+	}
+	// Check same size in tok_lst and in tab_res
+	int size_tab_res = 0;
+	while (tab_res[size_tab_res])
+		size_tab_res++;
+	int nb_node = 0;
+	t_list	*act = dt->tok_lst;
+	while (act)
+	{
+		nb_node++;
+		act = act->next;
+	}
+	if (nb_node != size_tab_res)
+		return (ft_printf(CR"NOT SAME SIZE:\n"CE"tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst="), print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+	int i = 0;
+	act = dt->tok_lst;
+	while (tab_res[i] && act)
+	{
+ 		if (!strcmp(tab_res[i], ((t_token *)(act->content))->str))
+			return (ft_printf(CR"NOT SAME STR:\n"CE"tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst="), print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+		if (type_res[i] == ((t_token *)act->content)->type)
+			return (ft_printf(CR"NOT SAME TYPE:\n"CE"tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst="), print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 		act = act->next;
 		i++;
 	}
-	if (!tab_res[i] && !act)
-		return (ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(PASS), 0);
-	if ((!tab_res[i] && act) || (tab_res[i] && !act))
-		return (ft_printf("tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst="), print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
-	if (strcmp(tab_res[i], ((t_token *)(act->content))->str))
-		return (ft_printf("tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst="), print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 	return (ft_lstclear(&dt->tok_lst, free_token), ft_printf(PASS), 0);
 }
 
