@@ -127,7 +127,7 @@ int	test(t_data *dt, char *str, char **tab_res, int *type_res)
 	act = dt->tok_lst;
 	while (tab_res[i] && act)
 	{
- 		if (!strcmp(tab_res[i], ((t_token *)(act->content))->str))
+ 		if (strcmp(tab_res[i], ((t_token *)(act->content))->str))
 			return (ft_printf(CR"NOT SAME STR:\n"CE"tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst="), print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 		if (type_res[i] == ((t_token *)act->content)->type)
 			return (ft_printf(CR"NOT SAME TYPE:\n"CE"tab_res="), ft_print_str_array(tab_res), ft_printf("\ntok_lst="), print_tok_lst(dt->tok_lst), ft_printf("\n"),ft_lstclear(&dt->tok_lst, free_token), printntime('-', LEN - 5), ft_printf(FAIL), 1);
