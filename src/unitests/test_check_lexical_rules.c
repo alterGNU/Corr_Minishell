@@ -78,32 +78,20 @@ int	test(t_data *dt, char *str, char **tab_res, int *type_res)
 	// STEP1: split_by_quote(str, "\'\"") 
 	ft_printf("\n");
 	dt->tok_lst = build_tok_lst_split_by_quotes(str);
-	//ft_printf("\nafter split_by_quote tok_lst=");
-	//print_tok_lst(dt->tok_lst);
 	// STEP2: split_by_space(str, "\t\r\s\n") 
 	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_spaces);
-	//ft_printf("\nafter split_by_spaces=");
-	//print_tok_lst(dt->tok_lst);
  	// STEP3: split_by_separator(str, "|&<>","")
 	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_operators);
-	//ft_printf("\nafter split_by_operators=");
-	//print_tok_lst(dt->tok_lst);
  	// STEP4: split_by_separator(str, "|&<>","")
 	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_parenthesis);
-	//ft_printf("\nafter split_by_parenthesis=");
-	//print_tok_lst(dt->tok_lst);
 	// STEP5: concatenate
 	concatenate_contiguous_str(&dt->tok_lst);
-	//ft_printf("\nafter split_by_contiguous_single_quotes=");
-	//print_tok_lst(dt->tok_lst);
 	// STEP 6: set_tok_lst_type
 	set_tok_lst_type(dt->tok_lst);
-	//ft_printf("\nafter set_tok_lst_type=");
-	//print_tok_lst(dt->tok_lst);
-	// STEP 7: check_lexical_rules
+	// STEP 7: set_tok_lst_parenthesis
+	set_tok_lst_parenthesis(dt);
+	// STEP 8: check_lexical_rules
 	check_lexical_rules(dt);
-	//ft_printf("\nafter check_lexical_rules:[%d]=", dt->last_cmd_exit_status);
-	//print_tok_lst(dt->tok_lst);
 	ft_printf("\n");
 
 	if (!dt->tok_lst)
@@ -337,12 +325,12 @@ int main(int ac, char **av, char **ev)
 	print_subtitle("Cases of 'Odd number of parenthesis'");
 	nb_err += test(dt, "(", NULL, NULL);
 	nb_err += test(dt, " ( ", NULL, NULL);
-	//nb_err += test(dt, ")", NULL, NULL);           //#TODO:🎯FIX-->SEGFAULT
-	//nb_err += test(dt, " ) ", NULL, NULL);         //#TODO:🎯FIX-->SEGFAULT
-	//nb_err += test(dt, "((cmd)", NULL, NULL);      //#TODO:🎯FIX-->SEGFAULT
-	//nb_err += test(dt, " ( ( cmd ) ", NULL, NULL); //#TODO:🎯FIX-->SEGFAULT
-	//nb_err += test(dt, "(cmd))", NULL, NULL);      //#TODO:🎯FIX-->SEGFAULT
-	//nb_err += test(dt, " ( cmd ) )", NULL, NULL);  //#TODO:🎯FIX-->SEGFAULT
+	nb_err += test(dt, ")", NULL, NULL);           //#TODO:🎯FIX-->SEGFAULT
+	nb_err += test(dt, " ) ", NULL, NULL);         //#TODO:🎯FIX-->SEGFAULT
+	nb_err += test(dt, "((cmd)", NULL, NULL);      //#TODO:🎯FIX-->SEGFAULT
+	nb_err += test(dt, " ( ( cmd ) ", NULL, NULL); //#TODO:🎯FIX-->SEGFAULT
+	nb_err += test(dt, "(cmd))", NULL, NULL);      //#TODO:🎯FIX-->SEGFAULT
+	nb_err += test(dt, " ( cmd ) )", NULL, NULL);  //#TODO:🎯FIX-->SEGFAULT
 	print_sep(SEPSUBT);
 	print_sep(SEPT);
 
