@@ -346,13 +346,18 @@ int main(int ac, char **av, char **ev)
 	nb_err += test(dt, " ( ", NULL, NULL);
 	nb_err += test(dt, ")", NULL, NULL);
 	nb_err += test(dt, " ) ", NULL, NULL);
+	nb_err += test(dt, ")(", NULL, NULL);
+	nb_err += test(dt, " ) ( ", NULL, NULL);
 	nb_err += test(dt, "((cmd)", NULL, NULL);
 	nb_err += test(dt, " ( ( cmd ) ", NULL, NULL);
 	nb_err += test(dt, "(cmd))", NULL, NULL);    
 	nb_err += test(dt, " ( cmd ) )", NULL, NULL);
 	nb_err += test(dt, "(cmd1)cmd2", NULL, NULL);
+	nb_err += test(dt, "(cmd1) cmd2", NULL, NULL);
 	nb_err += test(dt, "cmd1(cmd2)", NULL, NULL);
+	nb_err += test(dt, "cmd1 ( cmd2 )", NULL, NULL);
 	nb_err += test(dt, "(cmd1)(cmd2)", NULL, NULL);
+	nb_err += test(dt, " ( cmd1 ) ( cmd2 ) ", NULL, NULL);
 	print_sep(SEPSUBT);
 	print_sep(SEPT);
 
