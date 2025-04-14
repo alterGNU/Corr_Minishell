@@ -10,6 +10,7 @@
 #   - ARGS ∈ {-n, --no-norm}    :        🢥  Desable the Norme-checker
 #   - ARGS ∈ {+n, --norm}       :        🢥  Enable the Norme-checker
 #   - ARGS ∈ {+c, --comp}       :        🢥  Force compilation
+#   - ARGS ∈ {+f, --funcheck}   :        🢥  Compile then run funcheck
 #   - ARGS ∈ {-o, --no-opti}    :        🢥  Desable: RUN tests on ALL Minishell's function
 #   - ARGS ∈ {+o, --opti}       :        🢥  Enable: RUN tests ONLY on Minishell's functions with unitests
 # - Steps:
@@ -17,6 +18,7 @@
 #   - STEP 1) List-Builtin      :        🢥  Display the minishell buit-in functions used.
 #   - STEP 2) Norme-checker     :        🢥  Run the norminette.
 #   - STEP 3) Unitests          :        🢥  Run unitests on minishell user-made functions.
+#   - STEP 4) Funcheck          :        🢥  Compile then run funcheck on minishell's unitest create
 #   - STOP  ) Resume            :        🢥  Display a resume of failed/passed unitests.
 # ============================================================================================================
  
@@ -31,6 +33,7 @@ LOG_FAIL="${LOG_DIR}/list_errors.log"                             # ☒ File con
 BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to BSL folder
 BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
 LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a static library
+MINISHELL=$(find "${MS_DIR}" -type f -name "minishell")           # ☒ minishell program
 # -[ SCRIPT OPTION ]------------------------------------------------------------------------------------------
 NB_ARG="${#}"                                                     # ☒ Number of script's arguments
 HELP=0                                                            # ☒ Display script usage
@@ -38,6 +41,7 @@ NORM=1                                                            # ☒ Norminet
 OPTI=0                                                            # ☒ Run test only on fun with unitests
 BUIN=1                                                            # ☒ Display list of built-in fun used
 COMP=0                                                            # ☒ Force compilation
+FUNC=0                                                            # ☒ Run Funcheck tool
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
 FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
@@ -102,6 +106,8 @@ script_usage()
     echo -e "    ${BC0}‣ ${M0}[-n, --no-norm]    ${BC0} 🢥  ${E}Desable the Norme-checker step"
     echo -e "    ${BC0}‣ ${M0}[+n, --norm]       ${BC0} 🢥  ${E}Enable the Norme-checker step"
     echo -e "    ${BC0}‣ ${M0}[+c, --comp]       ${BC0} 🢥  ${E}Force compilation"
+    echo -e "    ${BC0}‣ ${M0}[+f, --funcheck]   ${BC0} 🢥  ${E}Enable funcheck-checker step"
+    echo -e "    ${BC0}‣ ${M0}[-f, --no-funcheck]${BC0} 🢥  ${E}Desable funcheck-checker step"
     echo -e "    ${BC0}‣ ${M0}[-o, --no-opti]    ${BC0} 🢥  ${E}Desable: RUN tests on ${GU}ALL${E} Minishell's functions"
     echo -e "    ${BC0}‣ ${M0}[+o, --opti]       ${BC0} 🢥  ${E}Enable: RUN tests ${GU}ONLY${E} on Minishell's functions with unitests"
     echo -e " 🔹 ${BCU}STEPS:${E}"
@@ -109,6 +115,7 @@ script_usage()
     echo -e "   ${BC0}|STEP 1| ${GU}List-Builtin${E} ${BC0} 🢥  ${E}Display the minishell buit-in functions used."
     echo -e "   ${BC0}|STEP 2| ${GU}Norme-checker${E}${BC0} 🢥  ${E}Run the norminette."
     echo -e "   ${BC0}|STEP 3| ${GU}Unitests${E}     ${BC0} 🢥  ${E}Run unitests on minishell user-made functions."
+    echo -e "   ${BC0}|STEP 4| ${GU}Funcheck${E}     ${BC0} 🢥  ${E}Compile minishell's unitests created for a funcheck use."
     echo -e "   ${BC0}|STOP  | ${GU}Resume${E}       ${BC0} 🢥  ${E}Display a resume of failed/passed unitests."
     exit ${exit_value}
 }
@@ -152,6 +159,7 @@ display_start()
     OPTIONS+=( "    🔸${YU}STEP 3)${Y0} UNITESTS OPTIONS:${E}" )
     [[ ${COMP} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Forced compilation:        ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Forced compilation:        ${R0}✘ Desable${E}" )
     [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Run only fun with unitests:${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Run only fun with unitests:${R0}✘ Desable${E}" )
+    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER:   ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER:   ${R0}✘ Desable${E}" )
     print_in_box -t 2 -c y \
         "     ${Y0}  __  __  _        _      _          _  _    _   _        _  _             _       ${E}" \
         "     ${Y0} |  \/  |(_) _ _  (_) ___| |_   ___ | || |  | | | | _ _  (_)| |_  ___  ___| |_  ___${E}" \
@@ -253,8 +261,8 @@ launch_unitests()
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
-                # cases where compilation needed: (1:no binary),(2:unitests source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:
-                if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || ( "${test_main}" -nt "${exe}" ) || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || ( "${LIBFT_A}" -nt "${exe}" ) ]];then
+                # cases where compilation needed: (1:no binary),(2:unitests source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:minishell newer than bin)
+                if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || ( "${test_main}" -nt "${exe}" ) || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || ( "${LIBFT_A}" -nt "${exe}" ) || ( "${MINISHELL}" -nt "${exe}" ) ]];then
                     local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
                         [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
@@ -322,7 +330,52 @@ launch_unitests()
     done
     return ${nb_err}
 }
-
+# -[ LAUNCH_FUNCHECK ]----------------------------------------------------------------------------------------
+# Launch funcheck test:
+# - 1 : search funcheck unitests (unitests with fewer tests)
+# - 2 : compile the funcheck
+launch_funcheck()
+{
+    local nb_err=0
+    for test_main in $(find "${PARENT_DIR}/src" -type f -name "funcheck_*");do
+        local fun=${test_main##*funcheck_}
+        echo "🔹${BCU}funcheck for ${fun}():${E}"
+        local FUN_LOG_DIR="${LOG_DIR}/${fun}"
+        [[ ! -d ${FUN_LOG_DIR} ]] && mkdir -p ${FUN_LOG_DIR}
+        local test_txt=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.txt")
+        # STEP 1 : COMPILATION --> IF NO BINARY OR IF SOURCES NEWER THAN BINARY
+        [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
+        exe="${BIN_DIR}/funcheck_${fun}"
+        echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
+        # cases where compilation needed: (1:if -c option enable),(2:if no bin alwready found),(3:if source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:if minishell newer than bin)
+        if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || ( "${test_main}" -nt "${exe}" ) || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || ( "${LIBFT_A}" -nt "${exe}" ) || ( "${MINISHELL}" -nt "${exe}" ) ]];then
+            local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
+            if [[ "${res_compile}" -eq 0 ]];then
+                [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
+                rm "${FUN_LOG_DIR}/comp_stderr.log"
+            else
+                local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
+                nb_err=$(( nb_err + 1 ))
+                echo -e "${fun}\tcomp-funcheck\t${log_comp_fail}" >> ${LOG_FAIL}
+                echo -en " ❌ ${R0}Compilation failed.${E}\n"
+                sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
+                continue
+            fi
+        else
+            echo -en " ☑️  ${BC0} Not needed.\n${E}"
+        fi
+        # STEP 2 : EXECUTION
+        echo -en " ${BC0} ⤷${E} 🚀 ${GU}Execution  :${E}"
+        if [[ -f "${test_txt}" ]];then
+            local file=$(dirname "${test_txt}")
+            script -c "funcheck ./${exe} ${file}" -a "${FUN_LOG_DIR}/funcheck.log"
+        else
+            script -c "funcheck ./${exe}" -a "${FUN_LOG_DIR}/funcheck.log"
+        fi
+        echo "      🔸${Y0}check log file 👉 ${M0}${FUN_LOG_DIR}/funcheck.log${E}"
+    done
+    return ${nb_err}
+}
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
 # Display the resume of test (norminette, tests results, log files produces ...)
 # Take on optionnal argument, text to add between the <🔶 RESUME> and the <:>.
@@ -377,15 +430,25 @@ display_resume()
             local link3=$(awk -v f="${fun}" '$1 == f &&  $2 == "leaks" {print $3}' ${LOG_FAIL})
             local link4=$(awk -v f="${fun}" '$1 == f &&  $2 == "missing" {print $3}' ${LOG_FAIL})
             local link5=$(awk -v f="${fun}" '$1 == f &&  $2 == "segfault" {print $3}' ${LOG_FAIL})
-            [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling ${M0}👉 ${link1}${E}" )
+            local link6=$(awk -v f="${fun}" '$1 == f &&  $2 == "comp-funcheck" {print $3}' ${LOG_FAIL})
+            [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling unitests:${M0}👉 ${link1}${E}" )
             [[ -n "${link2}" ]] && args+=( "      ${R0}⤷ Error detected ${M0}👉 ${link2}${E}" )
             [[ -n "${link3}" ]] && args+=( "      ${R0}⤷ Leaks detected ${M0}👉 ${link3}${E}" )
             [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
             [[ -n "${link5}" ]] && args+=( "      ${R0}⤷ Segmentation Fault${M0}👉 ${link5}${E}" )
+            [[ -n "${link6}" ]] && args+=( "      ${R0}⤷ Error occure will compilling funcheck unitest:${M0}👉 ${link6}${E}" )
         done
+    fi
+    # -[ FUNCHECK CHECKER ] ----------------------------------------------------------------------------------
+    if [[ ${FUNC} -gt 0 ]];then
+        args+=( " 🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${V0} ✅ Step Enable${E}" )
+        #[[ ${func_err} -eq 0 ]] && args+=( " 🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${V0} ✅ ALL PASS${E}" ) || args+=( " 🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
+    else
+        args+=( " 🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${E}${G0} ✖️  Step Desabled${E}" )
     fi
     print_in_box -t 2 -c y "${args[@]}"
 }
+
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
@@ -395,13 +458,16 @@ for args in "$@";do
     shift
     case "${args}" in
         --[Hh]elp | [+-][Hh] ) HELP=$(( HELP + 1 )) ;;
-        --[Nn]o-[Nn]orm | -[Nn] ) NORM=$(( NORM - 1 )) ;;
         --[Nn]orm | +[Nn] ) NORM=$(( NORM + 1 )) ;;
+        --[Nn]o-[Nn]orm | -[Nn] ) NORM=$(( NORM - 1 )) ;;
         --[Oo]pti | +[Oo] ) OPTI=$(( OPTI + 1 )) ;;
         --[Nn]o-[Oo]pti | -[Oo] ) OPTI=$(( OPTI - 1 )) ;;
         --[Bb]uil[td]-in | +[Bb] ) BUIN=$(( BUIN + 1 )) ;;
         --[Nn]o-[Bb]uil[td]-in | -[Bb] ) BUIN=$(( BUIN - 1 )) ;;
-        --[cC]omp | [-+][Cc] ) COMP=$(( COMP + 1 )) ;;
+        --[cC]omp | +[Cc] ) COMP=$(( COMP + 1 )) ;;
+        --[Nn]o-[cC]omp | -[Cc] ) COMP=$(( COMP - 1 )) ;;
+        --[fF]uncheck | +[Ff] ) FUNC=$(( FUNC + 1 )) ;;
+        --[Nn]o-[fF]uncheck | -[Ff] ) FUNC=$(( FUNC - 1 )) ;;
     esac
 done
 # =[ HELP ]===================================================================================================
@@ -453,6 +519,10 @@ if [[ ${OPTI} -gt 0 ]];then
     exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
 else
     exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
+fi
+# -[ STEP 4 | FUNCHECK ]--------------------------------------------------------------------------------------
+if [[ ${FUNC} -gt 0 ]];then
+    exec_anim_in_box "launch_funcheck" "Launch funcheck on Minishell's unitests"
 fi
 # =[ STOP ]===================================================================================================
 display_resume "Minishell's tests"
