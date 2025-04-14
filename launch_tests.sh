@@ -264,8 +264,8 @@ launch_unitests()
         if [[ "${FUN_FOUND[@]}" =~ "${fun}" ]];then
             local FUN_LOG_DIR="${LOG_DIR}/${fun}"
             [[ ! -d ${FUN_LOG_DIR} ]] && mkdir -p ${FUN_LOG_DIR}
-            local test_main=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")
-            local test_txt=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.txt")
+            local test_main=$(find "${PARENT_DIR}/src/unitests" -type f -name *"${fun}.c")
+            local test_txt=$(find "${PARENT_DIR}/src/unitests" -type f -name *"${fun}.txt")
             if [[ -n "${test_main}" ]];then
                 # STEP 1 : COMPILATION --> IF NO BINARY OR IF SOURCES NEWER THAN BINARY
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
@@ -353,7 +353,7 @@ launch_funcheck()
         "                          ${Y0} |_|  \_,_||_||_|\__||_||_|\___|\__||_\_\                 ${E}" \
         "   "
     local nb_err=0
-    for test_main in $(find "${PARENT_DIR}/src" -type f -name "funcheck_*");do
+    for test_main in $(find "${PARENT_DIR}/src/funcheck" -type f -name "funcheck_*");do
         local fun=${test_main##*funcheck_}
         fun=${fun%%\.c*}
         print_in_box -t 1 -c m " 🔸 ${Y0}funcheck for ${fun}():${E}"
