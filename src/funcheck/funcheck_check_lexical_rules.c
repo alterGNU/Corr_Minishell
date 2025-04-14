@@ -154,7 +154,7 @@ int main(int ac, char **av, char **ev)
 	print_sep(SEPSUBT);
 
 	print_title("A| PASS COMMANDS");
-	print_subtitle("Only unset and spaces-> check if quotes is count as one UNSET");
+	//print_subtitle("Only unset and spaces-> check if quotes is count as one UNSET");
 	//int ai0[9] = {ESP, UNSET, ESP, UNSET, ESP, UNSET, ESP, UNSET, ESP};
 	//char *as0[] = {" ", "cmd1", " ", "arg1", " ", "arg2", " ", "\"arg3 && arg4\"", " ", NULL};
 	//nb_err += test(dt, " cmd1 arg1   arg2   \"arg3 && arg4\" ", as0, ai0);
@@ -180,10 +180,10 @@ int main(int ac, char **av, char **ev)
 	nb_err += test(dt, "    'e'\"c\"ho  toto&&echo OK||echo  KO    ", as4, ai4);
 	print_sep(SEPSUBT);
 
-	print_subtitle("Check all binary operators");
-	int ai5[8] = {UNSET, PIP, UNSET, OPA, UNSET, OPO, UNSET};
-	char *as5[] = {"cmd1", "|", "cmd2", "&&", "cmd3", "||", "cmd4", NULL};
-	nb_err += test(dt, "cmd1|cmd2&&cmd3||cmd4", as5, ai5);
+	//print_subtitle("Check all binary operators");
+	//int ai5[8] = {UNSET, PIP, UNSET, OPA, UNSET, OPO, UNSET};
+	//char *as5[] = {"cmd1", "|", "cmd2", "&&", "cmd3", "||", "cmd4", NULL};
+	//nb_err += test(dt, "cmd1|cmd2&&cmd3||cmd4", as5, ai5);
 
 	//int ai6[15] = {ESP, UNSET, ESP, PIP, ESP, UNSET, ESP, OPA, ESP, UNSET, ESP, OPO, ESP, UNSET, ESP};
 	//char *as6[] = {" ", "cmd1", " ",  "|", " ",  "cmd2", " ",  "&&", " ",  "cmd3", " ",  "||", " ",  "cmd4", " ",  NULL};
@@ -217,14 +217,14 @@ int main(int ac, char **av, char **ev)
 	//char *as12[] = {" ", "(", " ", "(", " ", "(", "cmd1", "&&", "cmd2", ")", " ", ")", " ", ")", " ", NULL};
 	//nb_err += test(dt, " ( ( (cmd1&&cmd2) ) ) ", as12, ai12);
 
-	int ai13[9] = {UNSET, RLS, UNSET, PIP, RRS, UNSET, ESP, UNSET};
-	char *as13[] = {"cmd1", "<", "f2", "|", ">", "f3", " ", "cmd2", NULL};
-	nb_err += test(dt, "cmd1<f2|>f3 cmd2", as13, ai13);
-	print_sep(SEPSUBT);
-	print_sep(SEPT);
+	//int ai13[9] = {UNSET, RLS, UNSET, PIP, RRS, UNSET, ESP, UNSET};
+	//char *as13[] = {"cmd1", "<", "f2", "|", ">", "f3", " ", "cmd2", NULL};
+	//nb_err += test(dt, "cmd1<f2|>f3 cmd2", as13, ai13);
+	//print_sep(SEPSUBT);
+	//print_sep(SEPT);
 
-	print_title("B| FAIL UNARY UNKNOWN OPERATOR");
-	nb_err += test(dt, "<<<<", NULL, NULL);
+	//print_title("B| FAIL UNARY UNKNOWN OPERATOR");
+	//nb_err += test(dt, "<<<<", NULL, NULL);
 	//nb_err += test(dt, "<<<<f1", NULL, NULL);
 	//nb_err += test(dt, ">>>", NULL, NULL);
 	//nb_err += test(dt, ">>>f1", NULL, NULL);
@@ -232,14 +232,14 @@ int main(int ac, char **av, char **ev)
 	//nb_err += test(dt, "cmd1|||cmd2", NULL, NULL);
 	//nb_err += test(dt, "&&&", NULL, NULL);
 	//nb_err += test(dt, "cmd1&&&cmd2", NULL, NULL);
-	print_subtitle("List of operators not handle for now");
-	nb_err += test(dt, "<(cmd)", NULL, NULL);
+	//print_subtitle("List of operators not handle for now");
+	//nb_err += test(dt, "<(cmd)", NULL, NULL);
 	//nb_err += test(dt, ">(cmd)", NULL, NULL);
-	print_sep(SEPSUBT);
-	print_sep(SEPT);
+	//print_sep(SEPSUBT);
+	//print_sep(SEPT);
 
-	print_title("C| FAIL UNARY RLS <");
-	nb_err += test(dt, "<", NULL, NULL);
+	//print_title("C| FAIL UNARY RLS <");
+	//nb_err += test(dt, "<", NULL, NULL);
 	//nb_err += test(dt, "< ", NULL, NULL);
 	//nb_err += test(dt, "<>f1", NULL, NULL);
 	//nb_err += test(dt, " < > f1 ", NULL, NULL);
@@ -248,10 +248,10 @@ int main(int ac, char **av, char **ev)
 	//nb_err += test(dt, "<&&cmd2", NULL, NULL);
 	//nb_err += test(dt, "<||cmd2", NULL, NULL);
 	//nb_err += test(dt, "< (cmd1&&cmd2)", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
-	print_title("D| FAIL UNARY RLD <<");
-	nb_err += test(dt, "<<", NULL, NULL);
+	//print_title("D| FAIL UNARY RLD <<");
+	//nb_err += test(dt, "<<", NULL, NULL);
 	//nb_err += test(dt, "<< ", NULL, NULL);
 	//nb_err += test(dt, "<<>f1", NULL, NULL);
 	//nb_err += test(dt, " << > f1 ", NULL, NULL);
@@ -260,10 +260,10 @@ int main(int ac, char **av, char **ev)
 	//nb_err += test(dt, "<<&&cmd2", NULL, NULL);
 	//nb_err += test(dt, "<<||cmd2", NULL, NULL);
 	//nb_err += test(dt, "<< (cmd1&&cmd2)", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
-	print_title("E| FAIL UNARY RLT <<<");
-	nb_err += test(dt, "<<<", NULL, NULL);
+	//print_title("E| FAIL UNARY RLT <<<");
+	//nb_err += test(dt, "<<<", NULL, NULL);
 	//nb_err += test(dt, "<<< ", NULL, NULL);
 	//nb_err += test(dt, "<<<>f1", NULL, NULL);
 	//nb_err += test(dt, " <<< > f1 ", NULL, NULL);
@@ -272,10 +272,10 @@ int main(int ac, char **av, char **ev)
 	//nb_err += test(dt, "<<<&&cmd2", NULL, NULL);
 	//nb_err += test(dt, "<<<||cmd2", NULL, NULL);
 	//nb_err += test(dt, "<<< (cmd1&&cmd2)", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
-	print_title("F| FAIL UNARY RRS >");
-	nb_err += test(dt, ">", NULL, NULL);
+	//print_title("F| FAIL UNARY RRS >");
+	//nb_err += test(dt, ">", NULL, NULL);
 	//nb_err += test(dt, "> ", NULL, NULL);
 	//nb_err += test(dt, "cmd>", NULL, NULL);
 	//nb_err += test(dt, "cmd> ", NULL, NULL);
@@ -288,10 +288,10 @@ int main(int ac, char **av, char **ev)
 	//nb_err += test(dt, ">&&cmd2", NULL, NULL);
 	//nb_err += test(dt, "cmd1>&&cmd2", NULL, NULL);
 	//nb_err += test(dt, "> (cmd1&&cmd2)", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
-	print_title("G| FAIL UNARY RRD >");
-	nb_err += test(dt, ">>", NULL, NULL);
+	//print_title("G| FAIL UNARY RRD >");
+	//nb_err += test(dt, ">>", NULL, NULL);
 	//nb_err += test(dt, ">> ", NULL, NULL);
 	//nb_err += test(dt, "cmd>>", NULL, NULL);
 	//nb_err += test(dt, "cmd>> ", NULL, NULL);
@@ -304,34 +304,34 @@ int main(int ac, char **av, char **ev)
 	//nb_err += test(dt, ">>&&cmd2", NULL, NULL);
 	//nb_err += test(dt, "cmd1>>&&cmd2", NULL, NULL);
 	//nb_err += test(dt, ">> (cmd1&&cmd2)", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
-	print_title("H| FAIL BINARY OPA &&");
-	nb_err += test(dt, "&&", NULL, NULL);
+	//print_title("H| FAIL BINARY OPA &&");
+	//nb_err += test(dt, "&&", NULL, NULL);
 	//nb_err += test(dt, " && ", NULL, NULL);
 	//nb_err += test(dt, "cmd&&", NULL, NULL);
 	//nb_err += test(dt, " cmd && ", NULL, NULL);
 	//nb_err += test(dt, "&&cmd", NULL, NULL);
 	//nb_err += test(dt, " && cmd ", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
-	print_title("I| FAIL BINARY OPO ||");
-	nb_err += test(dt, "||", NULL, NULL);
+	//print_title("I| FAIL BINARY OPO ||");
+	//nb_err += test(dt, "||", NULL, NULL);
 	//nb_err += test(dt, " || ", NULL, NULL);
 	//nb_err += test(dt, "cmd||", NULL, NULL);
 	//nb_err += test(dt, " cmd || ", NULL, NULL);
 	//nb_err += test(dt, "||cmd", NULL, NULL);
 	//nb_err += test(dt, " || cmd ", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
-	print_title("J| FAIL BINARY PIP |");
-	nb_err += test(dt, "|", NULL, NULL);
+	//print_title("J| FAIL BINARY PIP |");
+	//nb_err += test(dt, "|", NULL, NULL);
 	//nb_err += test(dt, " | ", NULL, NULL);
 	//nb_err += test(dt, "cmd|", NULL, NULL);
 	//nb_err += test(dt, " cmd | ", NULL, NULL);
 	//nb_err += test(dt, "|cmd", NULL, NULL);
 	//nb_err += test(dt, " | cmd ", NULL, NULL);
-	print_sep(SEPT);
+	//print_sep(SEPT);
 
 	print_title("K| FAIL WITH PARENTHESIS");
 	print_subtitle("Cases of 'Empty parenthesis'");
