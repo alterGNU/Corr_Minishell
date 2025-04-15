@@ -387,18 +387,18 @@ launch_funcheck()
             local fun_log_file=$(print_shorter_path ${FUN_LOG_DIR}/funcheck.log)
             if [[ -f "${test_txt}" ]];then
                 local arg_file=$(dirname "${test_txt}")
-                script -q -c "funcheck ${short_exe} ${arg_file}";echo \$? > ${FUN_LOG_DIR}/tmp.txt -a ${fun_log_file}
+                script -q -c "funcheck ${short_exe} ${arg_file};echo \$? > ${FUN_LOG_DIR}/tmp.txt" -a ${fun_log_file}
             else
-                script -q -c "funcheck ${short_exe}";echo \$? > ${FUN_LOG_DIR}/tmp.txt -a ${fun_log_file}
+                script -q -c "funcheck ${short_exe};echo \$? > ${FUN_LOG_DIR}/tmp.txt" -a ${fun_log_file}
             fi
             local fun_res=$(< "${FUN_LOG_DIR}/tmp.txt")
             rm -f "${FUN_LOG_DIR}/tmp.txt"
             if [[ "${fun_res}" == "0" ]]; then
-                print_in_box -t 0 -c g "🔸${Y0}FUNCHECK for ${fun}:${V0} ✅ PASS${E}" "🔸${Y0}check log file 👉 ${M0}${fun_log_file}${E}"
+                print_in_box -t 1 -c g "🔸${Y0}FUNCHECK for ${fun}:${V0} ✅ PASS${E}" "🔸${Y0}check log file 👉 ${M0}${fun_log_file}${E}"
             else
                 nb_err=$(( nb_err + 1 ))
                 echo -e "${fun}\texec_funcheck\t${leaks_log_file}" >> ${LOG_FAIL}
-                print_in_box -t 0 -c r "🔸${Y0}FUNCHECK for ${fun}:${R0} ❌ FAIL${E}" "🔸${Y0}check log file 👉 ${M0}${fun_log_file}${E}"
+                print_in_box -t 1 -c r "🔸${Y0}FUNCHECK for ${fun}:${R0} ❌ FAIL${E}" "🔸${Y0}check log file 👉 ${M0}${fun_log_file}${E}"
             fi
         else
             print_in_box -t 0 -c m "${M0}2) 🚀 Execution  : ❌ ${R0}NOT POSSIBLE${E}"
