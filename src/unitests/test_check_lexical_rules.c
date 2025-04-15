@@ -232,12 +232,15 @@ int main(int ac, char **av, char **ev)
 	int ai12[16] = {ESP, PARO, ESP, PARO, ESP, PARO, UNSET, OPA, UNSET, PARC, ESP, PARC, ESP, PARC, ESP};
 	char *as12[] = {" ", "(", " ", "(", " ", "(", "cmd1", "&&", "cmd2", ")", " ", ")", " ", ")", " ", NULL};
 	nb_err += test(dt, " ( ( (cmd1&&cmd2) ) ) ", as12, ai12);
+	print_sep(S2);
 
+	print_subtitle("Combos");
 	int ai13[9] = {UNSET, RLS, UNSET, PIP, RRS, UNSET, ESP, UNSET};
 	char *as13[] = {"cmd1", "<", "f2", "|", ">", "f3", " ", "cmd2", NULL};
 	nb_err += test(dt, "cmd1<f2|>f3 cmd2", as13, ai13);
 	print_sep(S2);
 	print_sep(S1);
+
 
 	print_title("B| FAIL UNARY UNKNOWN OPERATOR");
 	nb_err += test(dt, "<<<<", NULL, NULL);
