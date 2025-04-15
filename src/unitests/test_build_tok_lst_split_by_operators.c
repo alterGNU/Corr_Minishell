@@ -86,7 +86,7 @@ int	test(char *str, char **tab_res)
 			print_sofar+=c*4;
 	}
 	printntime(S3, LEN - print_sofar - 5);
-	if (!tab_res || !*tab_res)
+	if (!str || !tab_res || !*tab_res)
 		printf("---\n");
 	t_list	*res = build_tok_lst_split_by_operators(str);
 	if (!res)
