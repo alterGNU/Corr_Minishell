@@ -197,13 +197,9 @@ int	compare_btree(t_btree *a, t_btree *b)
 // This function print details only on failures.
 int	test(char *str, t_btree **btree_res, char **ev)
 {
-	printf("btree_res=\n");
-	fflush(stdout);
-	ft_btreeprint(*btree_res, print_first_four_char, 4);
 	t_data	*data = init_data(ev);
 	if (!data)
 		return (ft_btreeclear(btree_res, free_token), 1);
-	data->debug_mode = 1;
 	// Print test header
 	int print_sofar = printf("%s(\"%s\")", f_name, str);
 	if (str)
@@ -219,15 +215,17 @@ int	test(char *str, t_btree **btree_res, char **ev)
 	// PARSER
 	parser(&data);
 	// PRINT
-	printf("AFTER PARSER\ndt->ast  =\n");
+	printf("btree_res=\n");
+	fflush(stdout);
+	ft_btreeprint(*btree_res, print_first_four_char, 4);
+	printf("data->ast=\n");
 	fflush(stdout);
 	ft_btreeprint(data->ast, print_first_four_char, 4);
 	// CHECK AFTER PARSING
-	//int res = compare_btree(data->ast, *btree_res);
-	//if (!res)
-	//	return (ft_btreeclear(btree_res, free_token), free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
-	//return (ft_btreeclear(btree_res, free_token), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
-	return (0);
+	int res = compare_btree(data->ast, *btree_res);
+	if (!res)
+		return (ft_btreeclear(btree_res, free_asn), free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
+	return (ft_btreeclear(btree_res, free_asn), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 }
 
 int add_dlst_node(t_dlist **raw, t_token *content)
@@ -292,15 +290,12 @@ int	main(int ac, char **av, char **ev)
 	t_asn *asn0 = create_asn(t0);
 	t_btree *ast0 = ft_btreenew(asn0);
 	nb_err += test(str0, &ast0, ev);
-	//// ----------------------------------------------
-	//char *str1="<f1";
-	//t_token t1[] = {{RLS,"<",0,0}, {UNSET,"f1",0,0},{0,0,0,0}};
-	//t_asn *asn1 = create_asn(t1);
-	//t_btree *ast1 = ft_btreenew(asn1);
-	//printf("btree_res=\n");
-	//fflush(stdout);
-	//ft_btreeprint(ast1, print_first_four_char, 4);
-	//nb_err += test(str1, &ast1, ev);
+	// ----------------------------------------------
+	char *str1="<f1";
+	t_token t1[] = {{RLS,"<",0,0}, {UNSET,"f1",0,0},{0,0,0,0}};
+	t_asn *asn1 = create_asn(t1);
+	t_btree *ast1 = ft_btreenew(asn1);
+	nb_err += test(str1, &ast1, ev);
 	// ----------------------------------------------
 	//char *str_10="cmd1&&cmd2||cmd3";
 	//
