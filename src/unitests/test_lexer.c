@@ -1,17 +1,58 @@
-#include "minishell.h"  // build_tok_lst_split_by_quotes build_tok_lst_split_by_spaces build_tok_lst_split_by_operators set_tok_lst_type
-#include <string.h>     // strncmp
-#include <stdio.h>      // printf
-
+// =[ INCLUDE ]=================================================================
+#include "minishell.h"    // build_tok_lst_split_by_quotes,build_tok_lst_split_by_spaces,build_tok_lst_split_by_operators,set_tok_lst_type
+#include <string.h>       // strcmp
+#include <stdio.h>        // printf, fflush
+						  // ⚠️  Some of minishell print fun. use ~write=>fflush
+						  // ⚠️  Depends on libft/array/ft_print_str_array()
+// =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "lexer"
-
-int	printntime(char c, int n)
+#define CE "\033[0m"      // COLOR END
+#define CR "\033[0;31m"   // COLOR RED
+#define CV "\033[0;32m"   // COLOR GREEN
+#define CM "\033[0;33m"   // COLOR BROWN
+#define CY "\033[0;93m"   // COLOR YELLOW
+#define CB "\033[0;36m"   // COLOR AZURE
+#define CG "\033[0;37m"   // COLOR GREY
+#define CT "\033[97;100m" // COLOR GREY
+#define PASS "> \033[37;42m ✓ \033[0m\n"
+#define	FAIL "> \033[30;41m ✗ \033[0m\n"
+#define	S1 CT"="CE
+#define	S2 CB"*"CE
+#define	S3 "-"
+// =[ UTILS FUN ]===============================================================
+// -[ PRINTNTIME ]--------------------------------------------------------------
+int	printntime(char *str, int n)
 {
 	for (int i = 0 ; i < n; i++)
-		ft_printf("%c", c);
+		printf("%s", str);
 	return (n);
 }
-
+// -[ PRINT_TITLE ]-------------------------------------------------------------
+void print_title(char *title)
+{
+	printf(S1""CT);
+	int psf = printf("[ %s ]", title);
+	printntime(S1, LEN - psf - 1);
+	printf(CE"\n");
+}
+// -[ PRINT_SUB_TITLE ]---------------------------------------------------------
+void print_subtitle(char *subtitle)
+{
+	printf(S2""CB);
+	int psf = printf("( %s )", subtitle);
+	printntime(S2, LEN - psf - 1);
+	printf(CE"\n");
+}
+// -[ PRINT_SEP ]---------------------------------------------------------------
+void print_sep(char *sep)
+{
+	int	i = -1;
+	while (++i < LEN)
+		printf("%s", sep);
+	printf("\n\n");
+}
+// -[ COUNT_CHAR_IN_STR ]-------------------------------------------------------
 int	count_char_in_str(char c, char *str)
 {
 	int	res;
@@ -26,40 +67,42 @@ int	count_char_in_str(char c, char *str)
 	return (res);
 }
 
-void print_title(const char *title)
+// =[ TESTS FUNCTIONS ]=========================================================
+// print_str_array
+int	print_strarr(char **str)
 {
-	int print_sofar = ft_printf("\n=[ %s ]", title);
-	printntime('=', LEN - print_sofar + 2);
-	ft_printf("\n");
+	int psf = printf("tab_res=");
+	fflush(stdout);
+	psf += ft_print_str_array(str);
+	return (psf);
 }
 
+// This function print details only on failures.
 int	test(char *str, char **tab_res, int *type_res, char **ev)
 {
 	t_data	*data = init_data(ev);
 	if (!data)
 		return (1);
 	// Print test header
-	int print_sofar = ft_printf("%s(<%s>)", f_name, str);
+	int print_sofar = printf("%s(\"%s\")", f_name, str);
 	if (str)
 	{
 		int c = count_char_in_str('\t', str);
 		if (c)
 			print_sofar+=c*4;
 	}
-	printntime('-', LEN - print_sofar);
-	ft_printf("\n");
+	printntime(S3, LEN - print_sofar);
+	if (!tab_res || !type_res)
+		printf("\n");
 	// LEXING
 	lexer(str, &data);
-	//ft_printf("\nafter lexer:data->parenthesis[%d]=", data->last_cmd_parenthesis);
-	//print_tok_lst(data->tok_lst);
-	//ft_printf("\n");
-
+	printf("\n");
+	// CHECK TOK_LST == NULL
 	if (!data->tok_lst)
 	{
-		ft_printf("\n");
 		if (!tab_res)
-			return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
-		return (free_data(&data), ft_printf("tab_res=", f_name), ft_print_str_array(tab_res), ft_printf("\ntok_lst=NULL\n"), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+			return (free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
+		return (free_data(&data), print_strarr(tab_res), printf("\ntok_lst=NULL\n"), printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
 	printf("\nEXIT 1\n");
 	int	i = 0;
@@ -67,22 +110,22 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 	while (tab_res[i] && act && !strcmp(tab_res[i], ((t_token *)(act->content))->str))
 	{
 		if (type_res[i] != ((t_token *)act->content)->type)
-			return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+			return (free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 		act = act->next;
 		i++;
 	}
-	ft_printf("tab_res=");
-	ft_print_str_array(tab_res);
-	ft_printf("\ntok_lst=");
+	print_strarr(tab_res);
+	printf("\ntok_lst=");
+	fflush(stdout);
 	print_tok_lst(data->tok_lst);
-	ft_printf("\n");
+	printf("\n");
 	if (!tab_res[i] && !act)
-		return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ✅\n"), 0);
+		return (free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
 	if ((!tab_res[i] && act) || (tab_res[i] && !act))
-		return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
+		return (free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 	if (strcmp(tab_res[i], ((t_token *)(act->content))->str))
-		return (free_data(&data), printntime('-', LEN - 3), ft_printf("> ❌\n"), 1);
-	return (free_data(&data), ft_printf("> ✅\n"), 0);
+		return (free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
+	return (free_data(&data), printf(PASS), 0);
 }
 
 int	main(int ac, char **av, char **ev)
@@ -219,6 +262,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test("echo toto ( && echo tata)", NULL, NULL, ev);
 	nb_err += test("(echo toto || ) echo tata", NULL, NULL, ev);
 	nb_err += test("echo toto ( || echo tata)", NULL, NULL, ev);
+	//nb_err += test("((echo toto))", NULL, NULL, ev);// TODO:repare check_lexical_rules()
 
 	return (nb_err);
 }
