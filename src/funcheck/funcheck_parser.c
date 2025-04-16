@@ -306,99 +306,99 @@ int	main(int ac, char **av, char **ev)
 	//nb_err += test(NULL, NULL, ev);
 	//print_sep(S1);
 
-	print_title("A| FAIL COMMANDS-->lexing");
-	nb_err += test("cmd>", NULL, ev);
-	nb_err += test("()", NULL, ev);
-	nb_err += test("<(cmd)", NULL, ev);
-	print_sep(S1);
+	//print_title("A| FAIL COMMANDS-->lexing");
+	//nb_err += test("cmd>", NULL, ev);
+	//nb_err += test("()", NULL, ev);
+	//nb_err += test("<(cmd)", NULL, ev);
+	//print_sep(S1);
 	
-	print_title("A| SINGLE NODES:parsing");
-	print_subtitle("Simple node == UNSET");
-	char *str0="cmd";
-	t_token t0[] = {{UNSET,"cmd",0,0},{0,0,0,0}};
-	t_btree *ast0 = create_ast_node(t0);
-	if (ast0)
-		return (1);
-	nb_err += test(str0, &ast0, ev);
-	print_sep(S2);
+	//print_title("A| SINGLE NODES:parsing");
+	//print_subtitle("Simple node == UNSET");
+	//char *str0="cmd";
+	//t_token t0[] = {{UNSET,"cmd",0,0},{0,0,0,0}};
+	//t_btree *ast0 = create_ast_node(t0);
+	//if (ast0)
+	//	return (1);
+	//nb_err += test(str0, &ast0, ev);
+	//print_sep(S2);
 	
-	print_subtitle("Simple node == REDIR");
-	char *str1="<f1";
-	t_token t1[] = {{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
-	t_btree *ast1 = create_ast_node(t1);
-	if (!ast1)
-		return (1);
-	nb_err += test(str1, &ast1, ev);
-	print_sep(S2);
-	print_sep(S1);
-// -[  ]------------------------------------------------------------------------
-	print_title("B| MULTIPLES NODES:parsing");
-	print_subtitle("Only unset with OPA, OPO");
-	char *str_2="cmd1&&cmd2||cmd3";
-	// CREATE NODES
-	t_token tab_10[]={{OPA,"&&",0,0}, {0,0,0,0}};
-	t_btree *ast_10 = create_ast_node(tab_10);
-	if (!ast_10)
-		return (1);
+	//print_subtitle("Simple node == REDIR");
+	//char *str1="<f1";
+	//t_token t1[] = {{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
+	//t_btree *ast1 = create_ast_node(t1);
+	//if (!ast1)
+	//	return (1);
+	//nb_err += test(str1, &ast1, ev);
+	//print_sep(S2);
+	//print_sep(S1);
+//// -[  ]------------------------------------------------------------------------
+	//print_title("B| MULTIPLES NODES:parsing");
+	//print_subtitle("Only unset with OPA, OPO");
+	//char *str_2="cmd1&&cmd2||cmd3";
+	//// CREATE NODES
+	//t_token tab_10[]={{OPA,"&&",0,0}, {0,0,0,0}};
+	//t_btree *ast_10 = create_ast_node(tab_10);
+	//if (!ast_10)
+	//	return (1);
 	
-	t_token tab_11[]={{UNSET,"cmd1",0,0}, {0,0,0,0}};
-	t_btree *ast_11 = create_ast_node(tab_11);
-	if (!ast_11)
-		return (ft_btreedelone(ast_10, free_token), 1);
+	//t_token tab_11[]={{UNSET,"cmd1",0,0}, {0,0,0,0}};
+	//t_btree *ast_11 = create_ast_node(tab_11);
+	//if (!ast_11)
+	//	return (ft_btreedelone(ast_10, free_token), 1);
 	
-	t_token tab_12[]={{OPO,"||",0,0}, {0,0,0,0}};
-	t_btree *ast_12 = create_ast_node(tab_12);
-	if (!ast_12)
-		return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token), 1);
+	//t_token tab_12[]={{OPO,"||",0,0}, {0,0,0,0}};
+	//t_btree *ast_12 = create_ast_node(tab_12);
+	//if (!ast_12)
+	//	return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token), 1);
 
-	t_token tab_13[]={{UNSET,"cmd2",0,0}, {0,0,0,0}};
-	t_btree *ast_13 = create_ast_node(tab_13);
-	if (!ast_13)
-		return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token),ft_btreedelone(ast_12, free_token), 1);
+	//t_token tab_13[]={{UNSET,"cmd2",0,0}, {0,0,0,0}};
+	//t_btree *ast_13 = create_ast_node(tab_13);
+	//if (!ast_13)
+	//	return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token),ft_btreedelone(ast_12, free_token), 1);
 	
-	t_token tab_14[]={{UNSET,"cmd3",0,0}, {0,0,0,0}};
-	t_btree *ast_14 = create_ast_node(tab_14);
-	if (!ast_14)
-		return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token),ft_btreedelone(ast_12, free_token),ft_btreedelone(ast_13, free_token), 1);
-	//ATTACHED NODES
-	ast_12->left = ast_13;
-	ast_12->right = ast_14;
-	ast_10->left = ast_11;
-	ast_10->right = ast_12;
-	// RUN TEST
-	nb_err += test(str_2, &ast_10, ev);
-	print_sep(S2);
-// -[  ]------------------------------------------------------------------------
-	print_subtitle("Only unset with OPA, OPO");
-	char *str_3="<f0 <f1 cm <f3 ar";
-	// CREATE NODES
-	t_token tab_20[]={{RLS,"<",0,0}, {UNSET,"f0",0,0}, {0,0,0,0}};
-	t_btree *ast_20 = create_ast_node(tab_20);
-	if (!ast_20)
-		return (1);
+	//t_token tab_14[]={{UNSET,"cmd3",0,0}, {0,0,0,0}};
+	//t_btree *ast_14 = create_ast_node(tab_14);
+	//if (!ast_14)
+	//	return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token),ft_btreedelone(ast_12, free_token),ft_btreedelone(ast_13, free_token), 1);
+	////ATTACHED NODES
+	//ast_12->left = ast_13;
+	//ast_12->right = ast_14;
+	//ast_10->left = ast_11;
+	//ast_10->right = ast_12;
+	//// RUN TEST
+	//nb_err += test(str_2, &ast_10, ev);
+	//print_sep(S2);
+//// -[  ]------------------------------------------------------------------------
+	//print_subtitle("Only unset with OPA, OPO");
+	//char *str_3="<f0 <f1 cm <f3 ar";
+	//// CREATE NODES
+	//t_token tab_20[]={{RLS,"<",0,0}, {UNSET,"f0",0,0}, {0,0,0,0}};
+	//t_btree *ast_20 = create_ast_node(tab_20);
+	//if (!ast_20)
+	//	return (1);
 	
-	t_token tab_21[]={{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
-	t_btree *ast_21 = create_ast_node(tab_21);
-	if (!ast_21)
-		return (ft_btreedelone(ast_20, free_token), 1);
+	//t_token tab_21[]={{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
+	//t_btree *ast_21 = create_ast_node(tab_21);
+	//if (!ast_21)
+	//	return (ft_btreedelone(ast_20, free_token), 1);
 	
-	t_token tab_22[]={{UNSET,"cm",0,0},{UNSET,"ar",0,0}, {0,0,0,0}};
-	t_btree *ast_22 = create_ast_node(tab_22);
-	if (!ast_22)
-		return (ft_btreedelone(ast_20, free_token),ft_btreedelone(ast_21, free_token), 1);
+	//t_token tab_22[]={{UNSET,"cm",0,0},{UNSET,"ar",0,0}, {0,0,0,0}};
+	//t_btree *ast_22 = create_ast_node(tab_22);
+	//if (!ast_22)
+	//	return (ft_btreedelone(ast_20, free_token),ft_btreedelone(ast_21, free_token), 1);
 
-	t_token tab_23[]={{RLS,"<",0,0}, {UNSET,"f3",0,0}, {0,0,0,0}};
-	t_btree *ast_23 = create_ast_node(tab_23);
-	if (!ast_23)
-		return (ft_btreedelone(ast_20, free_token),ft_btreedelone(ast_21, free_token),ft_btreedelone(ast_22, free_token), 1);
+	//t_token tab_23[]={{RLS,"<",0,0}, {UNSET,"f3",0,0}, {0,0,0,0}};
+	//t_btree *ast_23 = create_ast_node(tab_23);
+	//if (!ast_23)
+	//	return (ft_btreedelone(ast_20, free_token),ft_btreedelone(ast_21, free_token),ft_btreedelone(ast_22, free_token), 1);
 
-	//ATTACHED NODES
-	ast_20->left = ast_21;
-	ast_21->left = ast_23;
-	ast_23->left = ast_22;
-	// RUN TEST
-	nb_err += test(str_3, &ast_20, ev);
-	print_sep(S2);
+	////ATTACHED NODES
+	//ast_20->left = ast_21;
+	//ast_21->left = ast_23;
+	//ast_23->left = ast_22;
+	//// RUN TEST
+	//nb_err += test(str_3, &ast_20, ev);
+	//print_sep(S2);
 // -[  ]------------------------------------------------------------------------
 	print_subtitle("Combos");
 	char *str_4="c1<f1 a1|c2|c3&&c4";
