@@ -241,7 +241,6 @@ int main(int ac, char **av, char **ev)
 	print_sep(S2);
 	print_sep(S1);
 
-
 	print_title("B| FAIL UNARY UNKNOWN OPERATOR");
 	nb_err += test(dt, "<<<<", NULL, NULL);
 	nb_err += test(dt, "<<<<f1", NULL, NULL);
