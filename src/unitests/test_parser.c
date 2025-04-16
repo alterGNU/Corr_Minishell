@@ -349,7 +349,7 @@ int	main(int ac, char **av, char **ev)
 	print_sep(S2);
 // -[  ]------------------------------------------------------------------------
 	print_subtitle("Only unset with OPA, OPO");
-	char *str_3="<f0 <f1 cmd1 <f3 arg";
+	char *str_3="<f0 <f1 cm <f3 ar";
 	// CREATE NODES
 	t_token tab_20[]={{RLS,"<",0,0}, {UNSET,"f0",0,0}, {0,0,0,0}};
 	t_asn *asn_20 = create_asn(tab_20);
@@ -359,7 +359,7 @@ int	main(int ac, char **av, char **ev)
 	t_asn *asn_21 = create_asn(tab_21);
 	t_btree *ast_21 = ft_btreenew(asn_21);
 	
-	t_token tab_22[]={{UNSET,"cmd1",0,0},{UNSET,"arg",0,0}, {0,0,0,0}};
+	t_token tab_22[]={{UNSET,"cm",0,0},{UNSET,"ar",0,0}, {0,0,0,0}};
 	t_asn *asn_22 = create_asn(tab_22);
 	t_btree *ast_22 = ft_btreenew(asn_22);
 
@@ -372,6 +372,52 @@ int	main(int ac, char **av, char **ev)
 	ast_23->left = ast_22;
 	// RUN TEST
 	nb_err += test(str_3, &ast_20, ev);
+	print_sep(S2);
+// -[  ]------------------------------------------------------------------------
+	print_subtitle("Combos");
+	char *str_4="c1<f1 a1|c2|c3&&c4";
+	// CREATE NODES
+	t_token tab_30[]={{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
+	t_asn *asn_30 = create_asn(tab_30);
+	t_btree *ast_30 = ft_btreenew(asn_30);
+	
+	t_token tab_31[]={{UNSET,"c1",0,0},{UNSET,"a1",0,0}, {0,0,0,0}};
+	t_asn *asn_31 = create_asn(tab_31);
+	t_btree *ast_31 = ft_btreenew(asn_31);
+
+	t_token tab_32[]={{PIP,"|",0,0}, {0,0,0,0}};
+	t_asn *asn_32 = create_asn(tab_32);
+	t_btree *ast_32 = ft_btreenew(asn_32);
+
+	t_token tab_33[]={{UNSET,"c2",0,0}, {0,0,0,0}};
+	t_asn *asn_33 = create_asn(tab_33);
+	t_btree *ast_33 = ft_btreenew(asn_33);
+
+	t_token tab_34[]={{PIP,"|",0,0}, {0,0,0,0}};
+	t_asn *asn_34 = create_asn(tab_34);
+	t_btree *ast_34 = ft_btreenew(asn_34);
+
+	t_token tab_35[]={{UNSET,"c3",0,0}, {0,0,0,0}};
+	t_asn *asn_35 = create_asn(tab_35);
+	t_btree *ast_35 = ft_btreenew(asn_35);
+
+	t_token tab_36[]={{OPA,"&&",0,0}, {0,0,0,0}};
+	t_asn *asn_36 = create_asn(tab_36);
+	t_btree *ast_36 = ft_btreenew(asn_36);
+
+	t_token tab_37[]={{UNSET,"c4",0,0}, {0,0,0,0}};
+	t_asn *asn_37 = create_asn(tab_37);
+	t_btree *ast_37 = ft_btreenew(asn_37);
+	//ATTACHED NODES
+	ast_34->left = ast_33;
+	ast_34->right = ast_35;
+	ast_30->left = ast_31;
+	ast_32->left = ast_30;
+	ast_32->right = ast_34;
+	ast_36->left = ast_32;
+	ast_36->right = ast_37;
+	// RUN TEST
+	nb_err += test(str_4, &ast_36, ev);
 	print_sep(S2);
 	print_sep(S1);
 // -[ TODO ]--------------------------------------------------------------------
