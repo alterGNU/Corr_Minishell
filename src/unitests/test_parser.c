@@ -195,11 +195,14 @@ int	compare_btree(t_btree *a, t_btree *b)
 	return (compare_btree(a->left, b->left) + compare_btree(a->right, b->right));
 }
 // This function print details only on failures.
-int	test(char *str, t_btree **btree_res, char **ev)
+int	test(char *str, t_btree **add_res, char **ev)
 {
+	t_btree *res = NULL;
+	if (add_res)
+		res = *add_res;
 	t_data	*data = init_data(ev);
 	if (!data)
-		return (ft_btreeclear(btree_res, free_token), 1);
+		return (ft_btreeclear(add_res, free_token), 1);
 	// Print test header
 	int print_sofar = printf("%s(\"%s\")", f_name, str);
 	if (str)
@@ -210,6 +213,7 @@ int	test(char *str, t_btree **btree_res, char **ev)
 	}
 	printntime(S3, LEN - print_sofar);
 	printf("\n");
+	fflush(stdout);
 	// LEXING
 	lexer(str, &data);
 	// PARSER
@@ -217,15 +221,15 @@ int	test(char *str, t_btree **btree_res, char **ev)
 	// PRINT
 	printf("btree_res=\n");
 	fflush(stdout);
-	ft_btreeprint(*btree_res, print_first_four_char, 4);
+	ft_btreeprint(res, print_first_four_char, 4);
 	printf("data->ast=\n");
 	fflush(stdout);
 	ft_btreeprint(data->ast, print_first_four_char, 4);
 	// CHECK AFTER PARSING
-	int res = compare_btree(data->ast, *btree_res);
-	if (!res)
-		return (ft_btreeclear(btree_res, free_asn), free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
-	return (ft_btreeclear(btree_res, free_asn), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
+	int comp_res = compare_btree(data->ast, res);
+	if (!comp_res)
+		return (ft_btreeclear(add_res, free_asn), free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
+	return (ft_btreeclear(add_res, free_asn), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 }
 
 int add_dlst_node(t_dlist **raw, t_token *content)
@@ -238,7 +242,6 @@ int add_dlst_node(t_dlist **raw, t_token *content)
 	ft_dlstadd_back(raw, new);
 	return (1);
 }
-
 
 t_token	*create_token(char *str, int type, char quote, char parenthesis)
 {
@@ -283,44 +286,94 @@ int	main(int ac, char **av, char **ev)
 	(void) av;
 	int	nb_err = 0;
 
-	///TODO: lexer fails --> No parsing
-	///TODO: lexer pass  --> parsing --> compare with t_btree *tree_res
+	
+	////TODO can not be tested-->if null, lexer panic and exit
+	//print_title("A| NULL CASES");
+	//nb_err += test(NULL, NULL, ev);
+	//print_sep(S1);
+
+	print_title("A| FAIL COMMANDS-->lexing");
+	nb_err += test("cmd>", NULL, ev);
+	nb_err += test("()", NULL, ev);
+	nb_err += test("<(cmd)", NULL, ev);
+	print_sep(S1);
+	
+	print_title("A| SINGLE NODES:parsing");
+	print_subtitle("Simple node == UNSET");
 	char *str0="cmd";
 	t_token t0[] = {{UNSET,"cmd",0,0},{0,0,0,0}};
 	t_asn *asn0 = create_asn(t0);
 	t_btree *ast0 = ft_btreenew(asn0);
 	nb_err += test(str0, &ast0, ev);
-	// ----------------------------------------------
+	print_sep(S2);
+	
+	print_subtitle("Simple node == REDIR");
 	char *str1="<f1";
-	t_token t1[] = {{RLS,"<",0,0}, {UNSET,"f1",0,0},{0,0,0,0}};
+	t_token t1[] = {{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
 	t_asn *asn1 = create_asn(t1);
 	t_btree *ast1 = ft_btreenew(asn1);
 	nb_err += test(str1, &ast1, ev);
-	// ----------------------------------------------
-	//char *str_10="cmd1&&cmd2||cmd3";
-	//
-	//t_token *tab_10[]={{"&&",OPA,0,0}, NULL};
-	//t_asn *asn_10 = create_asn(tab_10);
-	//t_btree *ast_10 = ft_btreenew(asn_10);
-	//
-	//t_token *tab_11[]={{"cmd1",UNSET,0,0}, NULL};
-	//t_asn *asn_11 = create_asn(tab_11);
-	//t_btree *ast_11 = ft_btreenew(asn_11);
-	//
-	//t_token *tab_12[]={{"||",OPO,0,0}, NULL};
-	//t_asn *asn_12 = create_asn(tab_12);
-	//t_btree *ast_12 = ft_btreenew(asn_12);
-	//
-	//t_token *tab_13[]={{"cmd2",UNSET,0,0}, NULL};
-	//t_asn *asn_13 = create_asn(tab_13);
-	//t_btree *ast_13 = ft_btreenew(asn_13);
-	//
-	//t_token *tab_14[]={{"cmd3",UNSET,0,0}, NULL};
-	//t_asn *asn_14 = create_asn(tab_14);
-	//t_btree *ast_14 = ft_btreenew(asn_14);
+	print_sep(S2);
+	print_sep(S1);
+// -[  ]------------------------------------------------------------------------
+	print_title("B| MULTIPLES NODES:parsing");
+	print_subtitle("Only unset with OPA, OPO");
+	char *str_2="cmd1&&cmd2||cmd3";
+	// CREATE NODES
+	t_token tab_10[]={{OPA,"&&",0,0}, {0,0,0,0}};
+	t_asn *asn_10 = create_asn(tab_10);
+	t_btree *ast_10 = ft_btreenew(asn_10);
+	
+	t_token tab_11[]={{UNSET,"cmd1",0,0}, {0,0,0,0}};
+	t_asn *asn_11 = create_asn(tab_11);
+	t_btree *ast_11 = ft_btreenew(asn_11);
+	
+	t_token tab_12[]={{OPO,"||",0,0}, {0,0,0,0}};
+	t_asn *asn_12 = create_asn(tab_12);
+	t_btree *ast_12 = ft_btreenew(asn_12);
 
-	//nb_err += test(str_10, &ast_00, ev);
-	// ----------------------------------------------
-	//char *str_10="<f1 <f2 cmd1 <f3";
+	t_token tab_13[]={{UNSET,"cmd2",0,0}, {0,0,0,0}};
+	t_asn *asn_13 = create_asn(tab_13);
+	t_btree *ast_13 = ft_btreenew(asn_13);
+	
+	t_token tab_14[]={{UNSET,"cmd3",0,0}, {0,0,0,0}};
+	t_asn *asn_14 = create_asn(tab_14);
+	t_btree *ast_14 = ft_btreenew(asn_14);
+	//ATTACHED NODES
+	ast_12->left = ast_13;
+	ast_12->right = ast_14;
+	ast_10->left = ast_11;
+	ast_10->right = ast_12;
+	// RUN TEST
+	nb_err += test(str_2, &ast_10, ev);
+	print_sep(S2);
+// -[  ]------------------------------------------------------------------------
+	print_subtitle("Only unset with OPA, OPO");
+	char *str_3="<f0 <f1 cmd1 <f3 arg";
+	// CREATE NODES
+	t_token tab_20[]={{RLS,"<",0,0}, {UNSET,"f0",0,0}, {0,0,0,0}};
+	t_asn *asn_20 = create_asn(tab_20);
+	t_btree *ast_20 = ft_btreenew(asn_20);
+	
+	t_token tab_21[]={{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
+	t_asn *asn_21 = create_asn(tab_21);
+	t_btree *ast_21 = ft_btreenew(asn_21);
+	
+	t_token tab_22[]={{UNSET,"cmd1",0,0},{UNSET,"arg",0,0}, {0,0,0,0}};
+	t_asn *asn_22 = create_asn(tab_22);
+	t_btree *ast_22 = ft_btreenew(asn_22);
+
+	t_token tab_23[]={{RLS,"<",0,0}, {UNSET,"f3",0,0}, {0,0,0,0}};
+	t_asn *asn_23 = create_asn(tab_23);
+	t_btree *ast_23 = ft_btreenew(asn_23);
+	//ATTACHED NODES
+	ast_20->left = ast_21;
+	ast_21->left = ast_23;
+	ast_23->left = ast_22;
+	// RUN TEST
+	nb_err += test(str_3, &ast_20, ev);
+	print_sep(S2);
+	print_sep(S1);
+// -[ TODO ]--------------------------------------------------------------------
 	return (nb_err);
 }
