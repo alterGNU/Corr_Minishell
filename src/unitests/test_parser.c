@@ -202,7 +202,7 @@ int	test(char *str, t_btree **add_res, char **ev)
 		res = *add_res;
 	t_data	*data = init_data(ev);
 	if (!data)
-		return (ft_btreeclear(add_res, free_token), 1);
+		return (ft_btreeclear(add_res, free_asn), 1);
 	// Print test header
 	int print_sofar = printf("%s(\"%s\")", f_name, str);
 	if (str)
@@ -239,22 +239,7 @@ int add_dlst_node(t_dlist **raw, t_token *content)
 	new = ft_dlstnew(content);
 	if (!new)
 		return (ft_dlstclear(raw, free_token), 0);
-	ft_dlstadd_back(raw, new);
-	return (1);
-}
-
-t_token	*create_token(char *str, int type, char quote, char parenthesis)
-{
-	t_token *res;
-	
-	res = init_token();
-	if (!res)
-		return (NULL);
-	set_token_str(res, str, 0, strlen(str));
-	set_token_type(res, type);
-	set_token_quote(res, quote);
-	set_token_parenthesis(res, parenthesis);
-	return (res);
+	return (ft_dlstadd_back(raw, new));
 }
 
 t_asn *create_asn(t_token *tab)
@@ -272,7 +257,7 @@ t_asn *create_asn(t_token *tab)
 		if (!token)
 			return (ft_dlstclear(&raw, free_token), NULL);
 		if (!add_dlst_node(&raw, token))
-			return (free_token(token), ft_dlstclear(&raw, free_token), NULL);
+			return (free_token(token), ft_free((void **)&token), ft_dlstclear(&raw, free_token), NULL);
 	}
 	res = init_asn(raw);
 	if (!res)
@@ -285,12 +270,14 @@ t_btree *create_ast_node(t_token tab[])
 	t_asn *asn;
 	t_btree *res;
 
+	if (!tab)
+		return (NULL);
 	asn = create_asn(tab);
 	if (!asn)
 		return (NULL);
 	res = ft_btreenew(asn);
 	if (!res)
-		return (free_asn(&asn), NULL);
+		return (free_asn(asn), ft_free((void **)&asn), NULL);
 	return (res);
 }
 
@@ -300,7 +287,6 @@ int	main(int ac, char **av, char **ev)
 	(void) av;
 	int	nb_err = 0;
 
-	
 	////TODO can not be tested-->if null, lexer panic and exit
 	//print_title("A| NULL CASES");
 	//nb_err += test(NULL, NULL, ev);
@@ -317,7 +303,7 @@ int	main(int ac, char **av, char **ev)
 	char *str0="cmd";
 	t_token t0[] = {{UNSET,"cmd",0,0},{0,0,0,0}};
 	t_btree *ast0 = create_ast_node(t0);
-	if (ast0)
+	if (!ast0)
 		return (1);
 	nb_err += test(str0, &ast0, ev);
 	print_sep(S2);
@@ -344,22 +330,22 @@ int	main(int ac, char **av, char **ev)
 	t_token tab_11[]={{UNSET,"cmd1",0,0}, {0,0,0,0}};
 	t_btree *ast_11 = create_ast_node(tab_11);
 	if (!ast_11)
-		return (ft_btreedelone(ast_10, free_token), 1);
+		return (ft_btreedelone(&ast_10, free_asn), 1);
 	
 	t_token tab_12[]={{OPO,"||",0,0}, {0,0,0,0}};
 	t_btree *ast_12 = create_ast_node(tab_12);
 	if (!ast_12)
-		return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token), 1);
+		return (ft_btreedelone(&ast_10, free_asn),ft_btreedelone(&ast_11, free_asn), 1);
 
 	t_token tab_13[]={{UNSET,"cmd2",0,0}, {0,0,0,0}};
 	t_btree *ast_13 = create_ast_node(tab_13);
 	if (!ast_13)
-		return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token),ft_btreedelone(ast_12, free_token), 1);
+		return (ft_btreedelone(&ast_10, free_asn),ft_btreedelone(&ast_11, free_asn),ft_btreedelone(&ast_12, free_asn), 1);
 	
 	t_token tab_14[]={{UNSET,"cmd3",0,0}, {0,0,0,0}};
 	t_btree *ast_14 = create_ast_node(tab_14);
 	if (!ast_14)
-		return (ft_btreedelone(ast_10, free_token),ft_btreedelone(ast_11, free_token),ft_btreedelone(ast_12, free_token),ft_btreedelone(ast_13, free_token), 1);
+		return (ft_btreedelone(&ast_10, free_asn),ft_btreedelone(&ast_11, free_asn),ft_btreedelone(&ast_12, free_asn),ft_btreedelone(&ast_13, free_asn), 1);
 	//ATTACHED NODES
 	ast_12->left = ast_13;
 	ast_12->right = ast_14;
@@ -380,17 +366,17 @@ int	main(int ac, char **av, char **ev)
 	t_token tab_21[]={{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
 	t_btree *ast_21 = create_ast_node(tab_21);
 	if (!ast_21)
-		return (ft_btreedelone(ast_20, free_token), 1);
+		return (ft_btreedelone(&ast_20, free_asn), 1);
 	
 	t_token tab_22[]={{UNSET,"cm",0,0},{UNSET,"ar",0,0}, {0,0,0,0}};
 	t_btree *ast_22 = create_ast_node(tab_22);
 	if (!ast_22)
-		return (ft_btreedelone(ast_20, free_token),ft_btreedelone(ast_21, free_token), 1);
+		return (ft_btreedelone(&ast_20, free_asn),ft_btreedelone(&ast_21, free_asn), 1);
 
 	t_token tab_23[]={{RLS,"<",0,0}, {UNSET,"f3",0,0}, {0,0,0,0}};
 	t_btree *ast_23 = create_ast_node(tab_23);
 	if (!ast_23)
-		return (ft_btreedelone(ast_20, free_token),ft_btreedelone(ast_21, free_token),ft_btreedelone(ast_22, free_token), 1);
+		return (ft_btreedelone(&ast_20, free_asn),ft_btreedelone(&ast_21, free_asn),ft_btreedelone(&ast_22, free_asn), 1);
 
 	//ATTACHED NODES
 	ast_20->left = ast_21;
@@ -411,39 +397,37 @@ int	main(int ac, char **av, char **ev)
 	t_token tab_31[]={{UNSET,"c1",0,0},{UNSET,"a1",0,0}, {0,0,0,0}};
 	t_btree *ast_31 = create_ast_node(tab_31);
 	if (!ast_31)
-		return (ft_btreedelone(ast_30, free_token), 1);
+		return (ft_btreedelone(&ast_30, free_asn), 1);
 
 	t_token tab_32[]={{PIP,"|",0,0}, {0,0,0,0}};
 	t_btree *ast_32 = create_ast_node(tab_32);
 	if (!ast_32)
-		return (ft_btreedelone(ast_30, free_token),ft_btreedelone(ast_31, free_token), 1);
+		return (ft_btreedelone(&ast_30, free_asn),ft_btreedelone(&ast_31, free_asn), 1);
 
 	t_token tab_33[]={{UNSET,"c2",0,0}, {0,0,0,0}};
 	t_btree *ast_33 = create_ast_node(tab_33);
 	if (!ast_33)
-		return (ft_btreedelone(ast_30, free_token),ft_btreedelone(ast_31, free_token), ft_btreedelone(ast_32, free_token), 1);
+		return (ft_btreedelone(&ast_30, free_asn),ft_btreedelone(&ast_31, free_asn), ft_btreedelone(&ast_32, free_asn), 1);
 
 	t_token tab_34[]={{PIP,"|",0,0}, {0,0,0,0}};
 	t_btree *ast_34 = create_ast_node(tab_34);
 	if (!ast_34)
-		return (ft_btreedelone(ast_30, free_token),ft_btreedelone(ast_31, free_token), ft_btreedelone(ast_32, free_token), ft_btreedelone(ast_33, free_token), 1);
+		return (ft_btreedelone(&ast_30, free_asn),ft_btreedelone(&ast_31, free_asn), ft_btreedelone(&ast_32, free_asn), ft_btreedelone(&ast_33, free_asn), 1);
 
 	t_token tab_35[]={{UNSET,"c3",0,0}, {0,0,0,0}};
 	t_btree *ast_35 = create_ast_node(tab_35);
 	if (!ast_35)
-		return (ft_btreedelone(ast_30, free_token),ft_btreedelone(ast_31, free_token), ft_btreedelone(ast_32, free_token), ft_btreedelone(ast_33, free_token), ft_btreedelone(ast_34, free_token), 1);
+		return (ft_btreedelone(&ast_30, free_asn),ft_btreedelone(&ast_31, free_asn), ft_btreedelone(&ast_32, free_asn), ft_btreedelone(&ast_33, free_asn), ft_btreedelone(&ast_34, free_asn), 1);
 
 	t_token tab_36[]={{OPA,"&&",0,0}, {0,0,0,0}};
 	t_btree *ast_36 = create_ast_node(tab_36);
 	if (!ast_36)
-		return (ft_btreedelone(ast_30, free_token),ft_btreedelone(ast_31, free_token), ft_btreedelone(ast_32, free_token), ft_btreedelone(ast_33, free_token), ft_btreedelone(ast_34, free_token), ft_btreedelone(ast_35, free_token), 1);
+		return (ft_btreedelone(&ast_30, free_asn),ft_btreedelone(&ast_31, free_asn), ft_btreedelone(&ast_32, free_asn), ft_btreedelone(&ast_33, free_asn), ft_btreedelone(&ast_34, free_asn), ft_btreedelone(&ast_35, free_asn), 1);
 
 	t_token tab_37[]={{UNSET,"c4",0,0}, {0,0,0,0}};
 	t_btree *ast_37 = create_ast_node(tab_37);
 	if (!ast_37)
-		return (ft_btreedelone(ast_30, free_token),ft_btreedelone(ast_31, free_token), ft_btreedelone(ast_32, free_token), ft_btreedelone(ast_33, free_token), ft_btreedelone(ast_34, free_token), ft_btreedelone(ast_35, free_token), ft_btreedelone(ast_36, free_token), 1);
-
-
+		return (ft_btreedelone(&ast_30, free_asn),ft_btreedelone(&ast_31, free_asn), ft_btreedelone(&ast_32, free_asn), ft_btreedelone(&ast_33, free_asn), ft_btreedelone(&ast_34, free_asn), ft_btreedelone(&ast_35, free_asn), ft_btreedelone(&ast_36, free_asn), 1);
 	//ATTACHED NODES
 	ast_34->left = ast_33;
 	ast_34->right = ast_35;
@@ -456,6 +440,5 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_4, &ast_36, ev);
 	print_sep(S2);
 	print_sep(S1);
-// -[ TODO ]--------------------------------------------------------------------
 	return (nb_err);
 }
