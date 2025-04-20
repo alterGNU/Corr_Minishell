@@ -344,36 +344,36 @@ int	main(int ac, char **av, char **ev)
 	//nb_err += test(str_2, &ast_10, ev);
 	//print_sep(S2);
 // -//[  ]------------------------------------------------------------------------
-	//print_subtitle("Only unset with OPA, OPO");
-	//char *str_3="<f0 <f1 cm <f3 ar";
-	//// CREATE NODES
-	//t_token tab_20[]={{RLS,"<",0,0}, {UNSET,"f0",0,0}, {0,0,0,0}};
-	//t_btree *ast_20 = create_ast_node(tab_20);
-	//if (!ast_20)
-	//	return (1);
-	//
-	//t_token tab_21[]={{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
-	//t_btree *ast_21 = create_ast_node(tab_21);
-	//if (!ast_21)
-	//	return (ft_btreedelone(&ast_20, free_asn), 1);
-	//
-	//t_token tab_22[]={{UNSET,"cm",0,0},{UNSET,"ar",0,0}, {0,0,0,0}};
-	//t_btree *ast_22 = create_ast_node(tab_22);
-	//if (!ast_22)
-	//	return (ft_btreedelone(&ast_20, free_asn),ft_btreedelone(&ast_21, free_asn), 1);
+	print_subtitle("Only unset with OPA, OPO");
+	char *str_3="<f0 <f1 cm <f3 ar";
+	// CREATE NODES
+	t_token tab_20[]={{RLS,"<",0,0}, {UNSET,"f0",0,0}, {0,0,0,0}};
+	t_btree *ast_20 = create_ast_node(tab_20);
+	if (!ast_20)
+		return (1);
+	
+	t_token tab_21[]={{RLS,"<",0,0}, {UNSET,"f1",0,0}, {0,0,0,0}};
+	t_btree *ast_21 = create_ast_node(tab_21);
+	if (!ast_21)
+		return (ft_btreedelone(&ast_20, free_asn), 1);
+	
+	t_token tab_22[]={{UNSET,"cm",0,0},{UNSET,"ar",0,0}, {0,0,0,0}};
+	t_btree *ast_22 = create_ast_node(tab_22);
+	if (!ast_22)
+		return (ft_btreedelone(&ast_20, free_asn),ft_btreedelone(&ast_21, free_asn), 1);
 
-	//t_token tab_23[]={{RLS,"<",0,0}, {UNSET,"f3",0,0}, {0,0,0,0}};
-	//t_btree *ast_23 = create_ast_node(tab_23);
-	//if (!ast_23)
-	//	return (ft_btreedelone(&ast_20, free_asn),ft_btreedelone(&ast_21, free_asn),ft_btreedelone(&ast_22, free_asn), 1);
+	t_token tab_23[]={{RLS,"<",0,0}, {UNSET,"f3",0,0}, {0,0,0,0}};
+	t_btree *ast_23 = create_ast_node(tab_23);
+	if (!ast_23)
+		return (ft_btreedelone(&ast_20, free_asn),ft_btreedelone(&ast_21, free_asn),ft_btreedelone(&ast_22, free_asn), 1);
 
-	////ATTACHED NODES
-	//ast_20->left = ast_21;
-	//ast_21->left = ast_23;
-	//ast_23->left = ast_22;
-	//// RUN TEST
-	//nb_err += test(str_3, &ast_20, ev);
-	//print_sep(S2);
+	//ATTACHED NODES
+	ast_20->left = ast_21;
+	ast_21->left = ast_23;
+	ast_23->left = ast_22;
+	// RUN TEST
+	nb_err += test(str_3, &ast_20, ev);
+	print_sep(S2);
 // -[  ]------------------------------------------------------------------------
 	print_subtitle("Combos");
 	char *str_4="c1<f1 a1|c2|c3&&c4";
