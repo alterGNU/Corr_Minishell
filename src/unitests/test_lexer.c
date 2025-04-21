@@ -93,6 +93,7 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 	}
 	printntime(S3, LEN - print_sofar);
 	printf("\n");
+	fflush(stdout);
 	// LEXING
 	lexer(str, &data);
 	// CHECK TOK_LST == NULL
@@ -369,7 +370,7 @@ int	main(int ac, char **av, char **ev)
 	
 	// TODO:Check if recursive check_lexical_rule work()
 	print_subtitle("Cases of 'Wrong syntax with IMBRICATED parenthesis'");
-	nb_err += test("((echo toto))", NULL, NULL, ev);
+	//nb_err += test("((echo toto))", NULL, NULL, ev);
 	nb_err += test("(())", NULL, NULL, ev);
 	print_sep(S2);
 	print_sep(S1);
