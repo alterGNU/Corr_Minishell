@@ -205,12 +205,20 @@ int	main(int ac, char **av, char **ev)
 	//int ai13[11] = {PARO, PARO, UNSET, PARC, OPA, PARO, UNSET, PIP, UNSET, PARC, PARC};
 	//char *as13[] = {"(","(","cmd1",")","&&","(","cmd2","|","cmd3",")",")",NULL};
 	//nb_err += test("((cmd1)&&(cmd2|cmd3))", as13, ai13, ev);
+	
+	//int ai14[21] = {PARO, PARO, PARO, UNSET, OPA, UNSET, PARC, OPO, PARO, UNSET, OPA, UNSET, PARC, PARC, OPA, PARO, UNSET, PIP, UNSET, PARC, PARC};
+	//char *as14[] = {"(", "(", "(", "cmd1", "&&", "cmd2", ")", "||", "(", "cmd3", "&&", "cmd4", ")", ")", "&&", "(", "cmd5", "|", "cmd6", ")", ")", NULL};
+	//nb_err += test("(((cmd1&&cmd2)||(cmd3&&cmd4))&&(cmd5|cmd6))", as14, ai14, ev);
+
+	//int ai15[32] = {PARO, PARO, PARO, PARO, UNSET, ESP, UNSET, PARC, RRS, UNSET, PARC, OPA, PARO, PARO, RLS, UNSET, ESP, UNSET, PARC, ESP, RRS, UNSET, PARC, PARC, OPA, PARO, RLS, UNSET, ESP, UNSET, PARC, PARC};
+	//char *as15[] = {"(", "(", "(", "(", "echo", " ", "\"inside f1\"", ")", ">", "f1", ")", "&&", "(", "(", "<", "f1", " ", "cat", ")", " ", ">", "f2", ")", ")", "&&", "(", "<", "f2", " ", "cat", ")", ")", NULL};
+	//nb_err += test("((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))", as15, ai15, ev);
 	//print_sep(S2);
 
 	print_subtitle("Combos");
-	int ai14[9] = {UNSET, RLS, UNSET, PIP, RRS, UNSET, ESP, UNSET};
-	char *as14[] = {"cmd1", "<", "f2", "|", ">", "f3", " ", "cmd2", NULL};
-	nb_err += test("cmd1<f2|>f3 cmd2", as14, ai14, ev);
+	int ai24[9] = {UNSET, RLS, UNSET, PIP, RRS, UNSET, ESP, UNSET};
+	char *as24[] = {"cmd1", "<", "f2", "|", ">", "f3", " ", "cmd2", NULL};
+	nb_err += test("cmd1<f2|>f3 cmd2", as24, ai24, ev);
 	print_sep(S2);
 	print_sep(S1);
 
