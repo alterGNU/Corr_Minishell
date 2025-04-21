@@ -216,8 +216,12 @@ int	test(char *str, t_btree **add_res, char **ev)
 	fflush(stdout);
 	// LEXING
 	lexer(str, &data);
+	if (!data->tok_lst)
+		write(1, "\n", 1);
 	// PARSER
 	parser(&data);
+	if (!data->ast)
+		write(1, "\n", 1);
 	// PRINT
 	printf("btree_res=\n");
 	fflush(stdout);
