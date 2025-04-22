@@ -156,27 +156,27 @@ int main()
 	int	nb_err = 0;
 	// =[ 	 ]==================================================================
 	print_title("A| SET TYPE");
-	t_token a0[]={{ESP," ",0,0},{UNSET,"echo",0,0},{ESP," ",0,0},{UNSET,"coucou",0,0},{ESP," ",0,0},{UNSET,"petite",0,0},{ESP," ",0,0},{UNSET,"perruche",0,0},{ESP," ",0,0},{0,0,0,0}};
+	t_token a0[]={{ESP," ",0},{UNSET,"echo",0},{ESP," ",0},{UNSET,"coucou",0},{ESP," ",0},{UNSET,"petite",0},{ESP," ",0},{UNSET,"perruche",0},{ESP," ",0},{0,0,0}};
 	nb_err += test(" echo coucou petite perruche ", a0);
-	t_token a1[]={{RLS,"<",0,0},{ESP," ",0,0},{RLD,"<<",0,0},{ESP," ",0,0},{RLT,"<<<",0,0},{ESP," ",0,0},{ERR,"<<<<",0,0},{ESP," ",0,0},{ERR,"<<<<<",0,0},{0,0,0,0}};
+	t_token a1[]={{RLS,"<",0},{ESP," ",0},{RLD,"<<",0},{ESP," ",0},{RLT,"<<<",0},{ESP," ",0},{ERR,"<<<<",0},{ESP," ",0},{ERR,"<<<<<",0},{0,0,0}};
 	nb_err += test("< << <<< <<<< <<<<<", a1);
-	t_token a2[]={{RRS,">",0,0},{ESP," ",0,0},{RRD,">>",0,0},{ESP," ",0,0},{ERR,">>>",0,0},{ESP," ",0,0},{ERR,">>>>",0,0},{ESP," ",0,0},{ERR,">>>>>",0,0},{0,0,0,0}};
+	t_token a2[]={{RRS,">",0},{ESP," ",0},{RRD,">>",0},{ESP," ",0},{ERR,">>>",0},{ESP," ",0},{ERR,">>>>",0},{ESP," ",0},{ERR,">>>>>",0},{0,0,0}};
 	nb_err += test("> >> >>> >>>> >>>>>", a2);
-	t_token a3[]={{PIP,"|",0,0},{ESP," ",0,0},{OPO,"||",0,0},{ESP," ",0,0},{ERR,"|||",0,0},{ESP," ",0,0},{ERR,"||||",0,0},{ESP," ",0,0},{ERR,"|||||",0,0},{0,0,0,0}};
+	t_token a3[]={{PIP,"|",0},{ESP," ",0},{OPO,"||",0},{ESP," ",0},{ERR,"|||",0},{ESP," ",0},{ERR,"||||",0},{ESP," ",0},{ERR,"|||||",0},{0,0,0}};
 	nb_err += test("| || ||| |||| |||||", a3);
-	t_token a4[]={{ERR,"&",0,0},{ESP," ",0,0},{OPA,"&&",0,0},{ESP," ",0,0},{ERR,"&&&",0,0},{ESP," ",0,0},{ERR,"&&&&",0,0},{ESP," ",0,0},{ERR,"&&&&&",0,0},{0,0,0,0}};
+	t_token a4[]={{ERR,"&",0},{ESP," ",0},{OPA,"&&",0},{ESP," ",0},{ERR,"&&&",0},{ESP," ",0},{ERR,"&&&&",0},{ESP," ",0},{ERR,"&&&&&",0},{0,0,0}};
 	nb_err += test("& && &&& &&&& &&&&&", a4);
 	print_sep(S1);
 	// =[  ]====================================================================
 	print_title("B| SET QUOTES");
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Case of concat_contiguous_str that start with quoted token");
-	t_token b0[]={{ESP," ",0,0},{UNSET,"'e'ch\"o\"",'\'',0},{ESP," ",0,0},{UNSET,"\"coucou 'petite' perruche\"",'"',0},{0,0,0,0}};
+	t_token b0[]={{ESP," ",0},{UNSET,"'e'ch\"o\"",0},{ESP," ",0},{UNSET,"\"coucou 'petite' perruche\"",0},{0,0,0}};
 	nb_err += test(" 'e'ch\"o\" \"coucou 'petite' perruche\"", b0);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Case of concat_contiguous_str that does not start unquoted token");
-	t_token b1[]={{UNSET,"e'c'h\"o\"",0,0},{ESP," ",0,0},{UNSET,"\"coucou 'petite' perruche\"",'"',0},{0,0,0,0}};
+	t_token b1[]={{UNSET,"e'c'h\"o\"",0},{ESP," ",0},{UNSET,"\"coucou 'petite' perruche\"",0},{0,0,0}};
 	nb_err += test("e'c'h\"o\" \"coucou 'petite' perruche\"", b1);
 	print_sep(S2);
 	print_sep(S1);
@@ -184,22 +184,22 @@ int main()
 	print_title("C| SET PARENTHESIS");
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Simple:No priority changes");
-	t_token c0[]={{PARO,"(",0,1},{UNSET,"echo",0,1},{ESP," ",0,1},{UNSET,"toto",0,1},{PARC,")",0,0},{0,0,0,0}};
+	t_token c0[]={{PARO,"(",1},{UNSET,"echo",1},{ESP," ",1},{UNSET,"toto",1},{PARC,")",0},{0,0,0}};
 	nb_err += test("(echo toto)", c0);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Simple:With priority changes");
-	t_token c1[]={{PARO,"(",0,1},{UNSET,"cmd1",0,1},{OPA,"&&",0,1},{UNSET,"cmd2",0,1},{PARC,")",0,0},{OPO,"||",0,0},{PARO,"(",0,1},{UNSET,"cmd3",0,1},{OPA,"&&",0,1},{UNSET,"cmd4",0,1},{PARC,")",0,0},{0,0,0,0}};
+	t_token c1[]={{PARO,"(",1},{UNSET,"cmd1",1},{OPA,"&&",1},{UNSET,"cmd2",1},{PARC,")",0},{OPO,"||",0},{PARO,"(",1},{UNSET,"cmd3",1},{OPA,"&&",1},{UNSET,"cmd4",1},{PARC,")",0},{0,0,0}};
 	nb_err += test("(cmd1&&cmd2)||(cmd3&&cmd4)", c1);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Imbrication:No priority changes");
-	t_token c2[]={{PARO,"(",0,1},{PARO,"(",0,2},{UNSET,"cmd1",0,2},{PARC,")",0,1},{OPA,"&&",0,1},{PARO,"(",0,2},{UNSET,"cmd2",0,2},{PARC,")",0,1},{PARC,")",0,0},{0,0,0,0}};
+	t_token c2[]={{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",1},{OPA,"&&",1},{PARO,"(",2},{UNSET,"cmd2",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
 	nb_err += test("((cmd1)&&(cmd2))", c2);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Imbrication:With priority changes");
-	t_token c3[]={{PARO,"(",0,1},{PARO,"(",0,2},{PARO,"(",0,3},{UNSET,"cmd1",0,3},{PARC,")",0,2},{OPA,"&&",0,2},{PARO,"(",0,3},{UNSET,"cmd2",0,3},{PARC,")",0,2},{PARC,")",0,1},{OPO,"||",0,1},{PARO,"(",0,2},{PARO,"(",0,3},{UNSET,"cmd3",0,3},{PARC,")",0,2},{OPA,"&&",0,2},{PARO,"(",0,3},{UNSET,"cmd4",0,3},{PARC,")",0,2},{PARC,")",0,1},{PARC,")",0,0},{0,0,0,0}};
+	t_token c3[]={{PARO,"(",1},{PARO,"(",2},{PARO,"(",3},{UNSET,"cmd1",3},{PARC,")",2},{OPA,"&&",2},{PARO,"(",3},{UNSET,"cmd2",3},{PARC,")",2},{PARC,")",1},{OPO,"||",1},{PARO,"(",2},{PARO,"(",3},{UNSET,"cmd3",3},{PARC,")",2},{OPA,"&&",2},{PARO,"(",3},{UNSET,"cmd4",3},{PARC,")",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
 	nb_err += test("(((cmd1)&&(cmd2))||((cmd3)&&(cmd4)))", c3);
 	print_sep(S2);
 	print_sep(S1);
