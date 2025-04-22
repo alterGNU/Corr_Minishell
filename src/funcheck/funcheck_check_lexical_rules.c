@@ -88,24 +88,15 @@ int	test(t_data *dt, char *str, char **tab_res, int *type_res)
 			print_sofar+=c*4;
 	}
 	printntime(S3, LEN - print_sofar);
-	if (!tab_res || !type_res)
-		printf("\n");
-	// STEP1: split_by_quote(str, "\'\"") 
-	dt->tok_lst = build_tok_lst_split_by_quotes(str);
-	// STEP2: split_by_space(str, "\t\r\s\n") 
-	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_spaces);
- 	// STEP3: split_by_separator(str, "|&<>","")
-	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_operators);
- 	// STEP4: split_by_separator(str, "|&<>","")
-	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_parenthesis);
-	// STEP5: concatenate
-	concatenate_contiguous_str(&dt->tok_lst);
-	// STEP6: set_tok_lst_type
-	set_tok_lst_type(dt->tok_lst);
-	// STEP7: set_tok_lst_parenthesis
-	set_tok_lst_parenthesis(dt);
-	// STEP8: check_lexical_rules
-	check_lexical_rules(dt);
+	t_list	*tok_lst = build_tok_lst_split_by_quotes(str);                       // STEP1: split by quote
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_spaces);     // STEP2: split by space
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_operators);  // STEP3: split by operator
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_parenthesis);// STEP4: split by parenthesis
+	concatenate_contiguous_str(&tok_lst);                                        // STEP5: concatenate contiguous unset
+	if (!tok_lst)
+		write(1, "\n", 1);
+	set_tok_lst_members(tok_lst);                                                // STEP 6: set tok_lst members (type, parenthesis)
+	check_lexical_rules(dt);                                                     // 🎯STEP 7: check_lexical_rules()
 	printf("\ntok_lst=");
 	fflush(stdout);
 	print_tok_lst(dt->tok_lst);
