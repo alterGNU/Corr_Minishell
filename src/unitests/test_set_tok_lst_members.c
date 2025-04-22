@@ -75,31 +75,18 @@ int	compare_int(int a, int b)
 	return (0);
 }
 
-/*
- * return 0 if a==b
- * TODO remove token->quote
- */
 int	compare_token(t_token *a, t_token b)
 {
 	return (compare_int(a->type, b.type) + strcmp(a->str, b.str)+ compare_int(a->parenthesis, b.parenthesis));
-	//return (compare_int(a->type, b.type) + strcmp(a->str, b.str)+ compare_int(a->quote, b.quote) + compare_int(a->parenthesis, b.parenthesis));
 }
 
-/*
- * TODO: remove t_token->quote
- */
 void	print_token_arr(t_token *tab)
 {
 	int i;
 
 	i = -1;
 	while (tab[++i].str)
-	{
-		if (tab[i].quote)
-			printf("{%d,%s,%c,%d}-->",tab[i].type,tab[i].str,tab[i].quote,tab[i].parenthesis);
-		else
-			printf("{%d,%s,0,%d}-->",tab[i].type,tab[i].str,tab[i].parenthesis);
-	}
+			printf("{%d,%s,%d}-->",tab[i].type,tab[i].str,tab[i].parenthesis);
 	printf("NULL");
 }
 
@@ -153,15 +140,9 @@ int	test(char *str, t_token tab_res[])
 		if(compare_token(((t_token *)act->content), tab_res[i]))
 		{
 			printf(CR"Diff. Token at i=%d:\n tok_lst token=", i);
-			if (((t_token *)act->content)->quote)
-				printf("{%d,%s,%c,%d}",((t_token *)act->content)->type,((t_token *)act->content)->str,((t_token *)act->content)->quote,((t_token *)act->content)->parenthesis);
-			else
-				printf("{%d,%s,0,%d}",((t_token *)act->content)->type,((t_token *)act->content)->str,((t_token *)act->content)->parenthesis);
+			printf("{%d,%s,%d}",((t_token *)act->content)->type,((t_token *)act->content)->str,((t_token *)act->content)->parenthesis);
 			printf("\n tab_res token=");
-			if (tab_res[i].quote)
-				printf("{%d,%s,%c,%d}\n"CE,tab_res[i].type,tab_res[i].str,tab_res[i].quote,tab_res[i].parenthesis);
-			else
-				printf("{%d,%s,0,%d}\n"CE,tab_res[i].type,tab_res[i].str,tab_res[i].parenthesis);
+			printf("{%d,%s,%d}\n"CE,tab_res[i].type,tab_res[i].str,tab_res[i].parenthesis);
 			return (ft_lstclear(&tok_lst, free_token), printntime(S3, LEN - 5), printf(FAIL), 1);
 		}
 		i++;

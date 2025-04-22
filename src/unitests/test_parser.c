@@ -86,7 +86,7 @@ int	compare_int(int a, int b)
 
 int	compare_token(t_token *a, t_token *b)
 {
-	return (compare_int(a->type, b->type) + strcmp(a->str, b->str)+ compare_int(a->quote, b->quote) + compare_int(a->parenthesis, b->parenthesis));
+	return (compare_int(a->type, b->type) + strcmp(a->str, b->str)+ compare_int(a->parenthesis, b->parenthesis));
 }
 
 int	compare_tdlist(t_dlist *a, t_dlist *b)
@@ -145,7 +145,6 @@ int compare_ptr(void *ptr1, void *ptr2)
 //	int		(*print_fun)(void *ptr);
 //	void	(*free_fun)(void *ptr);
 //	//char	**str;
-//	//char	quote;
 //	//int		parenthesis;
 //	//char	*args;
 //	//char	*file;

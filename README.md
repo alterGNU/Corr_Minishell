@@ -65,9 +65,6 @@
 ### Questions❓
 - [ ] ⚠️ Can we organise our project with folders struct:`minishell/{include/*.h,src/*,libft/**/*,build/*.o,minishell}`
 
-### REMARQUES
-- in struct t_token, token->quote kind of useless since == token->str[0], same for ended == token->str[ft_strlen(token->str)]
-
 #### Checking-Lexical-Rules such as Detect-Unclosed-{Quotes,Parenthesis} happen before exec:
 ```bash
 $> gaa && gc -m'ce nez PAS fini
