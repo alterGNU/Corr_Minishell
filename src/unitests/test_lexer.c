@@ -127,6 +127,9 @@ int	test(char *str, char **tab_res, int *type_res, char **ev)
 	return (free_data(&data), printf(PASS), 0);
 }
 
+// =============================================================================
+// MAIN
+// =============================================================================
 int	main(int ac, char **av, char **ev)
 {
 	(void) ac;
@@ -134,9 +137,10 @@ int	main(int ac, char **av, char **ev)
 	int	nb_err = 0;
 
 	////TODO: find a way to test this without cause exit() kill testeur
-	//print_title("CAS:NULL");
+	//print_title("0| NULL CASES");
 	//nb_err += test(NULL, NULL, NULL, ev);
 	//nb_err += test("", NULL, NULL, ev);
+	//print_sep(S2);
 
 	print_title("A| PASS COMMANDS");
 	print_subtitle("Only unset and spaces-> check if quotes is count as one UNSET");
