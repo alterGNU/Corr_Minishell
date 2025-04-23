@@ -152,10 +152,11 @@ int	len_of_tab_res(t_tok tab[])
 // Compare a t_token and a t_tok
 int	tok_diff_token(t_tok tok, t_token *token)
 {
-	int comp_type = 0;
 	if (tok.type != token->type)
-		comp_type = 1;
-	return (strcmp(tok.str, token->str) + comp_type);
+		return (1);
+	if (strcmp(tok.str, token->str))
+		return (1);
+	return (0);
 }
 
 // This function print details only on failures.
