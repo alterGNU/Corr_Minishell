@@ -1,7 +1,9 @@
 // =[ INCLUDE ]=================================================================
-#include "minishell.h"  // ⚠️ ft_print_str_array, ⚠️ print_tok_lst, build_tok_lst_split_by_operators
-#include <string.h>     // strncmp
-#include <stdio.h>      // printf ⚠️  Use printf, not ft_printf or write
+#include "minishell.h"    // build_tok_lst_split_by_quotes,build_tok_lst_split_by_spaces,build_tok_lst_split_by_operators,set_tok_lst_type
+#include <string.h>       // strcmp
+#include <stdio.h>        // printf, fflush
+						  // ⚠️  Some of minishell print fun. use ~write=>fflush
+						  // ⚠️  Depends on libft/array/ft_print_str_array()
 // =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "build_tok_lst_split_by_operators"
@@ -18,6 +20,13 @@
 #define	S1 CT"="CE
 #define	S2 CB"*"CE
 #define	S3 "-"
+// =[ STRUCT ]==================================================================
+typedef struct s_tok
+{
+	int		type;
+	char	*str;
+	int		par;
+}			t_tok;
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
 int	printntime(char *str, int n)
@@ -65,114 +74,194 @@ int	count_char_in_str(char c, char *str)
 	return (res);
 }
 // =[ TESTS FUNCTIONS ]=========================================================
-// print_str_array
-int	print_strarr(char **str)
+/* convert int to t_token->type */
+void	print_t_token_type(int i)
 {
-	int psf = printf("tab_res=");
-	fflush(stdout);
-	psf += ft_print_str_array(str);
-	return (psf);
+	if (i == -1)
+		printf("UNSET");
+	else if (i == 0)
+		printf("ESP");
+	else if (i ==1)
+		printf("CMD");
+ 	else if (i == 2)
+		printf("ARG");
+ 	else if (i == 10)
+		printf("RLS");
+ 	else if (i == 11)
+		printf("RLD");
+ 	else if (i == 12)
+		printf("RLT");
+ 	else if (i == 13)
+		printf("RRS");
+ 	else if (i == 14)
+		printf("RRD");
+ 	else if (i == 15)
+		printf("PIP");
+ 	else if (i == 20)
+		printf("OPO");
+ 	else if (i == 21)
+		printf("OPA");
+ 	else if (i == 30)
+		printf("PARO");
+ 	else if (i == 31)
+		printf("PARC");
+ 	else if (i == 42)
+		printf("ERR");
+	else
+		printf("???");
 }
-
-int	test(char *str, char **tab_res)
+// print t_tok array
+void	display_tok_array(t_tok tab[])
+{
+	int	i = -1;
+	if (!tab)
+		printf("NULL");
+	while (tab[++i].str)
+	{
+		printf("{");
+		print_t_token_type(tab[i].type);
+		printf(",%s,%d}-->",tab[i].str,tab[i].par);
+	}
+	printf("NULL");
+}
+// print tok_lst
+void	display_tok_lst(t_list *tok_lst)
+{
+	t_token	*token;
+	t_list	*act = tok_lst;
+	while (act)
+	{
+		token = ((t_token *)act->content);
+		printf("{");
+		print_t_token_type(token->type);
+		printf(",%s,%d}-->",token->str,token->parenthesis);
+		act = act->next;
+	}
+	printf("NULL");
+}
+// Return size of t_tok tab
+int	len_of_tab_res(t_tok tab[])
 {
 	int	i = 0;
-	t_list	*act;
-	int print_sofar = printf("%s(<%s>)", f_name, str);
+	if (!tab)
+		return (0);
+	while (tab[i].str)
+		i++;
+	return (i);
+}
+// Compare a t_token and a t_tok
+int	tok_diff_token(t_tok tok, t_token *token)
+{
+	int comp_type = 0;
+	if (tok.type != token->type)
+		comp_type = 1;
+	return (strcmp(tok.str, token->str) + comp_type);
+}
+
+// This function print details only on failures.
+int	test(char *str, t_tok tab_res[])
+{
+	// Print test header
+	int print_sofar	 = printf("%s(", f_name);
+	printf(CB);
+	print_sofar 	+= printf("%s", str);
+	printf(CE);
+	print_sofar 	+= printf(")");
 	if (str)
 	{
 		int c = count_char_in_str('\t', str);
 		if (c)
-			print_sofar+=c*4;
+			print_sofar+=c*2;
 	}
-	printntime(S3, LEN - print_sofar - 5);
-	if (!str || !tab_res || !*tab_res)
-		printf("---\n");
-	t_list	*res = build_tok_lst_split_by_operators(str);
-	if (!res)
+	printntime(S3, LEN - print_sofar);
+	printf("\n");
+	// STEP 1
+	t_list *tok_lst = build_tok_lst_split_by_quotes(str);
+	// STEP 2
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_spaces);
+	// STEP 3
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_operators);
+	// CHECK TOK_LST == NULL
+	if (!tok_lst)
 	{
 		if (!tab_res)
-			return (printntime(S3, LEN - 5), printf(PASS), 0);
-		return (printf("---\n%s return NULL\n", f_name), print_strarr(tab_res), printf("\n"), printntime(S3, LEN - 5), printf(FAIL), 1);
+			return (printf(CV" (tok_lst == tab_res == NULL)\n"CE),printntime(S3, LEN - 5), printf(PASS), 0);
+		write(1, "\n", 1);
+		return (printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
-	act = res;
-	while (tab_res[i] && act && !strcmp(tab_res[i], ((t_token *)(act->content))->str))
+	// Print result
+	printf("tab_res=");
+	display_tok_array(tab_res);
+	printf("\ntok_lst=");
+	display_tok_lst(tok_lst);
+	printf("\n");
+	// COMPARE TOTAL SIZE
+	int len_tab_res = len_of_tab_res(tab_res);
+	int len_tok_lst = ft_lstsize(tok_lst);
+	if (len_tok_lst != len_tab_res)
+		return (printntime(S3, LEN - 5), printf(FAIL), 1);
+	// COMPARE EACH NODE
+	int	i = 0;
+	t_list	*act = tok_lst;
+	while (tab_res[i].str && act)
 	{
+		if (tok_diff_token(tab_res[i], ((t_token *)act->content)))
+		{
+			printf(CR"tok diff. token at i=%d:\n", i);
+			printf("tok  ={");
+			print_t_token_type(tab_res[i].type);
+			printf(",%s,%d}\n",tab_res[i].str,tab_res[i].par);
+			printf("token={");
+			print_t_token_type(((t_token *)act->content)->type);
+			printf(",%s,%d}\n"CE,((t_token *)act->content)->str,((t_token *)act->content)->parenthesis);
+			return (ft_lstclear(&tok_lst, free_token),printntime(S3, LEN - 5), printf(FAIL), 1);
+		}
 		act = act->next;
 		i++;
 	}
-	printf("-----\n");
-	print_strarr(tab_res);
-	printf("\ntok_lst=");
-	fflush(stdout);
-	print_tok_lst(res);
-	printf("\n");
-	if (!tab_res[i] && !act)
-		return (ft_lstclear(&res, free_token), printntime(S3, LEN - 5), printf(PASS), 0);
-	if ((!tab_res[i] && act) || (tab_res[i] && !act))
-		return (ft_lstclear(&res, free_token), printntime(S3, LEN - 5), printf(FAIL), 1);
-	if (strcmp(tab_res[i], ((t_token *)(act->content))->str))
-		return (ft_lstclear(&res, free_token), printntime(S3, LEN - 5), printf(FAIL), 1);
-	return (ft_lstclear(&res, free_token), printf(PASS), 0);
+	return (ft_lstclear(&tok_lst, free_token),printntime(S3, LEN - 5), printf(PASS), 0);
 }
 
-int main()
+// =============================================================================
+// MAIN
+// =============================================================================
+int	main(void)
 {
 	int	nb_err = 0;
-
-	print_title("CAS:NULL");
-	print_subtitle("These cases never really happen because they're handled in main, before lexer(dt, line) is called");
+	// =[  ]====================================================================
+	print_title("0| NULL CASES");
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("str==NULL");
 	nb_err += test(NULL, NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("str==Empty");
 	nb_err += test("", NULL);
 	print_sep(S2);
 	print_sep(S1);
-
-	print_title("CAS NO OPERATOR");
-	char *t0[] = {"   abcd   ", NULL};
-	nb_err += test("   abcd   ", t0);
+	// =[  ]====================================================================
+	print_title("A| NO OPERATORS");
+	t_tok a0[]={{-1,"there_is_no_op",0},{0,0,0}};
+	nb_err += test("there_is_no_op", a0);
+	t_tok a1[]={{-1,"there",0},{-1,"'is<|>no'",0},{-1,"op",0},{0,0,0}};
+	nb_err += test("there'is<|>no'op", a1);
+	t_tok a2[]={{-1,"there",0},{-1,"\"is<<&&||>>no\"",0},{-1,"op",0},{0,0,0}};
+	nb_err += test("there\"is<<&&||>>no\"op", a2);
 	print_sep(S1);
-
-	print_title("CAS ONE OPERATOR");
-	char *t1[] = {"<", NULL};
-	nb_err += test("<", t1);
-	char *t2[] = {">", NULL};
-	nb_err += test(">", t2);
-	char *t3[] = {"|", NULL};
-	nb_err += test("|", t3);
-	char *t4[] = {"&", NULL};
-	nb_err += test("&", t4);
+	// =[  ]====================================================================
+	print_title("B| ONLY OPERATORS");
+	print_subtitle("One Type At The Time");
+	t_tok b0[]={{-1,"<",0},{-1,"f1",0},{-1,"<<",0},{-1,"f2",0},{-1,"<<<",0},{-1,"f3",0},{-1,"<<<<",0},{-1,"f4",0},{-1,"<<<<<",0},{-1,"f5",0},{0,0,0}};
+	nb_err += test("<f1<<f2<<<f3<<<<f4<<<<<f5", b0);
+	t_tok b1[]={{-1,">",0},{-1,"f1",0},{-1,">>",0},{-1,"f2",0},{-1,">>>",0},{-1,"f3",0},{-1,">>>>",0},{-1,"f4",0},{-1,">>>>>",0},{-1,"f5",0},{0,0,0}};
+	nb_err += test(">f1>>f2>>>f3>>>>f4>>>>>f5", b1);
+	t_tok b2[]={{-1,"|",0},{-1,"f1",0},{-1,"||",0},{-1,"f2",0},{-1,"|||",0},{-1,"f3",0},{-1,"||||",0},{-1,"f4",0},{-1,"|||||",0},{-1,"f5",0},{0,0,0}};
+	nb_err += test("|f1||f2|||f3||||f4|||||f5", b2);
+	t_tok b3[]={{-1,"&",0},{-1,"f1",0},{-1,"&&",0},{-1,"f2",0},{-1,"&&&",0},{-1,"f3",0},{-1,"&&&&",0},{-1,"f4",0},{-1,"&&&&&",0},{-1,"f5",0},{0,0,0}};
+	nb_err += test("&f1&&f2&&&f3&&&&f4&&&&&f5", b3);
+	t_tok b4[]={{-1,"<",0},{-1,">",0},{-1,"<<",0},{-1,">>",0},{-1,"<<<",0},{-1,">>>",0},{-1,"<<<<",0},{-1,">>>>",0},{-1,"|",0},{-1,"&",0},{-1,"||",0},{-1,"&&",0},{-1,"|||",0},{-1,"&&&",0},{0,0,0}};
+	nb_err += test("<><<>><<<>>><<<<>>>>|&||&&|||&&&", b4);
+	print_sep(S2);
 	print_sep(S1);
-
-	print_title("CAS ONLY OPERATORS (MULTIPLE)");
-	char *t5[] = {"<<<", NULL};
-	nb_err += test("<<<", t5);
-	char *t6[] = {"<", ">", "&", "|", NULL};
-	nb_err += test("<>&|", t6);
-	char *t7[] = {"<<<", ">", "&&", "|", NULL};
-	nb_err += test("<<<>&&|", t7);
-	char *t8[] = {"  ", "<<<", "   ", ">", "  ", "&&", "  ","|", "  ", NULL};
-	nb_err += test("  <<<   >  &&  |  ", t8);
-	char *t9[] = {"|", "&&&", "||", NULL};
-	nb_err += test("|&&&||", t9);
-	char *t10[] = {"<", ">", "<", ">", NULL};
-	nb_err += test("<><>", t10);
-	print_sep(S1);
-
-	print_title("CAS SIMPLE-OPERATORS WITH COMMANDS");
-	char *t11[] = {"<", " echo titi", "|", "cat", NULL};
-	nb_err += test("< echo titi|cat", t11);
-	char *t12[] = {"  ","<", " echo titi", "|", "cat", NULL};
-	nb_err += test("  < echo titi|cat", t12);
-	char *tt12[] = {"  ","<", " echo titi ", "|", "ls", NULL};
-	nb_err += test("  < echo titi |ls", tt12);
-	print_sep(S1);
-
-	print_title("CAS MULTIPLE-OPERATORS WITH COMMANDS");
-	char *t13[] = {"<<<", " $titi ", "|", " cat", NULL};
-	nb_err += test("<<< $titi | cat", t13);
-	char *t14[] = {"tutu=titi", "&&", "<<<", "$titi cat ", "&", NULL};
-	nb_err += test("tutu=titi&&<<<$titi cat &", t14);
-	print_sep(S1);
-
 	return (nb_err);
 }
