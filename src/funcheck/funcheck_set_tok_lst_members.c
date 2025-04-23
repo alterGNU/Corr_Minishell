@@ -22,7 +22,7 @@
 #define	S3 "-"
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
-int printntime(char *str, int n)
+int	printntime(char *str, int n)
 {
 	for (int i = 0 ; i < n; i++)
 		printf("%s", str);
@@ -67,105 +67,201 @@ int	count_char_in_str(char c, char *str)
 	return (res);
 }
 // =[ TESTS FUNCTIONS ]=========================================================
-// a==b return 0, else return 1
-int	compare_int(int a, int b)
+/* convert int to t_token->type */
+void	print_t_token_type(int i)
 {
-	if (a != b)
+	if (i == -1)
+		printf("UNSET");
+	else if (i == 0)
+		printf("ESP");
+	else if (i ==1)
+		printf("CMD");
+ 	else if (i == 2)
+		printf("ARG");
+ 	else if (i == 10)
+		printf("RLS");
+ 	else if (i == 11)
+		printf("RLD");
+ 	else if (i == 12)
+		printf("RLT");
+ 	else if (i == 13)
+		printf("RRS");
+ 	else if (i == 14)
+		printf("RRD");
+ 	else if (i == 15)
+		printf("PIP");
+ 	else if (i == 20)
+		printf("OPO");
+ 	else if (i == 21)
+		printf("OPA");
+ 	else if (i == 30)
+		printf("PARO");
+ 	else if (i == 31)
+		printf("PARC");
+ 	else if (i == 42)
+		printf("ERR");
+	else
+		printf("???");
+}
+// print tok_lst
+void	display_tok_lst(t_list *tok_lst)
+{
+	t_token	*token;
+	t_list	*act = tok_lst;
+	while (act)
+	{
+		token = ((t_token *)act->content);
+		printf("{");
+		print_t_token_type(token->type);
+		printf(",%s,%d}-->",token->str,token->parenthesis);
+		act = act->next;
+	}
+	printf("NULL");
+}
+// print tok_lst_const
+void	display_token_array(t_token token_arr[])
+{
+	if (token_arr)
+	{
+		int i = -1;
+		while (token_arr[++i].str)
+		{
+			printf("{");
+			print_t_token_type(token_arr[i].type);
+			printf(",%s,%d}-->",token_arr[i].str,token_arr[i].parenthesis);
+		}
+	}
+	printf("NULL");
+}
+// Return size of t_token array
+int	len_of_tab_res(t_token tab[])
+{
+	int	i = 0;
+	if (!tab)
+		return (0);
+	while (tab[i].str)
+		i++;
+	return (i);
+}
+// Compare a t_token and a t_tok
+int	tokcst_diff_token(t_token tok_cst, t_token *token)
+{
+	if (tok_cst.type != token->type)
+		return (1);
+	if (strcmp(tok_cst.str, token->str))
+		return (1);
+	if (tok_cst.parenthesis != token->parenthesis)
 		return (1);
 	return (0);
 }
 
-int	compare_token(t_token *a, t_token b)
-{
-	return (compare_int(a->type, b.type) + strcmp(a->str, b.str)+ compare_int(a->parenthesis, b.parenthesis));
-}
-
-void	print_token_arr(t_token *tab)
-{
-	int i;
-
-	i = -1;
-	while (tab[++i].str)
-			printf("{%d,%s,%d}-->",tab[i].type,tab[i].str,tab[i].parenthesis);
-	printf("NULL");
-}
-
+// This function print details only on failures.
 int	test(char *str, t_token tab_res[])
 {
 	// Print test header
-	int print_sofar = printf("%s(%s)", f_name, str);
+	int print_sofar	 = printf("%s(", f_name);
+	printf(CB);
+	print_sofar 	+= printf("%s", str);
+	printf(CE);
+	print_sofar 	+= printf(")");
 	if (str)
 	{
 		int c = count_char_in_str('\t', str);
 		if (c)
-			print_sofar+=c*4;
+			print_sofar+=c*2;
 	}
 	printntime(S3, LEN - print_sofar);
-	t_list	*tok_lst = build_tok_lst_split_by_quotes(str);                       // STEP1: split by quote
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_spaces);     // STEP2: split by space
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_operators);  // STEP3: split by operator
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_parenthesis);// STEP4: split by parenthesis
-	concatenate_contiguous_str(&tok_lst);                                        // STEP5: concatenate contiguous unset
+	printf("\n");
+	// STEP 1
+	t_list *tok_lst = build_tok_lst_split_by_quotes(str);
 	if (!tok_lst)
 		write(1, "\n", 1);
-	set_tok_lst_members(tok_lst);                                                // 🎯STEP 6: set tok_lst members (type, parenthesis, quote)
-	printf("\ntab_res=");
-	print_token_arr(tab_res);
-	printf("\ntok_lst=");
-	fflush(stdout);
-	print_tok_lst(tok_lst);
-	printf("\n");
-	// CHECK NULL CASES
+	// STEP 2
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_spaces);
+	// STEP 3
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_operators);
+	// STEP 4
+	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_parenthesis);
+	// STEP 5
+	concatenate_contiguous_str(&tok_lst);
+	// STEP 6
+	set_tok_lst_members(tok_lst);
+	// CHECK TOK_LST == NULL
 	if (!tok_lst)
 	{
 		if (!tab_res)
-			return (printntime(S3, LEN - 5), printf(PASS), 0);
+			return (printf(CV"tok_lst == tab_res == NULL\n"CE),printntime(S3, LEN - 5), printf(PASS), 0);
+		write(1, "\n", 1);
 		return (printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
-	// Get len of tab_res
-	int tab_len = 0;
-	int	i = -1;
-	while (tab_res[++i].str)
-		tab_len++;
-	// Get len of tok_lst
-	int lst_len = ft_lstsize(tok_lst);
-	// COMPARE SIZE
-	if (lst_len != tab_len)
-		return (ft_lstclear(&tok_lst, free_token), printntime(S3, LEN - 5), printf(FAIL), 1);
+	// Print result
+	printf("tab_res=");
+	display_token_array(tab_res);
+	printf("\ntok_lst=");
+	display_tok_lst(tok_lst);
+	printf("\n");
+	// COMPARE TOTAL SIZE
+	int len_tab_res = len_of_tab_res(tab_res);
+	int len_tok_lst = ft_lstsize(tok_lst);
+	if (len_tok_lst != len_tab_res)
+		return (printntime(S3, LEN - 5), printf(FAIL), 1);
 	// COMPARE EACH NODE
-	i = 0;
-	t_list *act = tok_lst;
-	while (i < tab_len && act)
+	int	i = 0;
+	t_list	*act = tok_lst;
+	while (tab_res[i].str && act)
 	{
-		if(compare_token(((t_token *)act->content), tab_res[i]))
+		if (tokcst_diff_token(tab_res[i], ((t_token *)act->content)))
 		{
-			printf(CR"Diff. Token at i=%d:\n tok_lst token=", i);
-			printf("{%d,%s,%d}",((t_token *)act->content)->type,((t_token *)act->content)->str,((t_token *)act->content)->parenthesis);
-			printf("\n tab_res token=");
-			printf("{%d,%s,%d}\n"CE,tab_res[i].type,tab_res[i].str,tab_res[i].parenthesis);
-			return (ft_lstclear(&tok_lst, free_token), printntime(S3, LEN - 5), printf(FAIL), 1);
+			printf(CR"tok diff. token at i=%d:\n", i);
+			printf("tok_cst={");
+			print_t_token_type(tab_res[i].type);
+			printf(",%s,%d}\n",tab_res[i].str,tab_res[i].parenthesis);
+			printf("token ={");
+			print_t_token_type(((t_token *)act->content)->type);
+			printf(",%s,%d}\n"CE,((t_token *)act->content)->str,((t_token *)act->content)->parenthesis);
+			return (ft_lstclear(&tok_lst, free_token),printntime(S3, LEN - 5), printf(FAIL), 1);
 		}
-		i++;
 		act = act->next;
+		i++;
 	}
-	return (ft_lstclear(&tok_lst, free_token), printntime(S3, LEN - 5), printf(PASS), 0);
+	return (ft_lstclear(&tok_lst, free_token),printntime(S3, LEN - 5), printf(PASS), 0);
 }
 
+// =============================================================================
+// MAIN
+// =============================================================================
 int main()
 {
 	int	nb_err = 0;
+	// =[  ]====================================================================
+	print_title("0| NULL CASES");
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("str==NULL");
+	nb_err += test(NULL, NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("str==Empty");
+	nb_err += test("", NULL);
+	print_sep(S2);
+	print_sep(S1);
 	// =[ 	 ]==================================================================
 	print_title("A| SET TYPE");
-	t_token a0[]={{ESP," ",0},{UNSET,"echo",0},{ESP," ",0},{UNSET,"coucou",0},{ESP," ",0},{UNSET,"petite",0},{ESP," ",0},{UNSET,"perruche",0},{ESP," ",0},{0,0,0}};
-	nb_err += test(" echo coucou petite perruche ", a0);
-	t_token a1[]={{RLS,"<",0},{ESP," ",0},{RLD,"<<",0},{ESP," ",0},{RLT,"<<<",0},{ESP," ",0},{ERR,"<<<<",0},{ESP," ",0},{ERR,"<<<<<",0},{0,0,0}};
-	nb_err += test("< << <<< <<<< <<<<<", a1);
+	//t_token a0[]={{ESP," ",0},{UNSET,"echo",0},{ESP," ",0},{UNSET,"coucou",0},{ESP," ",0},{UNSET,"petite",0},{ESP," ",0},{UNSET,"perruche",0},{ESP," ",0},{0,0,0}};
+	//nb_err += test(" echo coucou petite perruche ", a0);
+	//t_token a1[]={{RLS,"<",0},{ESP," ",0},{RLD,"<<",0},{ESP," ",0},{RLT,"<<<",0},{ESP," ",0},{ERR,"<<<<",0},{ESP," ",0},{ERR,"<<<<<",0},{0,0,0}};
+	//nb_err += test("< << <<< <<<< <<<<<", a1);
 	//t_token a2[]={{RRS,">",0},{ESP," ",0},{RRD,">>",0},{ESP," ",0},{ERR,">>>",0},{ESP," ",0},{ERR,">>>>",0},{ESP," ",0},{ERR,">>>>>",0},{0,0,0}};
 	//nb_err += test("> >> >>> >>>> >>>>>", a2);
 	//t_token a3[]={{PIP,"|",0},{ESP," ",0},{OPO,"||",0},{ESP," ",0},{ERR,"|||",0},{ESP," ",0},{ERR,"||||",0},{ESP," ",0},{ERR,"|||||",0},{0,0,0}};
 	//nb_err += test("| || ||| |||| |||||", a3);
 	//t_token a4[]={{ERR,"&",0},{ESP," ",0},{OPA,"&&",0},{ESP," ",0},{ERR,"&&&",0},{ESP," ",0},{ERR,"&&&&",0},{ESP," ",0},{ERR,"&&&&&",0},{0,0,0}};
 	//nb_err += test("& && &&& &&&& &&&&&", a4);
+	t_token a5[]={{ESP," ",0},{ERR,"&",0},{RLS,"<",0},{RRS,">",0},{PIP,"|",0},\
+				  {ESP," ",0},{OPA,"&&",0},{RLD,"<<",0},{RRD,">>",0},{OPO,"||",0},\
+				  {ESP," ",0},{ERR,"&&&",0},{RLT,"<<<",0},{ERR,">>>",0},{ERR,"|||",0},\
+				  {ESP," ",0},{ERR,"&&&&",0},{ERR,"<<<<",0},{ERR,">>>>",0},{ERR,"||||",0},\
+				  {ESP," ",0},{0,0,0}};
+	nb_err += test(" &<>|  &&<<>>||   &&&<<<>>>|||    &&&&<<<<>>>>||||     ", a5);
 	print_sep(S1);
 	// =[  ]====================================================================
 	print_title("B| SET QUOTES");
