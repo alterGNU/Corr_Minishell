@@ -274,3 +274,4 @@ int	main(void)
 	nb_err += test("   ' inside single '   \" inside double \"   ", c1);
 	return (nb_err);
 }
+
