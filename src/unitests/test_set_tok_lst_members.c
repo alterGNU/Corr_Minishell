@@ -185,7 +185,7 @@ int	test(char *str, t_token tab_res[])
 	// STEP 5
 	concatenate_contiguous_str(&tok_lst);
 	// STEP 6
-	set_tok_lst_members(tok_lst);
+	int res = set_tok_lst_members(tok_lst);
 	// CHECK TOK_LST == NULL
 	if (!tok_lst)
 	{
@@ -195,7 +195,7 @@ int	test(char *str, t_token tab_res[])
 		return (printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
 	// Print result
-	printf("tab_res=");
+	printf("set_tok_lst_members() returns %d\ntab_res=", res);
 	display_token_array(tab_res);
 	printf("\ntok_lst=");
 	display_tok_lst(tok_lst);
