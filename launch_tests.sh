@@ -281,8 +281,8 @@ launch_unitests()
                         local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
                         nb_err=$(( nb_err + 1 ))
                         echo -e "${fun}\tcompilation\t${log_comp_fail}" >> ${LOG_FAIL}
-                        echo -en " ❌ ${R0}Compilation failed.${E}\n"
-                        sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
+                        echo -en " ❌ ${R0}Compilation failed.   ${G0}Here the first 10 lines (out of $(cat ${log_comp_fail} | wc -l))${E}\n"
+                        head -n 10 ${log_comp_fail} | sed 's/^/\x1b[0;31m       /'
                         continue
                     fi
                 else
