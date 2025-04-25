@@ -234,69 +234,6 @@ int	main(int ac, char **av, char **ev)
 	//nb_err += test(ev,"",NULL);
 	//print_sep(S2);
 	// =[  ]====================================================================
-	print_title("A| PASS COMMANDS");
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Only unset and spaces-> check if quotes is count as one UNSET");
-	t_token a0[] = {{ESP," ",0}, {UNSET,"cmd1",0}, {ESP," ",0}, {UNSET,"arg1",0}, {ESP," ",0}, {UNSET,"arg2",0}, {ESP," ",0}, {UNSET,"\"arg3 && arg4\"",0}, {ESP," ",0}, {0,0,0}};
-	nb_err += test(ev," cmd1 arg1   arg2   \"arg3 && arg4\" ",a0);
-	print_sep(S2);
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Real command with REDIR and PIPE OPERATORS");
-	t_token a1[] = {{RLS,"<",0}, {ESP," ",0}, {UNSET,"file1",0}, {ESP," ",0}, {UNSET,"cat",0}, {ESP," ",0}, {PIP,"|",0}, {ESP," ",0}, {UNSET,"cat",0}, {ESP," ",0}, {RRS,">",0}, {ESP," ",0}, {UNSET,"file2",0},{0,0,0}};
-	nb_err += test(ev,"< file1 cat | cat > file2",a1);
-	print_sep(S2);
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("3 tests to check concatenation of contiguous quoted unset");
-	t_token a2[] = {{UNSET,"'e'''cho",0}, {ESP," ",0}, {UNSET,"toto",0}, {RRD,">>",0}, {UNSET,"file1",0},{0,0,0}};
-	nb_err += test(ev,"'e'''cho toto>>file1",a2);
-	
-	t_token a3[] = {{ESP," ",0},{UNSET,"'e'\"c\"ho",0}, {ESP," ",0}, {UNSET,"toto",0}, {OPA,"&&",0}, {UNSET,"echo",0}, {ESP," ",0}, {UNSET,"OK",0}, {OPO,"||",0}, {UNSET,"echo",0},{ESP," ",0}, {UNSET,"KO",0},{0,0,0}};
-	nb_err += test(ev,"    'e'\"c\"ho  toto&&echo OK||echo  KO",a3);
-
-	t_token a4[] = {{ESP," ",0},{PARO,"(",1},{UNSET,"'e'\"c\"ho",1}, {ESP," ",1}, {UNSET,"toto",1},{PARC,")",0},{OPA,"&&",0}, {UNSET,"echo",0}, {ESP," ",0}, {UNSET,"OK",0}, {OPO,"||",0}, {UNSET,"echo",0},{ESP," ",0}, {UNSET,"KO",0}, {ESP," ",0},{0,0,0}};
-	nb_err += test(ev,"    ('e'\"c\"ho  toto)&&echo OK||echo  KO    ",a4);
-	print_sep(S2);
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Check all binary operators");
-	t_token a5[] = {{UNSET,"cmd1",0}, {PIP,"|",0}, {UNSET,"cmd2",0}, {OPA,"&&",0}, {UNSET,"cmd3",0}, {OPO,"||",0}, {UNSET,"cmd4",0},{0,0,0}};
-	nb_err += test(ev,"cmd1|cmd2&&cmd3||cmd4",a5);
-
-	t_token a6[] = {{ESP," ",0}, {UNSET,"cmd1",0}, {ESP," ",0},  {PIP,"|",0}, {ESP," ",0},  {UNSET,"cmd2",0}, {ESP," ",0},  {OPA,"&&",0}, {ESP," ",0},  {UNSET,"cmd3",0}, {ESP," ",0},  {OPO,"||",0}, {ESP," ",0},  {UNSET,"cmd4",0}, {ESP," ",0},{0,0,0}};
-	nb_err += test(ev,"   cmd1   |   cmd2   &&   cmd3   ||   cmd4   ",a6);
-	print_sep(S2);
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Check all unary operators");
-	t_token a7[] = {{RLS,"<",0}, {UNSET,"f1",0}, {RLD,"<<",0}, {UNSET,"f2",0}, {RLT,"<<<",0}, {UNSET,"f3",0}, {RRS,">",0}, {UNSET,"f4",0},{RRD,">>",0}, {UNSET,"f5",0},{0,0,0}};
-	nb_err += test(ev,"<f1<<f2<<<f3>f4>>f5",a7);
-
-	t_token a8[] = {{ESP," ",0}, {RLS,"<",0}, {ESP," ",0}, {UNSET,"f1",0}, {ESP," ",0}, {RLD,"<<",0}, {ESP," ",0}, {UNSET,"f2",0}, {ESP," ",0}, {RLT,"<<<",0}, {ESP," ",0}, {UNSET,"f3",0}, {ESP," ",0}, {RRS,">",0}, {ESP," ",0}, {UNSET,"f4",0}, {ESP," ",0},{RRD,">>",0}, {ESP," ",0}, {UNSET,"f5",0}, {ESP," ",0},{0,0,0}};
-	nb_err += test(ev,"  <  f1  <<  f2  <<<  f3  >  f4  >>  f5  ",a8);
-	print_sep(S2);
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Check parenthesis");
-	t_token a9[] = {{PARO,"(",1}, {UNSET,"cmd",1}, {PARC,")",0},{0,0,0}};
-	nb_err += test(ev,"(cmd)",a9);
-
-	t_token a10[] = {{PARO,"(",1}, {UNSET,"cmd1",1}, {OPA,"&&",1}, {UNSET,"cmd2",1}, {PARC,")",0}, {OPO,"||",0}, {PARO,"(",1}, {UNSET,"cmd3",1}, {OPA,"&&",1}, {UNSET,"cmd4",1}, {PARC,")",0},{0,0,0}};
-	nb_err += test(ev,"(cmd1&&cmd2)||(cmd3&&cmd4)",a10);
-
-	t_token a11[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
-	nb_err += test(ev,"(((cmd1&&cmd2)))",a11);
-
-	t_token a12[] = {{ESP," ",0}, {PARO,"(",1}, {ESP," ",1}, {PARO,"(",2}, {ESP," ",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {ESP," ",2}, {PARC,")",1}, {ESP," ",1}, {PARC,")",0}, {ESP," ",0},{0,0,0}};
-	nb_err += test(ev," ( ( (cmd1&&cmd2) ) ) ",a12);
-
-	t_token a13[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",1},{OPA,"&&",1},{PARO,"(",2},{UNSET,"cmd2",2},{PIP,"|",2},{UNSET,"cmd3",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
-	nb_err += test(ev,"((cmd1)&&(cmd2|cmd3))",a13);
-	
-	t_token a14[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {OPO,"||",2}, {PARO,"(",3}, {UNSET,"cmd3",3}, {OPA,"&&",3}, {UNSET,"cmd4",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {UNSET,"cmd5",2}, {PIP,"|",2}, {UNSET,"cmd6",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
-	nb_err += test(ev,"(((cmd1&&cmd2)||(cmd3&&cmd4))&&(cmd5|cmd6))",a14);
-
-	t_token a15[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {PARO,"(",4}, {UNSET,"echo",4}, {ESP," ",4}, {UNSET,"\"inside f1\"",4}, {PARC,")",3}, {RRS,">",3}, {UNSET,"f1",3}, {PARC,")",2}, {OPA,"&&",2}, {PARO,"(",3}, {PARO,"(",4}, {RLS,"<",4}, {UNSET,"f1",4}, {ESP," ",4}, {UNSET,"cat",4}, {PARC,")",3}, {ESP," ",3}, {RRS,">",3}, {UNSET,"f2",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {RLS,"<",2}, {UNSET,"f2",2}, {ESP," ",2}, {UNSET,"cat",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
-	nb_err += test(ev,"((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))",a15);
-	print_sep(S2);
-	print_sep(S1);
-	// =[  ]====================================================================
 	print_subtitle("Combos");
 	t_token a24[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cat",2},{PARC,")",1},{RLS,"<",1},{UNSET,"f2",1},{PARC,")",0},{PIP,"|",0},{PARO,"(",1},{RRS,">",1},{UNSET,"f3",1},{ESP," ",1},{UNSET,"cat",1},{PARC,")",0},{0,0,0}};
 	nb_err += test(ev,"((cat)<f2)|(>f3 cat)",a24);
@@ -446,15 +383,79 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"cmd1 ( cmd2 )",NULL);
 	nb_err += test(ev,"(cmd1)(cmd2)",NULL);
 	nb_err += test(ev," ( cmd1 ) ( cmd2 ) ",NULL);
+	print_sep(S2);
 	// =[  ]====================================================================
-	// TODO:🎯 Should return-->Arithmetique not supported
-	//print_title("ARITHMETIQUE PARENTHESIS'");
+	print_subtitle("ARITHMETIQUE PARENTHESIS'");
 	nb_err += test(ev,"(())",NULL);
 	nb_err += test(ev,"(( ))",NULL);
 	nb_err += test(ev,"((0))",NULL);
 	nb_err += test(ev,"((echo toto))",NULL);
 	nb_err += test(ev,"((1 + 2))",NULL);
-	//print_sep(S1);
+	print_sep(S2);
+	print_sep(S1);
+	// =[  ]====================================================================
+	print_title("A| PASS COMMANDS");
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Only unset and spaces-> check if quotes is count as one UNSET");
+	t_token a0[] = {{ESP," ",0}, {UNSET,"cmd1",0}, {ESP," ",0}, {UNSET,"arg1",0}, {ESP," ",0}, {UNSET,"arg2",0}, {ESP," ",0}, {UNSET,"\"arg3 && arg4\"",0}, {ESP," ",0}, {0,0,0}};
+	nb_err += test(ev," cmd1 arg1   arg2   \"arg3 && arg4\" ",a0);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Real command with REDIR and PIPE OPERATORS");
+	t_token a1[] = {{RLS,"<",0}, {ESP," ",0}, {UNSET,"file1",0}, {ESP," ",0}, {UNSET,"cat",0}, {ESP," ",0}, {PIP,"|",0}, {ESP," ",0}, {UNSET,"cat",0}, {ESP," ",0}, {RRS,">",0}, {ESP," ",0}, {UNSET,"file2",0},{0,0,0}};
+	nb_err += test(ev,"< file1 cat | cat > file2",a1);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("3 tests to check concatenation of contiguous quoted unset");
+	t_token a2[] = {{UNSET,"'e'''cho",0}, {ESP," ",0}, {UNSET,"toto",0}, {RRD,">>",0}, {UNSET,"file1",0},{0,0,0}};
+	nb_err += test(ev,"'e'''cho toto>>file1",a2);
+	
+	t_token a3[] = {{ESP," ",0},{UNSET,"'e'\"c\"ho",0}, {ESP," ",0}, {UNSET,"toto",0}, {OPA,"&&",0}, {UNSET,"echo",0}, {ESP," ",0}, {UNSET,"OK",0}, {OPO,"||",0}, {UNSET,"echo",0},{ESP," ",0}, {UNSET,"KO",0},{0,0,0}};
+	nb_err += test(ev,"    'e'\"c\"ho  toto&&echo OK||echo  KO",a3);
+
+	t_token a4[] = {{ESP," ",0},{PARO,"(",1},{UNSET,"'e'\"c\"ho",1}, {ESP," ",1}, {UNSET,"toto",1},{PARC,")",0},{OPA,"&&",0}, {UNSET,"echo",0}, {ESP," ",0}, {UNSET,"OK",0}, {OPO,"||",0}, {UNSET,"echo",0},{ESP," ",0}, {UNSET,"KO",0}, {ESP," ",0},{0,0,0}};
+	nb_err += test(ev,"    ('e'\"c\"ho  toto)&&echo OK||echo  KO    ",a4);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Check all binary operators");
+	t_token a5[] = {{UNSET,"cmd1",0}, {PIP,"|",0}, {UNSET,"cmd2",0}, {OPA,"&&",0}, {UNSET,"cmd3",0}, {OPO,"||",0}, {UNSET,"cmd4",0},{0,0,0}};
+	nb_err += test(ev,"cmd1|cmd2&&cmd3||cmd4",a5);
+
+	t_token a6[] = {{ESP," ",0}, {UNSET,"cmd1",0}, {ESP," ",0},  {PIP,"|",0}, {ESP," ",0},  {UNSET,"cmd2",0}, {ESP," ",0},  {OPA,"&&",0}, {ESP," ",0},  {UNSET,"cmd3",0}, {ESP," ",0},  {OPO,"||",0}, {ESP," ",0},  {UNSET,"cmd4",0}, {ESP," ",0},{0,0,0}};
+	nb_err += test(ev,"   cmd1   |   cmd2   &&   cmd3   ||   cmd4   ",a6);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Check all unary operators");
+	t_token a7[] = {{RLS,"<",0}, {UNSET,"f1",0}, {RLD,"<<",0}, {UNSET,"f2",0}, {RLT,"<<<",0}, {UNSET,"f3",0}, {RRS,">",0}, {UNSET,"f4",0},{RRD,">>",0}, {UNSET,"f5",0},{0,0,0}};
+	nb_err += test(ev,"<f1<<f2<<<f3>f4>>f5",a7);
+
+	t_token a8[] = {{ESP," ",0}, {RLS,"<",0}, {ESP," ",0}, {UNSET,"f1",0}, {ESP," ",0}, {RLD,"<<",0}, {ESP," ",0}, {UNSET,"f2",0}, {ESP," ",0}, {RLT,"<<<",0}, {ESP," ",0}, {UNSET,"f3",0}, {ESP," ",0}, {RRS,">",0}, {ESP," ",0}, {UNSET,"f4",0}, {ESP," ",0},{RRD,">>",0}, {ESP," ",0}, {UNSET,"f5",0}, {ESP," ",0},{0,0,0}};
+	nb_err += test(ev,"  <  f1  <<  f2  <<<  f3  >  f4  >>  f5  ",a8);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Check parenthesis");
+	t_token a9[] = {{PARO,"(",1}, {UNSET,"cmd",1}, {PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"(cmd)",a9);
+
+	t_token a10[] = {{PARO,"(",1}, {UNSET,"cmd1",1}, {OPA,"&&",1}, {UNSET,"cmd2",1}, {PARC,")",0}, {OPO,"||",0}, {PARO,"(",1}, {UNSET,"cmd3",1}, {OPA,"&&",1}, {UNSET,"cmd4",1}, {PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"(cmd1&&cmd2)||(cmd3&&cmd4)",a10);
+
+	t_token a11[] = {{PARO,"(",1},{ESP," ",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3},{PARC,")",2},{ESP," ",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"( ((cmd1&&cmd2) ))",a11);
+
+	t_token a12[] = {{ESP," ",0}, {PARO,"(",1}, {ESP," ",1}, {PARO,"(",2}, {ESP," ",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {ESP," ",2}, {PARC,")",1}, {ESP," ",1}, {PARC,")",0}, {ESP," ",0},{0,0,0}};
+	nb_err += test(ev," ( ( (cmd1&&cmd2) ) ) ",a12);
+
+	t_token a13[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",1},{OPA,"&&",1},{PARO,"(",2},{UNSET,"cmd2",2},{PIP,"|",2},{UNSET,"cmd3",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"((cmd1)&&(cmd2|cmd3))",a13);
+	
+	t_token a14[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {OPO,"||",2}, {PARO,"(",3}, {UNSET,"cmd3",3}, {OPA,"&&",3}, {UNSET,"cmd4",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {UNSET,"cmd5",2}, {PIP,"|",2}, {UNSET,"cmd6",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"(((cmd1&&cmd2)||(cmd3&&cmd4))&&(cmd5|cmd6))",a14);
+
+	t_token a15[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {PARO,"(",4}, {UNSET,"echo",4}, {ESP," ",4}, {UNSET,"\"inside f1\"",4}, {PARC,")",3}, {RRS,">",3}, {UNSET,"f1",3}, {PARC,")",2}, {OPA,"&&",2}, {PARO,"(",3}, {PARO,"(",4}, {RLS,"<",4}, {UNSET,"f1",4}, {ESP," ",4}, {UNSET,"cat",4}, {PARC,")",3}, {ESP," ",3}, {RRS,">",3}, {UNSET,"f2",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {RLS,"<",2}, {UNSET,"f2",2}, {ESP," ",2}, {UNSET,"cat",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))",a15);
+	print_sep(S2);
+	print_sep(S1);
 	print_title("IMBRICATION~NESTING~GROUPING PARENTHESIS'");
 	nb_err += test(ev,"( ( ) )",NULL);
 	nb_err += test(ev,"(( ) )",NULL);
