@@ -273,7 +273,7 @@ int	main(int ac, char **av, char **ev)
 	//nb_err += test(ev,"  <  f1  <<  f2  <<<  f3  >  f4  >>  f5  ",a8);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Check parenthesis");
+	//print_subtitle("Check parenthesis");
 	//t_token a9[] = {{PARO,"(",1}, {UNSET,"cmd",1}, {PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"(cmd)",a9);
 
@@ -289,20 +289,18 @@ int	main(int ac, char **av, char **ev)
 	//t_token a13[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",1},{OPA,"&&",1},{PARO,"(",2},{UNSET,"cmd2",2},{PIP,"|",2},{UNSET,"cmd3",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"((cmd1)&&(cmd2|cmd3))",a13);
 	
-	t_token a14[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {OPO,"||",2}, {PARO,"(",3}, {UNSET,"cmd3",3}, {OPA,"&&",3}, {UNSET,"cmd4",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {UNSET,"cmd5",2}, {PIP,"|",2}, {UNSET,"cmd6",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
-	nb_err += test(ev,"(((cmd1&&cmd2)||(cmd3&&cmd4))&&(cmd5|cmd6))",a14);
+	//t_token a14[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {OPO,"||",2}, {PARO,"(",3}, {UNSET,"cmd3",3}, {OPA,"&&",3}, {UNSET,"cmd4",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {UNSET,"cmd5",2}, {PIP,"|",2}, {UNSET,"cmd6",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"(((cmd1&&cmd2)||(cmd3&&cmd4))&&(cmd5|cmd6))",a14);
 
-	//// TODO: 🎯FIX False Negatif
-	//t_token a15[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {PARO,"(",4}, {UNSET,"echo",4}, {ESP," ",4}, {UNSET,"\"inside f1\"",4}, {PARC,")",3}, {UNSET,">",3}, {UNSET,"f1",3}, {PARC,")",2}, {OPA,"&&",2}, {PARO,"(",3}, {PARO,"(",4}, {RLS,"<",4}, {UNSET,"f1",4}, {ESP," ",4}, {UNSET,"cat",4}, {PARC,")",3}, {ESP," ",3}, {RRS,">",3}, {UNSET,"f2",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {RLS,"<",2}, {UNSET,"f2",2}, {ESP," ",2}, {UNSET,"cat",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
+	//t_token a15[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {PARO,"(",4}, {UNSET,"echo",4}, {ESP," ",4}, {UNSET,"\"inside f1\"",4}, {PARC,")",3}, {RRS,">",3}, {UNSET,"f1",3}, {PARC,")",2}, {OPA,"&&",2}, {PARO,"(",3}, {PARO,"(",4}, {RLS,"<",4}, {UNSET,"f1",4}, {ESP," ",4}, {UNSET,"cat",4}, {PARC,")",3}, {ESP," ",3}, {RRS,">",3}, {UNSET,"f2",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {RLS,"<",2}, {UNSET,"f2",2}, {ESP," ",2}, {UNSET,"cat",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))",a15);
-	print_sep(S2);
-	print_sep(S1);
-	// =[  ]====================================================================
-	//// TODO: 🎯FIX False Negatif
-	//print_subtitle("Combos");
-	//t_token a24[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",0},{RLS,"<",1},{UNSET,"f2",1},{PARC,")",0},{PIP,"|",0},{RRS,">",0},{UNSET,"f3",0},{PARO,"(",1},{UNSET,"cat",1},{PARC,")",0},{0,0,0}};
-	//nb_err += test(ev,"((cat)<f2)|>f3(cat)",a24);
+	//print_sep(S2);
 	//print_sep(S1);
+	// =[  ]====================================================================
+	print_subtitle("Combos");
+	t_token a24[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cat",2},{PARC,")",1},{RLS,"<",1},{UNSET,"f2",1},{PARC,")",0},{PIP,"|",0},{PARO,"(",1},{RRS,">",1},{UNSET,"f3",1},{ESP," ",1},{UNSET,"cat",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"((cat)<f2)|(>f3 cat)",a24);
+	print_sep(S1);
 
 	print_title("B| FAIL UNARY UNKNOWN OPERATOR");
 	nb_err += test(ev,"<<<<",NULL);

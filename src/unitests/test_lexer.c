@@ -196,7 +196,7 @@ int	test(char **ev, char *str, t_token tab_res[])
 	int len_tab_res = len_of_tab_res(tab_res);
 	int len_tok_lst = ft_lstsize(dt->tok_lst);
 	if (len_tok_lst != len_tab_res)
-		return (printntime(S3, LEN - 5), printf(FAIL), 1);
+		return (printf(CR"DIFF.IN.SIZE:len_tab_res=%d VS len_tok_lst=%d\n"CE, len_tab_res, len_tok_lst), printntime(S3, LEN - 5), printf(FAIL), 1);
 	// COMPARE EACH NODE
 	int	i = 0;
 	t_list	*act = dt->tok_lst;
@@ -292,18 +292,16 @@ int	main(int ac, char **av, char **ev)
 	t_token a14[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {OPO,"||",2}, {PARO,"(",3}, {UNSET,"cmd3",3}, {OPA,"&&",3}, {UNSET,"cmd4",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {UNSET,"cmd5",2}, {PIP,"|",2}, {UNSET,"cmd6",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
 	nb_err += test(ev,"(((cmd1&&cmd2)||(cmd3&&cmd4))&&(cmd5|cmd6))",a14);
 
-	//// TODO: 🎯FIX False Negatif
-	//t_token a15[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {PARO,"(",4}, {UNSET,"echo",4}, {ESP," ",4}, {UNSET,"\"inside f1\"",4}, {PARC,")",3}, {UNSET,">",3}, {UNSET,"f1",3}, {PARC,")",2}, {OPA,"&&",2}, {PARO,"(",3}, {PARO,"(",4}, {RLS,"<",4}, {UNSET,"f1",4}, {ESP," ",4}, {UNSET,"cat",4}, {PARC,")",3}, {ESP," ",3}, {RRS,">",3}, {UNSET,"f2",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {RLS,"<",2}, {UNSET,"f2",2}, {ESP," ",2}, {UNSET,"cat",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
-	//nb_err += test(ev,"((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))",a15);
+	t_token a15[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {PARO,"(",4}, {UNSET,"echo",4}, {ESP," ",4}, {UNSET,"\"inside f1\"",4}, {PARC,")",3}, {RRS,">",3}, {UNSET,"f1",3}, {PARC,")",2}, {OPA,"&&",2}, {PARO,"(",3}, {PARO,"(",4}, {RLS,"<",4}, {UNSET,"f1",4}, {ESP," ",4}, {UNSET,"cat",4}, {PARC,")",3}, {ESP," ",3}, {RRS,">",3}, {UNSET,"f2",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {RLS,"<",2}, {UNSET,"f2",2}, {ESP," ",2}, {UNSET,"cat",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))",a15);
 	print_sep(S2);
 	print_sep(S1);
 	// =[  ]====================================================================
-	//// TODO: 🎯FIX False Negatif
-	//print_subtitle("Combos");
-	//t_token a24[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",0},{RLS,"<",1},{UNSET,"f2",1},{PARC,")",0},{PIP,"|",0},{RRS,">",0},{UNSET,"f3",0},{PARO,"(",1},{UNSET,"cat",1},{PARC,")",0},{0,0,0}};
-	//nb_err += test(ev,"((cat)<f2)|>f3(cat)",a24);
-	//print_sep(S1);
-
+	print_subtitle("Combos");
+	t_token a24[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cat",2},{PARC,")",1},{RLS,"<",1},{UNSET,"f2",1},{PARC,")",0},{PIP,"|",0},{PARO,"(",1},{RRS,">",1},{UNSET,"f3",1},{ESP," ",1},{UNSET,"cat",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"((cat)<f2)|(>f3 cat)",a24);
+	print_sep(S1);
+	// =[  ]====================================================================
 	print_title("B| FAIL UNARY UNKNOWN OPERATOR");
 	nb_err += test(ev,"<<<<",NULL);
 	nb_err += test(ev,"<<<<f1",NULL);
@@ -318,7 +316,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,">(cmd)",NULL);
 	print_sep(S2);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("C| FAIL UNARY RLS <");
 	nb_err += test(ev,"<",NULL);
 	nb_err += test(ev,"< ",NULL);
@@ -330,7 +328,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"<||cmd2",NULL);
 	nb_err += test(ev,"< (cmd1&&cmd2)",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("D| FAIL UNARY RLD <<");
 	nb_err += test(ev,"<<",NULL);
 	nb_err += test(ev,"<< ",NULL);
@@ -342,7 +340,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"<<||cmd2",NULL);
 	nb_err += test(ev,"<< (cmd1&&cmd2)",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("E| FAIL UNARY RLT <<<");
 	nb_err += test(ev,"<<<",NULL);
 	nb_err += test(ev,"<<< ",NULL);
@@ -354,7 +352,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"<<<||cmd2",NULL);
 	nb_err += test(ev,"<<< (cmd1&&cmd2)",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("F| FAIL UNARY RRS >");
 	nb_err += test(ev,">",NULL);
 	nb_err += test(ev,"> ",NULL);
@@ -370,7 +368,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"cmd1>&&cmd2",NULL);
 	nb_err += test(ev,"> (cmd1&&cmd2)",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("G| FAIL UNARY RRD >");
 	nb_err += test(ev,">>",NULL);
 	nb_err += test(ev,">> ",NULL);
@@ -386,7 +384,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"cmd1>>&&cmd2",NULL);
 	nb_err += test(ev,">> (cmd1&&cmd2)",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("H| FAIL BINARY OPA &&");
 	nb_err += test(ev,"&&",NULL);
 	nb_err += test(ev," && ",NULL);
@@ -395,7 +393,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"&&cmd",NULL);
 	nb_err += test(ev," && cmd ",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("I| FAIL BINARY OPO ||");
 	nb_err += test(ev,"||",NULL);
 	nb_err += test(ev," || ",NULL);
@@ -404,7 +402,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"||cmd",NULL);
 	nb_err += test(ev," || cmd ",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("J| FAIL BINARY PIP |");
 	nb_err += test(ev,"|",NULL);
 	nb_err += test(ev," | ",NULL);
@@ -413,7 +411,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"|cmd",NULL);
 	nb_err += test(ev," | cmd ",NULL);
 	print_sep(S1);
-
+	// =[  ]====================================================================
 	print_title("K| FAIL WITH PARENTHESIS");
 	print_subtitle("Cases of 'Empty parenthesis'");
 	nb_err += test(ev,"()",NULL);
@@ -421,7 +419,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"(())",NULL);
 	nb_err += test(ev," ( ( ) ) ",NULL);
 	print_sep(S2);
-
+	// -[ 	 ]------------------------------------------------------------------
 	print_subtitle("Cases of 'Odd number of parenthesis'");
 	nb_err += test(ev,"(",NULL);
 	nb_err += test(ev," ( ",NULL);
@@ -432,7 +430,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"(cmd))",NULL);    
 	nb_err += test(ev," ( cmd ) )",NULL);
 	print_sep(S2);
-
+	// -[ 	 ]------------------------------------------------------------------
 	print_subtitle("Cases of 'Wrong order of parenthesis'");
 	nb_err += test(ev,")(",NULL);
 	nb_err += test(ev," ) ( ",NULL);
@@ -440,7 +438,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"cmd1)(cmd2",NULL);
 	nb_err += test(ev,"cmd1)cmd2(cmd3",NULL);
 	print_sep(S2);
-
+	// -[ 	 ]------------------------------------------------------------------
 	print_subtitle("Cases of 'Wrong syntax with parenthesis'");
 	nb_err += test(ev,"(cmd1)cmd2",NULL);
 	nb_err += test(ev,"(cmd1) cmd2",NULL);
@@ -448,13 +446,34 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(ev,"cmd1 ( cmd2 )",NULL);
 	nb_err += test(ev,"(cmd1)(cmd2)",NULL);
 	nb_err += test(ev," ( cmd1 ) ( cmd2 ) ",NULL);
-	
-	//// TODO:🎯FIX:SEGFAULT
-	//print_subtitle("Cases of 'Wrong syntax with IMBRICATED parenthesis'");
-	//nb_err += test(ev,"((echo toto))",NULL);
-	//nb_err += test(ev,"(())",NULL);
-	//print_sep(S2);
+	// =[  ]====================================================================
+	// TODO:🎯 Should return-->Arithmetique not supported
+	//print_title("ARITHMETIQUE PARENTHESIS'");
+	nb_err += test(ev,"(())",NULL);
+	nb_err += test(ev,"(( ))",NULL);
+	nb_err += test(ev,"((0))",NULL);
+	nb_err += test(ev,"((echo toto))",NULL);
+	nb_err += test(ev,"((1 + 2))",NULL);
 	//print_sep(S1);
+	print_title("IMBRICATION~NESTING~GROUPING PARENTHESIS'");
+	nb_err += test(ev,"( ( ) )",NULL);
+	nb_err += test(ev,"(( ) )",NULL);
+	nb_err += test(ev,"( ( ))",NULL);
+	t_token b0[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{UNSET,"0",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"( (0) )",b0);
+	t_token b1[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{UNSET,"echo",2},{ESP," ",2},{UNSET,"toto",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"( (echo toto) )",b1);
+	t_token b2[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"echo",2},{ESP," ",2},{UNSET,"toto",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"((echo toto) )",b2);
+	t_token b3[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{UNSET,"echo",2},{ESP," ",2},{UNSET,"toto",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"( (echo toto))",b3);
+	t_token b4[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{ESP," ", 2},{PARO,"(",3},{ESP," ", 3}, {UNSET,"echo",3},{ESP," ",3},{UNSET,"toto",3},{ESP," ",3}, {PARC,")",2},{ESP," ",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"( ( ( echo toto ) ) )",b4);
+	t_token b5[] = {{PARO,"(",1},{PARO,"(",2},{ESP," ", 2},{PARO,"(",3},{ESP," ", 3}, {UNSET,"echo",3},{ESP," ",3},{UNSET,"toto",3},{ESP," ",3}, {PARC,")",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"(( ( echo toto )) )",b5);
+	t_token b6[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{PARO,"(",3},{ESP," ", 3}, {UNSET,"echo",3},{ESP," ",3},{UNSET,"toto",3},{ESP," ",3}, {PARC,")",2},{ESP," ",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
+	nb_err += test(ev,"( (( echo toto ) ))",b6);
+	print_sep(S1);
 
 	return (nb_err);
 }
