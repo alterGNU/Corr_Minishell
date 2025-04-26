@@ -196,7 +196,7 @@ int	test(char **ev, char *str, t_token tab_res[])
 	int len_tab_res = len_of_tab_res(tab_res);
 	int len_tok_lst = ft_lstsize(dt->tok_lst);
 	if (len_tok_lst != len_tab_res)
-		return (printntime(S3, LEN - 5), printf(FAIL), 1);
+		return (printf(CR"DIFF.IN.SIZE:len_tab_res=%d VS len_tok_lst=%d\n"CE, len_tab_res, len_tok_lst), printntime(S3, LEN - 5), printf(FAIL), 1);
 	// COMPARE EACH NODE
 	int	i = 0;
 	t_list	*act = dt->tok_lst;
@@ -234,7 +234,173 @@ int	main(int ac, char **av, char **ev)
 	//nb_err += test(ev,"",NULL);
 	//print_sep(S2);
 	// =[  ]====================================================================
-	print_title("A| PASS COMMANDS");
+	print_title("A| FAILS UNSUPPORT OPERATORS");
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Cases of 'PROCESS SUBSTITUTION' (Not Handle For Now)");
+	nb_err += test(ev,"<(cmd)",NULL);
+	//nb_err += test(ev,">(cmd)",NULL);
+	print_sep(S2);
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("Cases of 'ARITHMETIC OPERATOR' (Not Handle For Now)");
+	//nb_err += test(ev,"(())",NULL);
+	//nb_err += test(ev,"(( ))",NULL);
+	nb_err += test(ev,"((0))",NULL);
+	//nb_err += test(ev,"((echo toto))",NULL);
+	//nb_err += test(ev,"((1 + 2))",NULL);
+	print_sep(S2);
+	// =[  ]====================================================================
+	print_title("B| FAILS UNKNOWN OPERATORS");
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("List of 'UNKNOWN operators' == type:ERR");
+	nb_err += test(ev,"<<<<",NULL);
+	//nb_err += test(ev,"<<<<f1",NULL);
+	//nb_err += test(ev,">>>",NULL);
+	//nb_err += test(ev,">>>f1",NULL);
+	//nb_err += test(ev,"|||",NULL);
+	//nb_err += test(ev,"cmd1|||cmd2",NULL);
+	//nb_err += test(ev,"&&&",NULL);
+	//nb_err += test(ev,"cmd1&&&cmd2",NULL);
+	print_sep(S1);
+	// =[  ]====================================================================
+	print_title("C| FAILS OF UNARY OPERATOR SYNTAX ");
+	print_subtitle("Cases of '<' RSL operator");
+	nb_err += test(ev,"<",NULL);
+	//nb_err += test(ev,"< ",NULL);
+	//nb_err += test(ev,"<>f1",NULL);
+	//nb_err += test(ev," < > f1 ",NULL);
+	//nb_err += test(ev,"cmd1<",NULL);
+	//nb_err += test(ev,"<|cmd2",NULL);
+	//nb_err += test(ev,"<&&cmd2",NULL);
+	//nb_err += test(ev,"<||cmd2",NULL);
+	//nb_err += test(ev,"< (cmd1&&cmd2)",NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Cases of '<<' RDL operator");
+	//nb_err += test(ev,"<<",NULL);
+	//nb_err += test(ev,"<< ",NULL);
+	nb_err += test(ev,"<<>f1",NULL);
+	//nb_err += test(ev," << > f1 ",NULL);
+	//nb_err += test(ev,"cmd1<<",NULL);
+	//nb_err += test(ev,"<<|cmd2",NULL);
+	//nb_err += test(ev,"<<&&cmd2",NULL);
+	//nb_err += test(ev,"<<||cmd2",NULL);
+	//nb_err += test(ev,"<< (cmd1&&cmd2)",NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Cases of '<<<' RTL operator");
+	//nb_err += test(ev,"<<<",NULL);
+	//nb_err += test(ev,"<<< ",NULL);
+	//nb_err += test(ev,"<<<>f1",NULL);
+	//nb_err += test(ev," <<< > f1 ",NULL);
+	//nb_err += test(ev,"cmd1<<<",NULL);
+	//nb_err += test(ev,"<<<|cmd2",NULL);
+	nb_err += test(ev,"<<<&&cmd2",NULL);
+	//nb_err += test(ev,"<<<||cmd2",NULL);
+	//nb_err += test(ev,"<<< (cmd1&&cmd2)",NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Cases of '>' RRS operator");
+	//nb_err += test(ev,">",NULL);
+	//nb_err += test(ev,"> ",NULL);
+	//nb_err += test(ev,"cmd>",NULL);
+	//nb_err += test(ev,"cmd> ",NULL);
+	//nb_err += test(ev,"<f1>",NULL);
+	//nb_err += test(ev," < f1 > ",NULL);
+	//nb_err += test(ev,">|cmd2",NULL);
+	//nb_err += test(ev,"cmd1>|cmd2",NULL);
+	//nb_err += test(ev,">||cmd2",NULL);
+	//nb_err += test(ev,"cmd1>||cmd2",NULL);
+	//nb_err += test(ev,">&&cmd2",NULL);
+	nb_err += test(ev,"cmd1>&&cmd2",NULL);
+	//nb_err += test(ev,"> (cmd1&&cmd2)",NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Cases of '>>' RRD operator");
+	//nb_err += test(ev,">>",NULL);
+	//nb_err += test(ev,">> ",NULL);
+	//nb_err += test(ev,"cmd>>",NULL);
+	//nb_err += test(ev,"cmd>> ",NULL);
+	//nb_err += test(ev,"<f1>>",NULL);
+	//nb_err += test(ev," < f1 >> ",NULL);
+	//nb_err += test(ev,">>|cmd2",NULL);
+	//nb_err += test(ev,"cmd1>>|cmd2",NULL);
+	//nb_err += test(ev,">>||cmd2",NULL);
+	//nb_err += test(ev,"cmd1>>||cmd2",NULL);
+	//nb_err += test(ev,">>&&cmd2",NULL);
+	//nb_err += test(ev,"cmd1>>&&cmd2",NULL);
+	nb_err += test(ev,">> (cmd1&&cmd2)",NULL);
+	print_sep(S2);
+	print_sep(S1);
+	// =[  ]====================================================================
+	print_title("D| FAILS OF BINARY OPERATORS SYNTAX ");
+	print_subtitle("Cases of '&& OPA operator");
+	//nb_err += test(ev,"&&",NULL);
+	//nb_err += test(ev," && ",NULL);
+	//nb_err += test(ev,"cmd&&",NULL);
+	nb_err += test(ev," cmd && ",NULL);
+	//nb_err += test(ev,"&&cmd",NULL);
+	//nb_err += test(ev," && cmd ",NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Cases of '||' OPO operator");
+	nb_err += test(ev,"||",NULL);
+	//nb_err += test(ev," || ",NULL);
+	//nb_err += test(ev,"cmd||",NULL);
+	//nb_err += test(ev," cmd || ",NULL);
+	//nb_err += test(ev,"||cmd",NULL);
+	//nb_err += test(ev," || cmd ",NULL);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("Cases of '|' PIP operator");
+	//nb_err += test(ev,"|",NULL);
+	//nb_err += test(ev," | ",NULL);
+	//nb_err += test(ev,"cmd|",NULL);
+	//nb_err += test(ev," cmd | ",NULL);
+	//nb_err += test(ev,"|cmd",NULL);
+	nb_err += test(ev," | cmd ",NULL);
+	print_sep(S2);
+	print_sep(S1);
+	// =[  ]====================================================================
+	print_title("E| FAILS OF PARENTHESIS SYNTAX ");
+	print_subtitle("Cases of 'Empty parenthesis'");
+	//nb_err += test(ev,"()",NULL);
+	//nb_err += test(ev," ( ) ",NULL);
+	//nb_err += test(ev," ( ( ) ) ",NULL);
+	//nb_err += test(ev,"( ( ) )",NULL);
+	nb_err += test(ev,"(( ) )",NULL);
+	//nb_err += test(ev,"( ( ))",NULL);
+	print_sep(S2);
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("Cases of 'Odd number of parenthesis'");
+	nb_err += test(ev,"(",NULL);
+	//nb_err += test(ev," ( ",NULL);
+	//nb_err += test(ev,")",NULL);
+	//nb_err += test(ev," ) ",NULL);
+	//nb_err += test(ev,"((cmd)",NULL);
+	//nb_err += test(ev," ( ( cmd ) ",NULL);
+	//nb_err += test(ev,"(cmd))",NULL);    
+	//nb_err += test(ev," ( cmd ) )",NULL);
+	print_sep(S2);
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("Cases of 'Wrong order of parenthesis'");
+	//nb_err += test(ev,")(",NULL);
+	//nb_err += test(ev," ) ( ",NULL);
+	//nb_err += test(ev,")cmd1(",NULL);
+	//nb_err += test(ev,"cmd1)(cmd2",NULL);
+	nb_err += test(ev,"cmd1)cmd2(cmd3",NULL);
+	print_sep(S2);
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("Cases of 'Wrong syntax with parenthesis'");
+	nb_err += test(ev,"(cmd1)cmd2",NULL);
+	//nb_err += test(ev,"(cmd1) cmd2",NULL);
+	//nb_err += test(ev,"cmd1(cmd2)",NULL);
+	//nb_err += test(ev,"cmd1 ( cmd2 )",NULL);
+	//nb_err += test(ev,"(cmd1)(cmd2)",NULL);
+	//nb_err += test(ev," ( cmd1 ) ( cmd2 ) ",NULL);
+	print_sep(S2);
+	print_sep(S1);
+	// =[  ]====================================================================
+	print_title("F| PASS COMMANDS");
 	// -[  ]--------------------------------------------------------------------
 	//print_subtitle("Only unset and spaces-> check if quotes is count as one UNSET");
 	//t_token a0[] = {{ESP," ",0}, {UNSET,"cmd1",0}, {ESP," ",0}, {UNSET,"arg1",0}, {ESP," ",0}, {UNSET,"arg2",0}, {ESP," ",0}, {UNSET,"\"arg3 && arg4\"",0}, {ESP," ",0}, {0,0,0}};
@@ -271,8 +437,8 @@ int	main(int ac, char **av, char **ev)
 
 	//t_token a8[] = {{ESP," ",0}, {RLS,"<",0}, {ESP," ",0}, {UNSET,"f1",0}, {ESP," ",0}, {RLD,"<<",0}, {ESP," ",0}, {UNSET,"f2",0}, {ESP," ",0}, {RLT,"<<<",0}, {ESP," ",0}, {UNSET,"f3",0}, {ESP," ",0}, {RRS,">",0}, {ESP," ",0}, {UNSET,"f4",0}, {ESP," ",0},{RRD,">>",0}, {ESP," ",0}, {UNSET,"f5",0}, {ESP," ",0},{0,0,0}};
 	//nb_err += test(ev,"  <  f1  <<  f2  <<<  f3  >  f4  >>  f5  ",a8);
-	print_sep(S2);
-	// -[  ]--------------------------------------------------------------------
+	//print_sep(S2);
+	//// -[  ]--------------------------------------------------------------------
 	//print_subtitle("Check parenthesis");
 	//t_token a9[] = {{PARO,"(",1}, {UNSET,"cmd",1}, {PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"(cmd)",a9);
@@ -280,179 +446,49 @@ int	main(int ac, char **av, char **ev)
 	//t_token a10[] = {{PARO,"(",1}, {UNSET,"cmd1",1}, {OPA,"&&",1}, {UNSET,"cmd2",1}, {PARC,")",0}, {OPO,"||",0}, {PARO,"(",1}, {UNSET,"cmd3",1}, {OPA,"&&",1}, {UNSET,"cmd4",1}, {PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"(cmd1&&cmd2)||(cmd3&&cmd4)",a10);
 
-	//t_token a11[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
-	//nb_err += test(ev,"(((cmd1&&cmd2)))",a11);
+	//t_token a11[] = {{PARO,"(",1},{ESP," ",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3},{PARC,")",2},{ESP," ",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"( ((cmd1&&cmd2) ))",a11);
 
 	//t_token a12[] = {{ESP," ",0}, {PARO,"(",1}, {ESP," ",1}, {PARO,"(",2}, {ESP," ",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {ESP," ",2}, {PARC,")",1}, {ESP," ",1}, {PARC,")",0}, {ESP," ",0},{0,0,0}};
 	//nb_err += test(ev," ( ( (cmd1&&cmd2) ) ) ",a12);
 
 	//t_token a13[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",1},{OPA,"&&",1},{PARO,"(",2},{UNSET,"cmd2",2},{PIP,"|",2},{UNSET,"cmd3",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"((cmd1)&&(cmd2|cmd3))",a13);
-	
+	//
 	//t_token a14[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {OPO,"||",2}, {PARO,"(",3}, {UNSET,"cmd3",3}, {OPA,"&&",3}, {UNSET,"cmd4",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {UNSET,"cmd5",2}, {PIP,"|",2}, {UNSET,"cmd6",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"(((cmd1&&cmd2)||(cmd3&&cmd4))&&(cmd5|cmd6))",a14);
 
 	//t_token a15[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {PARO,"(",4}, {UNSET,"echo",4}, {ESP," ",4}, {UNSET,"\"inside f1\"",4}, {PARC,")",3}, {RRS,">",3}, {UNSET,"f1",3}, {PARC,")",2}, {OPA,"&&",2}, {PARO,"(",3}, {PARO,"(",4}, {RLS,"<",4}, {UNSET,"f1",4}, {ESP," ",4}, {UNSET,"cat",4}, {PARC,")",3}, {ESP," ",3}, {RRS,">",3}, {UNSET,"f2",3}, {PARC,")",2}, {PARC,")",1}, {OPA,"&&",1}, {PARO,"(",2}, {RLS,"<",2}, {UNSET,"f2",2}, {ESP," ",2}, {UNSET,"cat",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
 	//nb_err += test(ev,"((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))",a15);
 	//print_sep(S2);
-	//print_sep(S1);
-	// =[  ]====================================================================
+	//// -[  ]--------------------------------------------------------------------
+	//print_subtitle("Valid Parenthesis imbrication~nesting");
+	//t_token b0[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{UNSET,"0",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"( (0) )",b0);
+
+	//t_token b1[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{UNSET,"echo",2},{ESP," ",2},{UNSET,"toto",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"( (echo toto) )",b1);
+
+	//t_token b2[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"echo",2},{ESP," ",2},{UNSET,"toto",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"((echo toto) )",b2);
+
+	//t_token b3[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{UNSET,"echo",2},{ESP," ",2},{UNSET,"toto",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"( (echo toto))",b3);
+
+	//t_token b4[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{ESP," ", 2},{PARO,"(",3},{ESP," ", 3}, {UNSET,"echo",3},{ESP," ",3},{UNSET,"toto",3},{ESP," ",3}, {PARC,")",2},{ESP," ",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"( ( ( echo toto ) ) )",b4);
+
+	//t_token b5[] = {{PARO,"(",1},{PARO,"(",2},{ESP," ", 2},{PARO,"(",3},{ESP," ", 3}, {UNSET,"echo",3},{ESP," ",3},{UNSET,"toto",3},{ESP," ",3}, {PARC,")",2},{PARC,")",1},{ESP," ",1},{PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"(( ( echo toto )) )",b5);
+
+	//t_token b6[] = {{PARO,"(",1},{ESP," ", 1},{PARO,"(",2},{PARO,"(",3},{ESP," ", 3}, {UNSET,"echo",3},{ESP," ",3},{UNSET,"toto",3},{ESP," ",3}, {PARC,")",2},{ESP," ",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
+	//nb_err += test(ev,"( (( echo toto ) ))",b6);
+	//print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Combos");
 	t_token a24[] = {{PARO,"(",1},{PARO,"(",2},{UNSET,"cat",2},{PARC,")",1},{RLS,"<",1},{UNSET,"f2",1},{PARC,")",0},{PIP,"|",0},{PARO,"(",1},{RRS,">",1},{UNSET,"f3",1},{ESP," ",1},{UNSET,"cat",1},{PARC,")",0},{0,0,0}};
 	nb_err += test(ev,"((cat)<f2)|(>f3 cat)",a24);
-	print_sep(S1);
-
-	print_title("B| FAIL UNARY UNKNOWN OPERATOR");
-	nb_err += test(ev,"<<<<",NULL);
-	//nb_err += test(ev,"<<<<f1",NULL);
-	//nb_err += test(ev,">>>",NULL);
-	//nb_err += test(ev,">>>f1",NULL);
-	//nb_err += test(ev,"|||",NULL);
-	//nb_err += test(ev,"cmd1|||cmd2",NULL);
-	//nb_err += test(ev,"&&&",NULL);
-	//nb_err += test(ev,"cmd1&&&cmd2",NULL);
-	//print_subtitle("List of operators not handle for now");
-	//nb_err += test(ev,"<(cmd)",NULL);
-	//nb_err += test(ev,">(cmd)",NULL);
 	print_sep(S2);
 	print_sep(S1);
-
-	//print_title("C| FAIL UNARY RLS <");
-	//nb_err += test(ev,"<",NULL);
-	//nb_err += test(ev,"< ",NULL);
-	//nb_err += test(ev,"<>f1",NULL);
-	//nb_err += test(ev," < > f1 ",NULL);
-	//nb_err += test(ev,"cmd1<",NULL);
-	//nb_err += test(ev,"<|cmd2",NULL);
-	//nb_err += test(ev,"<&&cmd2",NULL);
-	//nb_err += test(ev,"<||cmd2",NULL);
-	//nb_err += test(ev,"< (cmd1&&cmd2)",NULL);
-	//print_sep(S1);
-
-	//print_title("D| FAIL UNARY RLD <<");
-	//nb_err += test(ev,"<<",NULL);
-	//nb_err += test(ev,"<< ",NULL);
-	//nb_err += test(ev,"<<>f1",NULL);
-	//nb_err += test(ev," << > f1 ",NULL);
-	//nb_err += test(ev,"cmd1<<",NULL);
-	//nb_err += test(ev,"<<|cmd2",NULL);
-	//nb_err += test(ev,"<<&&cmd2",NULL);
-	//nb_err += test(ev,"<<||cmd2",NULL);
-	//nb_err += test(ev,"<< (cmd1&&cmd2)",NULL);
-	//print_sep(S1);
-
-	//print_title("E| FAIL UNARY RLT <<<");
-	//nb_err += test(ev,"<<<",NULL);
-	//nb_err += test(ev,"<<< ",NULL);
-	//nb_err += test(ev,"<<<>f1",NULL);
-	//nb_err += test(ev," <<< > f1 ",NULL);
-	//nb_err += test(ev,"cmd1<<<",NULL);
-	//nb_err += test(ev,"<<<|cmd2",NULL);
-	//nb_err += test(ev,"<<<&&cmd2",NULL);
-	//nb_err += test(ev,"<<<||cmd2",NULL);
-	//nb_err += test(ev,"<<< (cmd1&&cmd2)",NULL);
-	//print_sep(S1);
-
-	//print_title("F| FAIL UNARY RRS >");
-	//nb_err += test(ev,">",NULL);
-	//nb_err += test(ev,"> ",NULL);
-	//nb_err += test(ev,"cmd>",NULL);
-	//nb_err += test(ev,"cmd> ",NULL);
-	//nb_err += test(ev,"<f1>",NULL);
-	//nb_err += test(ev," < f1 > ",NULL);
-	//nb_err += test(ev,">|cmd2",NULL);
-	//nb_err += test(ev,"cmd1>|cmd2",NULL);
-	//nb_err += test(ev,">||cmd2",NULL);
-	//nb_err += test(ev,"cmd1>||cmd2",NULL);
-	//nb_err += test(ev,">&&cmd2",NULL);
-	//nb_err += test(ev,"cmd1>&&cmd2",NULL);
-	//nb_err += test(ev,"> (cmd1&&cmd2)",NULL);
-	//print_sep(S1);
-
-	//print_title("G| FAIL UNARY RRD >");
-	//nb_err += test(ev,">>",NULL);
-	//nb_err += test(ev,">> ",NULL);
-	//nb_err += test(ev,"cmd>>",NULL);
-	//nb_err += test(ev,"cmd>> ",NULL);
-	//nb_err += test(ev,"<f1>>",NULL);
-	//nb_err += test(ev," < f1 >> ",NULL);
-	//nb_err += test(ev,">>|cmd2",NULL);
-	//nb_err += test(ev,"cmd1>>|cmd2",NULL);
-	//nb_err += test(ev,">>||cmd2",NULL);
-	//nb_err += test(ev,"cmd1>>||cmd2",NULL);
-	//nb_err += test(ev,">>&&cmd2",NULL);
-	//nb_err += test(ev,"cmd1>>&&cmd2",NULL);
-	//nb_err += test(ev,">> (cmd1&&cmd2)",NULL);
-	//print_sep(S1);
-
-	//print_title("H| FAIL BINARY OPA &&");
-	//nb_err += test(ev,"&&",NULL);
-	//nb_err += test(ev," && ",NULL);
-	//nb_err += test(ev,"cmd&&",NULL);
-	//nb_err += test(ev," cmd && ",NULL);
-	//nb_err += test(ev,"&&cmd",NULL);
-	//nb_err += test(ev," && cmd ",NULL);
-	//print_sep(S1);
-
-	//print_title("I| FAIL BINARY OPO ||");
-	//nb_err += test(ev,"||",NULL);
-	//nb_err += test(ev," || ",NULL);
-	//nb_err += test(ev,"cmd||",NULL);
-	//nb_err += test(ev," cmd || ",NULL);
-	//nb_err += test(ev,"||cmd",NULL);
-	//nb_err += test(ev," || cmd ",NULL);
-	//print_sep(S1);
-
-	//print_title("J| FAIL BINARY PIP |");
-	//nb_err += test(ev,"|",NULL);
-	//nb_err += test(ev," | ",NULL);
-	//nb_err += test(ev,"cmd|",NULL);
-	//nb_err += test(ev," cmd | ",NULL);
-	//nb_err += test(ev,"|cmd",NULL);
-	//nb_err += test(ev," | cmd ",NULL);
-	//print_sep(S1);
-
-	//print_title("K| FAIL WITH PARENTHESIS");
-	//print_subtitle("Cases of 'Empty parenthesis'");
-	//nb_err += test(ev,"()",NULL);
-	//nb_err += test(ev," ( ) ",NULL);
-	//nb_err += test(ev,"(())",NULL);
-	//nb_err += test(ev," ( ( ) ) ",NULL);
-	//print_sep(S2);
-
-	//print_subtitle("Cases of 'Odd number of parenthesis'");
-	//nb_err += test(ev,"(",NULL);
-	//nb_err += test(ev," ( ",NULL);
-	//nb_err += test(ev,")",NULL);
-	//nb_err += test(ev," ) ",NULL);
-	//nb_err += test(ev,"((cmd)",NULL);
-	//nb_err += test(ev," ( ( cmd ) ",NULL);
-	//nb_err += test(ev,"(cmd))",NULL);    
-	//nb_err += test(ev," ( cmd ) )",NULL);
-	//print_sep(S2);
-
-	//print_subtitle("Cases of 'Wrong order of parenthesis'");
-	//nb_err += test(ev,")(",NULL);
-	//nb_err += test(ev," ) ( ",NULL);
-	//nb_err += test(ev,")cmd1(",NULL);
-	//nb_err += test(ev,"cmd1)(cmd2",NULL);
-	//nb_err += test(ev,"cmd1)cmd2(cmd3",NULL);
-	//print_sep(S2);
-
-	//print_subtitle("Cases of 'Wrong syntax with parenthesis'");
-	//nb_err += test(ev,"(cmd1)cmd2",NULL);
-	//nb_err += test(ev,"(cmd1) cmd2",NULL);
-	//nb_err += test(ev,"cmd1(cmd2)",NULL);
-	//nb_err += test(ev,"cmd1 ( cmd2 )",NULL);
-	//nb_err += test(ev,"(cmd1)(cmd2)",NULL);
-	//nb_err += test(ev," ( cmd1 ) ( cmd2 ) ",NULL);
-	
-	//// TODO:🎯FIX:SEGFAULT
-	//print_subtitle("Cases of 'Wrong syntax with IMBRICATED parenthesis'");
-	//nb_err += test(ev,"((echo toto))",NULL);
-	//nb_err += test(ev,"(())",NULL);
-	//print_sep(S2);
-	//print_sep(S1);
-
 	return (nb_err);
 }
