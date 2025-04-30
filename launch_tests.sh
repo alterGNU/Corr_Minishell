@@ -29,8 +29,8 @@
 # =[ VARIABLES ]==============================================================================================
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
 SCRIPTNAME=${0##*\/}                                              # ☒ Script's name (no path)
-PARENT_DIR=$(dirname $(realpath ${0}))                            # ☒ Name of parent directory
-MS_DIR=$(dirname $(realpath ${PARENT_DIR}))                       # ☒ Name of parent directory
+PARENT_DIR=$(dirname $(realpath ${0}))                            # ☒ Name of parent directory (TEST_DIR)
+MS_DIR=$(dirname $(realpath ${PARENT_DIR}))                       # ☒ Name of great-parent directory (MINISHELL_DIR)
 PROGRAMM="${MS_DIR}/minishell"                                    # ☒ Object's name to test (here our executable)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"           # ☒ Name of the log folder
 LOG_FAIL="${LOG_DIR}/list_errors.log"                             # ☒ File contains list of function that failed
@@ -63,9 +63,10 @@ ALLOWED_FUN+=( "readline" "rl_clear_history" "rl_on_new_line" "rl_replace_line" 
     "ttyname" "ttyslot" "ioctl" "getenv" "tcsetattr" "tcgetattr" "tgetent" "tgetflag" "tgetnum" "tgetstr" \
     "tgoto" "tputs" )
 OBJ=( )                                                           # ☒ List of object.o (no main function in it)
-for obj in $(ls ${MS_DIR}/build/**/*.o ${MS_DIR}/build/*.o);do if ! nm "${obj}" | grep -qE '\<main\>';then OBJ+=( "${obj}" );fi;done
+# add to OBJ list all '.o' files founded in minishell/build/ folders that do not contains a main() function
+for obj in $(find ${MS_DIR}/build -type f -name '*.o');do if ! nm "${obj}" | grep -qE '\<main\>';then OBJ+=( "${obj}" );fi;done
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
-CC="cc -Wall -Wextra -Werror -I${MS_DIR}/include -I${MS_DIR}/libft/include ${OBJ[@]} -lreadline"
+CC="cc -Wall -Wextra -Werror -I${MS_DIR}/include -I${MS_DIR}/libft/include ${OBJ[@]}"
 VAL_ERR=42
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}"
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
