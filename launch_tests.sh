@@ -28,6 +28,8 @@
  
 # =[ VARIABLES ]==============================================================================================
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
+ARGS=()                                                           # ☒ Copy of arguments pass to the script
+for arg in "${@}";do ARGS+=( "${arg}" );done
 SCRIPTNAME=${0##*\/}                                              # ☒ Script's name (no path)
 PARENT_DIR=$(dirname $(realpath ${0}))                            # ☒ Name of parent directory (TEST_DIR)
 MS_DIR=$(dirname $(realpath ${PARENT_DIR}))                       # ☒ Name of great-parent directory (MINISHELL_DIR)
@@ -96,9 +98,9 @@ source ${BSL_DIR}/src/print.sh
 script_usage()
 {
     local exit_value=0
-    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[-+h, -+b, -+n, -+c, -+o]${R0}\`${E}"
+    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u]${R0}\`${E}"
     if [[ ${#} -eq 2 ]];then
-        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[-+h, -+b, -+n, -+c, -+o]${R0}\`${E}"
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u]${R0}\`${E}"
         local exit_value=${2}
     fi
     echo -e "${entete}"
@@ -129,6 +131,15 @@ script_usage()
     echo -e "   ${BC0}|STEP 4| ${GU}Funcheck${E}     ${BC0} 🢥  ${E}Compile minishell's unitests created for a funcheck use."
     echo -e "   ${BC0}|STOP  | ${GU}Resume${E}       ${BC0} 🢥  ${E}Display a resume of failed/passed unitests."
     exit ${exit_value}
+}
+# -[ MAX() ]--------------------------------------------------------------------------------------------------
+max()
+{
+    if (($1 > $2));then
+        echo $1
+    else
+        echo $2
+    fi
 }
 # -[ PRINT_RELATIF_PATH() ]-----------------------------------------------------------------------------------
 # substract pwd from arg1 abs-path given
@@ -484,40 +495,48 @@ display_resume()
 # MAIN
 # ============================================================================================================
 # =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
-# TODO handle functions names
-for args in "$@";do
+for arg in "${ARGS[@]}";do
     shift
-    case "${args}" in
-        --[Hh]elp | [+-][Hh] ) HELP=$(( HELP + 1 )) ;;
-        --[Aa]ll | +[Aa] )
-            NORM=1
-            OPTI=1
-            BUIN=1
-            COMP=1
-            FUNC=1
-            USERMADE=1
-            ;;
-        --[Nn]o-[Aa]ll | -[Aa] )
-            NORM=0
-            OPTI=0
-            BUIN=0
-            COMP=0
-            FUNC=0
-            USERMADE=0
-            ;;
-        --[Nn]orm | +[Nn] ) NORM=$(( NORM + 1 )) ;;
-        --[Nn]o-[Nn]orm | -[Nn] ) NORM=$(( NORM - 1 )) ;;
-        --[Oo]pti | +[Oo] ) OPTI=$(( OPTI + 1 )) ;;
-        --[Nn]o-[Oo]pti | -[Oo] ) OPTI=$(( OPTI - 1 )) ;;
-        --[Bb]uil[td]-in | +[Bb] ) BUIN=$(( BUIN + 1 )) ;;
-        --[Nn]o-[Bb]uil[td]-in | -[Bb] ) BUIN=$(( BUIN - 1 )) ;;
-        --[cC]omp | +[Cc] ) COMP=$(( COMP + 1 )) ;;
-        --[Nn]o-[cC]omp | -[Cc] ) COMP=$(( COMP - 1 )) ;;
-        --[fF]uncheck | +[Ff] ) FUNC=$(( FUNC + 1 )) ;;
-        --[Nn]o-[fF]uncheck | -[Ff] ) FUNC=$(( FUNC - 1 )) ;;
-        --[Uu]sermade | +[Uu] ) USERMADE=$(( USERMADE + 1 )) ;;
-        --[Nn]o-[Uu]sermade | -[Uu] ) USERMADE=$(( USERMADE - 1 )) ;;
-    esac
+    if [[ "$arg" =~ ^(\+\+|--).*$ ]];then
+        case "${arg}" in
+            --[Hh]elp ) HELP=$(( HELP + 1 )) ;;
+            --[Nn]o-[Hh]elp ) HELP=$(max 0 $(( HELP + 1 ))) ;;
+            --[Aa]ll ) NORM=1; OPTI=1; BUIN=1; COMP=1; FUNC=1; USERMADE=1 ;;
+            --[Nn]o-[Aa]ll ) NORM=0; OPTI=0; BUIN=0; COMP=0; FUNC=0; USERMADE=0 ;;
+            --[Nn]orm ) NORM=$(( NORM + 1 )) ;;
+            --[Nn]o-[Nn]orm ) NORM=$(max 0 $(( NORM - 1 ))) ;;
+            --[Oo]pti ) OPTI=$(( OPTI + 1 )) ;;
+            --[Nn]o-[Oo]pti ) OPTI=$(max 0 $(( OPTI - 1 ))) ;;
+            --[Bb]uil[td]-in ) BUIN=$(( BUIN + 1 )) ;;
+            --[Nn]o-[Bb]uil[td]-in ) BUIN=$(max 0 $(( BUIN - 1 ))) ;;
+            --[cC]omp ) COMP=$(( COMP + 1 )) ;;
+            --[Nn]o-[cC]omp ) COMP=$(max 0 $(( COMP - 1 ))) ;;
+            --[fF]uncheck ) FUNC=$(( FUNC + 1 )) ;;
+            --[Nn]o-[fF]uncheck ) FUNC=$(max 0 $(( FUNC - 1 ))) ;;
+            --[Uu]sermade ) USERMADE=$(( USERMADE + 1 )) ;;
+            --[Nn]o-[Uu]sermade ) USERMADE=$(max 0 $(( USERMADE - 1 ))) ;;
+            *) script_usage "${R0}unknown option:${RU}${arg}${E}" 4 ;;
+        esac
+    elif [[ "${arg}" =~ ^[+-][^+-]*$ ]];then
+        symb=${arg:0:1}
+        for i in $(seq 1 $((${#arg} - 1)));do
+            char="${arg:i:1}"
+            case "${char}" in
+                [Hh] ) [[ "${symb}" == "+" ]] && HELP=$(( HELP + 1 )) || HELP=$(max 0 $(( HELP - 1 ))) ;;
+                [Aa] ) [[ "${symb}" == "+" ]] && { NORM=1;OPTI=1;BUIN=1;COMP=1;FUNC=1;USERMADE=1;} || { NORM=0;OPTI=0;BUIN=0;COMP=0;FUNC=0;USERMADE=0;} ;;
+                [Nn] ) [[ "${symb}" == "+" ]] && NORM=$(( NORM + 1 )) || NORM=$(max 0 $(( NORM - 1 ))) ;;
+                [Oo] ) [[ "${symb}" == "+" ]] && OPTI=$(( OPTI + 1 )) || OPTI=$(max 0 $(( OPTI - 1 ))) ;;
+                [Bb] ) [[ "${symb}" == "+" ]] && BUIN=$(( BUIN + 1 )) || BUIN=$(max 0 $(( BUIN - 1 ))) ;;
+                [Cc] ) [[ "${symb}" == "+" ]] && COMP=$(( COMP + 1 )) || COMP=$(max 0 $(( COMP - 1 ))) ;;
+                [Ff] ) [[ "${symb}" == "+" ]] && FUNC=$(( FUNC + 1 )) || FUNC=$(max 0 $(( FUNC - 1 ))) ;;
+                [Uu] ) [[ "${symb}" == "+" ]] && USERMADE=$(( USERMADE + 1 )) || USERMADE=$(max 0 $(( USERMADE - 1 ))) ;;
+                *) script_usage "${R0}unknown option:${RU}${symb}${char}${E}" 5 ;;
+            esac
+        done
+    else # TODO handle functions names given
+        echo -e "$arg is not an option"
+        continue
+    fi
 done
 # =[ HELP ]===================================================================================================
 [[ ${HELP} -ne 0 ]] && script_usage
