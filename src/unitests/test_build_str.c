@@ -158,23 +158,23 @@ int	main(int ac, char **av, char **ev)
 	//ft_printf("\n");
 	int	nb_err = 0;
 	// =[  ]====================================================================
-	print_title("0| NULL CASES");
+	print_title("A| NULL CASES");
 	print_subtitle("str == NULL");
-	nb_err += test(dt,NULL,NULL);
+	//nb_err += test(dt,NULL,NULL);
 	print_sep(S2);
 	print_subtitle("str == EMPTY");
-	nb_err += test(dt,"",NULL);
+	//nb_err += test(dt,"",NULL);
 	print_sep(S2);
 	print_sep(S1);
 	// =[  ]====================================================================
-	print_title("A| NO VAR IN STR");
+	print_title("B| NO VAR IN STR");
 	print_sep(S1);
 	// =[  ]====================================================================
-	print_title("B| SINGLE VAR IN STR");
-	print_sep(S1)
+	print_title("C| SINGLE VAR IN STR");
+	print_sep(S1);
 	// =[  ]====================================================================
-	print_title("C| MULTIPLE VAR IN STR");
-	print_sep(S1)
+	print_title("D| MULTIPLE VAR IN STR");
+	print_sep(S1);
 	
 	//////TODO: find a way to test this without cause exit() kill testeur
 	////print_title("0| NULL CASES");
