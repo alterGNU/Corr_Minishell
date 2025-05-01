@@ -156,7 +156,7 @@ int	tokcst_diff_token(t_token tok_cst, t_token *token)
 }
 
 // This function print details only on failures.
-int	test(char *str, t_token tab_res[])
+int	test(t_data *dt, char *str, t_token tab_res[])
 {
 	// Print test header
 	int print_sofar	 = printf("%s(", f_name);
@@ -173,41 +173,41 @@ int	test(char *str, t_token tab_res[])
 	printntime(S3, LEN - print_sofar);
 	printf("\n");
 	// STEP 1
-	t_list *tok_lst = build_tok_lst_split_by_quotes(str);
-	if (!tok_lst)
+	dt->tok_lst = build_tok_lst_split_by_quotes(str);
+	if (!dt->tok_lst)
 		write(1, "\n", 1);
 	// STEP 2
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_spaces);
+	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_spaces);
 	// STEP 3
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_operators);
+	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_operators);
 	// STEP 4
-	map_tok_lst_if_node_not_quoted(&tok_lst, build_tok_lst_split_by_parenthesis);
+	map_tok_lst_if_node_not_quoted(&dt->tok_lst, build_tok_lst_split_by_parenthesis);
 	// STEP 5
-	concatenate_contiguous_str(&tok_lst);
+	concatenate_contiguous_str(&dt->tok_lst);
 	// STEP 6
-	int res = set_tok_lst_members(tok_lst);
+	set_tok_lst_members(dt);
 	// CHECK TOK_LST == NULL
-	if (!tok_lst)
+	if (!dt->tok_lst)
 	{
 		if (!tab_res)
-			return (printf(CV"tok_lst == tab_res == NULL\n"CE),printntime(S3, LEN - 5), printf(PASS), 0);
+			return (printf(CV"dt->tok_lst == tab_res == NULL\n"CE),printntime(S3, LEN - 5), printf(PASS), 0);
 		write(1, "\n", 1);
 		return (printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
 	// Print result
-	printf("set_tok_lst_members() returns %d\ntab_res=", res);
+	printf("dt->odd_par_nbr=%d\ndt->pair_of_par=%d\ntab_res    =",dt->odd_par_nbr,dt->pair_of_par);
 	display_token_array(tab_res);
-	printf("\ntok_lst=");
-	display_tok_lst(tok_lst);
+	printf("\ndt->tok_lst=");
+	display_tok_lst(dt->tok_lst);
 	printf("\n");
 	// COMPARE TOTAL SIZE
 	int len_tab_res = len_of_tab_res(tab_res);
-	int len_tok_lst = ft_lstsize(tok_lst);
+	int len_tok_lst = ft_lstsize(dt->tok_lst);
 	if (len_tok_lst != len_tab_res)
 		return (printntime(S3, LEN - 5), printf(FAIL), 1);
 	// COMPARE EACH NODE
 	int	i = 0;
-	t_list	*act = tok_lst;
+	t_list	*act = dt->tok_lst;
 	while (tab_res[i].str && act)
 	{
 		if (tokcst_diff_token(tab_res[i], ((t_token *)act->content)))
@@ -219,61 +219,64 @@ int	test(char *str, t_token tab_res[])
 			printf("token ={");
 			print_t_token_type(((t_token *)act->content)->type);
 			printf(",%s,%d}\n"CE,((t_token *)act->content)->str,((t_token *)act->content)->parenthesis);
-			return (ft_lstclear(&tok_lst, free_token),printntime(S3, LEN - 5), printf(FAIL), 1);
+			return (ft_lstclear(&dt->tok_lst, free_token),printntime(S3, LEN - 5), printf(FAIL), 1);
 		}
 		act = act->next;
 		i++;
 	}
-	return (ft_lstclear(&tok_lst, free_token),printntime(S3, LEN - 5), printf(PASS), 0);
+	return (ft_lstclear(&dt->tok_lst, free_token),printntime(S3, LEN - 5), printf(PASS), 0);
 }
 
 // =============================================================================
 // MAIN
 // =============================================================================
-int main()
+int main(int ac, char **av, char **ev)
 {
 	int	nb_err = 0;
+	(void) ac;
+	(void) av;
+	t_data	*dt = init_data(ev);
 	// =[  ]====================================================================
 	print_title("0| NULL CASES");
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("str==NULL");
-	nb_err += test(NULL, NULL);
+	nb_err += test(dt, NULL, NULL);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("str==Empty");
-	nb_err += test("", NULL);
+	nb_err += test(dt, "", NULL);
 	print_sep(S2);
 	print_sep(S1);
 	// =[ 	 ]==================================================================
 	print_title("A| SET TYPE");
 	//t_token a0[]={{ESP," ",0},{UNSET,"echo",0},{ESP," ",0},{UNSET,"coucou",0},{ESP," ",0},{UNSET,"petite",0},{ESP," ",0},{UNSET,"perruche",0},{ESP," ",0},{0,0,0}};
-	//nb_err += test(" echo coucou petite perruche ", a0);
+	//nb_err += test(dt, " echo coucou petite perruche ", a0);
 	//t_token a1[]={{RLS,"<",0},{ESP," ",0},{RLD,"<<",0},{ESP," ",0},{RLT,"<<<",0},{ESP," ",0},{ERR,"<<<<",0},{ESP," ",0},{ERR,"<<<<<",0},{0,0,0}};
-	//nb_err += test("< << <<< <<<< <<<<<", a1);
+	//nb_err += test(dt, "< << <<< <<<< <<<<<", a1);
 	//t_token a2[]={{RRS,">",0},{ESP," ",0},{RRD,">>",0},{ESP," ",0},{ERR,">>>",0},{ESP," ",0},{ERR,">>>>",0},{ESP," ",0},{ERR,">>>>>",0},{0,0,0}};
-	//nb_err += test("> >> >>> >>>> >>>>>", a2);
+	//nb_err += test(dt, "> >> >>> >>>> >>>>>", a2);
 	//t_token a3[]={{PIP,"|",0},{ESP," ",0},{OPO,"||",0},{ESP," ",0},{ERR,"|||",0},{ESP," ",0},{ERR,"||||",0},{ESP," ",0},{ERR,"|||||",0},{0,0,0}};
-	//nb_err += test("| || ||| |||| |||||", a3);
+	//nb_err += test(dt, "| || ||| |||| |||||", a3);
 	//t_token a4[]={{ERR,"&",0},{ESP," ",0},{OPA,"&&",0},{ESP," ",0},{ERR,"&&&",0},{ESP," ",0},{ERR,"&&&&",0},{ESP," ",0},{ERR,"&&&&&",0},{0,0,0}};
-	//nb_err += test("& && &&& &&&& &&&&&", a4);
+	//nb_err += test(dt, "& && &&& &&&& &&&&&", a4);
 	t_token a5[]={{ESP," ",0},{ERR,"&",0},{RLS,"<",0},{RRS,">",0},{PIP,"|",0},\
 				  {ESP," ",0},{OPA,"&&",0},{RLD,"<<",0},{RRD,">>",0},{OPO,"||",0},\
 				  {ESP," ",0},{ERR,"&&&",0},{RLT,"<<<",0},{ERR,">>>",0},{ERR,"|||",0},\
 				  {ESP," ",0},{ERR,"&&&&",0},{ERR,"<<<<",0},{ERR,">>>>",0},{ERR,"||||",0},\
 				  {ESP," ",0},{0,0,0}};
-	nb_err += test(" &<>|  &&<<>>||   &&&<<<>>>|||    &&&&<<<<>>>>||||     ", a5);
+	nb_err += test(dt, " &<>|  &&<<>>||   &&&<<<>>>|||    &&&&<<<<>>>>||||     ", a5);
 	print_sep(S1);
 	// =[  ]====================================================================
 	print_title("B| SET QUOTES");
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Case of concat_contiguous_str that start with quoted token");
 	t_token b0[]={{ESP," ",0},{UNSET,"'e'ch\"o\"",0},{ESP," ",0},{UNSET,"\"coucou 'petite' perruche\"",0},{0,0,0}};
-	nb_err += test(" 'e'ch\"o\" \"coucou 'petite' perruche\"", b0);
+	nb_err += test(dt, " 'e'ch\"o\" \"coucou 'petite' perruche\"", b0);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
 	//print_subtitle("Case of concat_contiguous_str that does not start unquoted token");
 	//t_token b1[]={{UNSET,"e'c'h\"o\"",0},{ESP," ",0},{UNSET,"\"coucou 'petite' perruche\"",0},{0,0,0}};
-	//nb_err += test("e'c'h\"o\" \"coucou 'petite' perruche\"", b1);
+	//nb_err += test(dt, "e'c'h\"o\" \"coucou 'petite' perruche\"", b1);
 	//print_sep(S2);
 	print_sep(S1);
 	// =[  ]====================================================================
@@ -281,23 +284,23 @@ int main()
 	//// -[  ]--------------------------------------------------------------------
 	//print_subtitle("Simple:No priority changes");
 	//t_token c0[]={{PARO,"(",1},{UNSET,"echo",1},{ESP," ",1},{UNSET,"toto",1},{PARC,")",0},{0,0,0}};
-	//nb_err += test("(echo toto)", c0);
+	//nb_err += test(dt, "(echo toto)", c0);
 	//print_sep(S2);
 	//// -[  ]--------------------------------------------------------------------
 	//print_subtitle("Simple:With priority changes");
 	//t_token c1[]={{PARO,"(",1},{UNSET,"cmd1",1},{OPA,"&&",1},{UNSET,"cmd2",1},{PARC,")",0},{OPO,"||",0},{PARO,"(",1},{UNSET,"cmd3",1},{OPA,"&&",1},{UNSET,"cmd4",1},{PARC,")",0},{0,0,0}};
-	//nb_err += test("(cmd1&&cmd2)||(cmd3&&cmd4)", c1);
+	//nb_err += test(dt, "(cmd1&&cmd2)||(cmd3&&cmd4)", c1);
 	//print_sep(S2);
 	//// -[  ]--------------------------------------------------------------------
 	//print_subtitle("Imbrication:No priority changes");
 	//t_token c2[]={{PARO,"(",1},{PARO,"(",2},{UNSET,"cmd1",2},{PARC,")",1},{OPA,"&&",1},{PARO,"(",2},{UNSET,"cmd2",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
-	//nb_err += test("((cmd1)&&(cmd2))", c2);
+	//nb_err += test(dt, "((cmd1)&&(cmd2))", c2);
 	//print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("Imbrication:With priority changes");
 	t_token c3[]={{PARO,"(",1},{PARO,"(",2},{PARO,"(",3},{UNSET,"cmd1",3},{PARC,")",2},{OPA,"&&",2},{PARO,"(",3},{UNSET,"cmd2",3},{PARC,")",2},{PARC,")",1},{OPO,"||",1},{PARO,"(",2},{PARO,"(",3},{UNSET,"cmd3",3},{PARC,")",2},{OPA,"&&",2},{PARO,"(",3},{UNSET,"cmd4",3},{PARC,")",2},{PARC,")",1},{PARC,")",0},{0,0,0}};
-	nb_err += test("(((cmd1)&&(cmd2))||((cmd3)&&(cmd4)))", c3);
+	nb_err += test(dt, "(((cmd1)&&(cmd2))||((cmd3)&&(cmd4)))", c3);
 	print_sep(S2);
 	print_sep(S1);
-	return (nb_err);
+	return (free_data(&dt), nb_err);
 }

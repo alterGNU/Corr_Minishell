@@ -189,7 +189,7 @@ int	test(char **ev, char *str, t_token tab_res[])
 	// STEP 5
 	concatenate_contiguous_str(&dt->tok_lst);
 	// STEP 6
-	dt->odd_par_nbr = set_tok_lst_members(dt->tok_lst);
+	set_tok_lst_members(dt);
 	// STEP 7
 	check_lexical_rules(dt);
 	// CHECK TOK_LST == NULL
@@ -296,8 +296,8 @@ int main(int ac, char **av, char **ev)
 	//t_token a10[] = {{PARO,"(",1}, {UNSET,"cmd1",1}, {OPA,"&&",1}, {UNSET,"cmd2",1}, {PARC,")",0}, {OPO,"||",0}, {PARO,"(",1}, {UNSET,"cmd3",1}, {OPA,"&&",1}, {UNSET,"cmd4",1}, {PARC,")",0}, {0,0,0}};
 	//nb_err += test(ev, "(cmd1&&cmd2)||(cmd3&&cmd4)", a10);
 
-	//t_token a11[] = {{PARO,"(",1}, {PARO,"(",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {PARC,")",1}, {PARC,")",0},{0,0,0}};
-	//nb_err += test(ev, "(((cmd1&&cmd2)))", a11);
+	//t_token a11[] = {{PARO,"(",1}, {PARO,"(",2}, {ESP," ",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {PARC,")",1}, {ESP," ",1}, {PARC,")",0},{0,0,0}};
+	//nb_err += test(ev, "(( (cmd1&&cmd2)) )", a11);
 
 	//t_token a12[] = {{ESP," ",0}, {PARO,"(",1}, {ESP," ",1}, {PARO,"(",2}, {ESP," ",2}, {PARO,"(",3}, {UNSET,"cmd1",3}, {OPA,"&&",3}, {UNSET,"cmd2",3}, {PARC,")",2}, {ESP," ",2}, {PARC,")",1}, {ESP," ",1}, {PARC,")",0}, {ESP," ",0}, {0,0,0}};
 	//nb_err += test(ev, " ( ( (cmd1&&cmd2) ) ) ", a12);

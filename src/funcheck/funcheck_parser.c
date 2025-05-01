@@ -262,7 +262,7 @@ t_asn *create_asn(t_token *tab)
 		if (!add_dlst_node(&raw, token))
 			return (free_token(token), ft_free((void **)&token), ft_dlstclear(&raw, free_token), NULL);
 	}
-	res = init_asn(raw);
+	res = init_asn(raw, tab[0].type);
 	if (!res)
 		return (ft_dlstclear(&raw, free_token), NULL);
 	return (res);
