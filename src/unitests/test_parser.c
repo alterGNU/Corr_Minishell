@@ -193,7 +193,11 @@ int	test(char *str, t_btree **add_res, char **ev)
 		return (ft_btreeclear(add_res, free_asn), 1);
 	data->debug_mode = 1;
 	// Print test header
-	int print_sofar = printf("%s(\"%s\")", f_name, str);
+	int print_sofar = printf("%s(\"", f_name);
+	printf(CB);
+	print_sofar += printf("%s",str);
+	printf(CE);
+	print_sofar += printf("\")");
 	if (str)
 	{
 		int c = count_char_in_str('\t', str);
@@ -215,9 +219,7 @@ int	test(char *str, t_btree **add_res, char **ev)
 	printf("btree_res=\n");
 	fflush(stdout);
 	ft_btreeprint(res, print_first_four_char, 4);
-	printf("data->ast=\n");
-	fflush(stdout);
-	ft_btreeprint(data->ast, print_first_four_char, 4);
+	printf("\n");
 	// CHECK AFTER PARSING
 	int comp_res = compare_btree(data->ast, res);
 	if (!comp_res)
@@ -317,15 +319,15 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("Only UNSET and OPA, OPO");
 	char *str_2="cmd1&&cmd2||cmd3";
 	// CREATE NODES
-	t_token tab_10[]={{OPA,"&&",0}, {0,0,0}};
+	t_token tab_10[]={{OPO,"||",0}, {0,0,0}};
 	t_btree *ast_10 = create_ast_node(tab_10);
 	if (!ast_10)
 		return (1);
-	t_token tab_11[]={{UNSET,"cmd1",0}, {0,0,0}};
+	t_token tab_11[]={{OPA,"&&",0}, {0,0,0}};
 	t_btree *ast_11 = create_ast_node(tab_11);
 	if (!ast_11)
 		return (ft_btreedelone(&ast_10, free_asn), 1);
-	t_token tab_12[]={{OPO,"||",0}, {0,0,0}};
+	t_token tab_12[]={{UNSET,"cmd1",0}, {0,0,0}};
 	t_btree *ast_12 = create_ast_node(tab_12);
 	if (!ast_12)
 		return (ft_btreedelone(&ast_10, free_asn),ft_btreedelone(&ast_11, free_asn), 1);
@@ -338,10 +340,10 @@ int	main(int ac, char **av, char **ev)
 	if (!ast_14)
 		return (ft_btreedelone(&ast_10, free_asn),ft_btreedelone(&ast_11, free_asn),ft_btreedelone(&ast_12, free_asn),ft_btreedelone(&ast_13, free_asn), 1);
 	//ATTACHED NODES
-	ast_12->left = ast_13;
-	ast_12->right = ast_14;
 	ast_10->left = ast_11;
-	ast_10->right = ast_12;
+	ast_10->right= ast_14;
+	ast_11->left = ast_12;
+	ast_11->right= ast_13;
 	// RUN TEST
 	nb_err += test(str_2, &ast_10, ev);
 	print_sep(S2);
@@ -422,6 +424,36 @@ int	main(int ac, char **av, char **ev)
 	print_sep(S1);
 	// =[  ]====================================================================
 	print_title("C| PARENTHESIS");
+	char *str_c1="c1&&(c2||c3)";
+	// CREATE NODES
+	t_token tab_c40[]={{OPA,"&&",0}, {0,0,0}};
+	t_btree *ast_c40 = create_ast_node(tab_c40);
+	if (!ast_c40)
+		return (1);
+	t_token tab_c41[]={{UNSET,"c1",0}, {0,0,0}};
+	t_btree *ast_c41 = create_ast_node(tab_c41);
+	if (!ast_c41)
+		return (ft_btreedelone(&ast_c40, free_asn), 1);
+	t_token tab_c42[]={{OPO,"||",1}, {0,0,0}};
+	t_btree *ast_c42 = create_ast_node(tab_c42);
+	if (!ast_c42)
+		return (ft_btreedelone(&ast_c40, free_asn),ft_btreedelone(&ast_c41, free_asn), 1);
+	t_token tab_c43[]={{UNSET,"c2",1}, {0,0,0}};
+	t_btree *ast_c43 = create_ast_node(tab_c43);
+	if (!ast_c43)
+		return (ft_btreedelone(&ast_c40, free_asn),ft_btreedelone(&ast_c41, free_asn),ft_btreedelone(&ast_c42, free_asn), 1);
+	t_token tab_c44[]={{UNSET,"c3",1}, {0,0,0}};
+	t_btree *ast_c44 = create_ast_node(tab_c44);
+	if (!ast_c44)
+		return (ft_btreedelone(&ast_c40, free_asn),ft_btreedelone(&ast_c41, free_asn),ft_btreedelone(&ast_c42, free_asn),ft_btreedelone(&ast_c43, free_asn), 1);
+	//ATTACHED NODES
+	ast_c40->left = ast_c41;
+	ast_c40->right = ast_c42;
+	ast_c42->left = ast_c43;
+	ast_c42->right = ast_c44;
+	// RUN TEST
+	nb_err += test(str_c1, &ast_c41, ev);
+	print_sep(S2);
 	// -[ 	 ]------------------------------------------------------------------
 	print_subtitle("IMBRICATION:NO PRIORITY CHANGES");
 	char *str_5="(((c1&&c2)||c3)&&c4)";
