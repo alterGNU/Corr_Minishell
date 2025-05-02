@@ -191,6 +191,7 @@ int	test(char *str, t_btree **add_res, char **ev)
 	t_data	*data = init_data(ev);
 	if (!data)
 		return (ft_btreeclear(add_res, free_asn), 1);
+	data->debug_mode = 1;
 	// Print test header
 	int print_sofar = printf("%s(\"%s\")", f_name, str);
 	if (str)
