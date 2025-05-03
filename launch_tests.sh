@@ -375,10 +375,10 @@ launch_unitests()
                             echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
                             echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
                         fi
-                        echo -e "${FUN_LOG_DIR}/leaks.log" >> ${DLOG_FILE}
+                        [[ ${DLOG} -gt 0 ]] && echo -e "${FUN_LOG_DIR}/leaks.log" >> ${DLOG_FILE}
                     fi
                 else
-                    echo -e "${FUN_LOG_DIR}/exec.log" >> ${DLOG_FILE}
+                    [[ ${DLOG} -gt 0 ]] && echo -e "${FUN_LOG_DIR}/exec.log" >> ${DLOG_FILE}
                 fi
             else
                 echo " ${BC0} ⤷${E} ✖️  ${G0}Tests not found.${E}"
@@ -670,11 +670,19 @@ if [[ -f ${DLOG_FILE} ]];then
     " ${Y0}   | |) | | | (_-< | '_ \ | | / _' | | || |   | |__  / _ \ / _' | | _|  | | | | / -_) (_-<${E}" \
     " ${Y0}   |___/  |_| /__/ | .__/ |_| \__,_|  \_, |   |____| \___/ \__, | |_|   |_| |_| \___| /__/${E}" \
     " ${Y0}                   |_|                |__/                 |___/                          ${E}"
-    LOG_FILE_LST=( )
-    while IFS= read -r line; do LOG_FILE_LST+=( "${line}" );done < "${DLOG_FILE}"
-    for line in ${LOG_FILE_LST[@]};do
-        print_in_box -t 1 -c m "${Y0}$(basename "${line}")${E}" && cat "${line}"
-    done
+    while IFS= read -r log_file || [ -n "$log_file" ]; do
+        if [ -f "$log_file" ]; then
+            fun_name=$(dirname ${log_file})
+            fun_name="${Y0}${fun_name##*\/}()${E}"
+            print_box_title -t 1 -c m "${fun_name}"
+            while IFS= read -r log_file_line; do
+                echol -i 0 -c m -t 1 "${log_file_line}"
+            done < "${log_file}"
+            print_last -t 1 -c m
+        else
+            echo "File not found: $log_file"
+        fi
+    done < "$DLOG_FILE"
 fi
 # =[ STOP ]===================================================================================================
 display_resume "Minishell's tests"
