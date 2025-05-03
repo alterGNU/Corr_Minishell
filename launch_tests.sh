@@ -3,20 +3,22 @@
 # ============================================================================================================
 # Launch minishell unitests
 # - This script take multiples options as arguments:
-#   - TODO: enable fun name as argument => test only what given
-#   - ARGS ∈ {+-h, +-help}      :        🢥  Display this script usage
-#   - ARGS ∈ {-a, --no-all}     :        🢥  Desable all options
-#   - ARGS ∈ {+a, --all}        :        🢥  Enable all options
-#   - ARGS ∈ {-b, --no-built-in}:        🢥  Desable the listing of Minishell's built-in function found
-#   - ARGS ∈ {+b, --built-in}   :        🢥  Enable the listing of Minishell's built-in function found
-#   - ARGS ∈ {-n, --no-norm}    :        🢥  Desable the Norme-checker
-#   - ARGS ∈ {+n, --norm}       :        🢥  Enable the Norme-checker
-#   - ARGS ∈ {+c, --comp}       :        🢥  Force compilation
-#   - ARGS ∈ {+f, --funcheck}   :        🢥  Compile then run funcheck
-#   - ARGS ∈ {-o, --no-opti}    :        🢥  Desable: RUN tests on ALL Minishell's function
-#   - ARGS ∈ {+o, --opti}       :        🢥  Enable: RUN tests ONLY on Minishell's functions with unitests
-#   - ARGS ∈ {-u, --no-usermade}:        🢥  Desable: RUN tests on ALL Minishell's usermade function
-#   - ARGS ∈ {+u, --usermade}   :        🢥  Enable: RUN tests ONLY on Minishell's usermade functions with unitests
+#   - If does not start with + or -:
+#     - ADD to FUN_NAME_PATTERN list (list of name pattern to search for (unitests and funcheck))
+#   - Else, is an option
+#     - {+-h, +-help}           :        🢥  Display this script usage
+#     - {-a, --no-all}          :        🢥  Desable all options
+#     - {+a, --all}             :        🢥  Enable all options
+#     - {-b, --no-built-in}     :        🢥  Desable the listing of Minishell's built-in function found
+#     - {+b, --built-in}        :        🢥  Enable the listing of Minishell's built-in function found
+#     - {-n, --no-norm}         :        🢥  Desable the Norme-checker
+#     - {+n, --norm}            :        🢥  Enable the Norme-checker
+#     - {+c, --comp}            :        🢥  Force compilation
+#     - {+f, --funcheck}        :        🢥  Compile then run funcheck
+#     - {-o, --no-opti}         :        🢥  Desable: RUN tests on ALL Minishell's function
+#     - {+o, --opti}            :        🢥  Enable: RUN tests ONLY on Minishell's functions with unitests
+#     - {-u, --no-usermade}     :        🢥  Desable: RUN tests on ALL Minishell's usermade function
+#     - {+u, --usermade}        :        🢥  Enable: RUN tests ONLY on Minishell's usermade functions with unitests
 # - Steps:
 #   - START ) List-Options      :        🢥  Display the list of enabled/desabled options.
 #   - STEP 1) List-Builtin      :        🢥  Display the minishell buit-in functions used.
@@ -50,6 +52,8 @@ COMP=0                                                            # ☒ Force co
 USERMADE=1                                                        # ☒ Run unitests on user-made function found
 FUNC=0                                                            # ☒ Run Funcheck tool
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
+FUN_NAME_PATTERN=( )                                              # ☒ List of function name pattern passed as argument
+FUN_ASKED_FOR=( )                                                 # ☒ List of function matching given pattern names as argument
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
 FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
 FUN_TO_TEST=( )                                                   # ☒ List of user created function specific to minishell
@@ -98,16 +102,18 @@ source ${BSL_DIR}/src/print.sh
 script_usage()
 {
     local exit_value=0
-    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u]${R0}\`${E}"
+    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u] [<name_pattern>, ...]${R0}\`${E}"
     if [[ ${#} -eq 2 ]];then
-        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u]${R0}\`${E}"
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u] [<name_pattern>, ...]${R0}\`${E}"
         local exit_value=${2}
     fi
     echo -e "${entete}"
     echo -e " 🔹 ${BCU}PRE-REQUISITES:${E}"
     echo -e "    ${BC0}‣ ${BCU}i)${E} : To be cloned inside the project ${M0}path/minishell/${E} to be tested."
     echo -e "    ${BC0}‣ ${RCU}ii)${E}: The programm ${M0}path/minishell/${V0}minishell${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
-    echo -e " 🔹 ${BCU}OPTIONS:${E}"
+    echo -e " 🔹 ${BCU}ARGUMENTS:${E}"
+    echo -e "    ${BC0}‣ ${M0}any arg that does not start with + or - symbol is considered as an <name_pattern> (will be use to seach on unitests and funcheck file)"
+    echo -e " 🔹 ${BCU}OPTIONS: (any arguments that start with an + or - symbol)${E}"
     echo -e "    ${BC0}‣ ${M0}[+-h, --help]      ${BC0} 🢥  ${E}Display this script usage"
     echo -e "    ${BC0}‣ ${M0}[-a, --no-all]     ${BC0} 🢥  ${E}Desable all options"
     echo -e "    ${BC0}‣ ${M0}[+a, --all]        ${BC0} 🢥  ${E}Enable all options"
@@ -354,8 +360,8 @@ launch_unitests()
 }
 # -[ LAUNCH_FUNCHECK ]----------------------------------------------------------------------------------------
 # Launch funcheck test:
-# - 1 : search funcheck unitests (unitests with fewer tests)
-# - 2 : compile the funcheck
+# IF FUN_NAME_PATTERN list not empty, launch matching funcheck for fun.name passed as argument to script
+# ELSE, launch all funcheck files founded
 launch_funcheck()
 {
     print_in_box -t 2 -c y \
@@ -365,7 +371,16 @@ launch_funcheck()
         "                          ${Y0} |_|  \_,_||_||_|\__||_||_|\___|\__||_\_\                 ${E}" \
         "   "
     local nb_err=0
-    for test_main in $(find "${PARENT_DIR}/src/funcheck" -type f -name "funcheck_*");do
+    local FUNCHECK_LIST=( )
+    if [[ ${#FUN_NAME_PATTERN[@]} -eq 0 ]];then
+        for file in $(find "${PARENT_DIR}/src/funcheck" -type f -name "funcheck_*");do FUNCHECK_LIST+=( "${file}" );done
+    else
+        for funame in ${#FUN_NAME_PATTERN[@]};do
+            local file=$(find "${PARENT_DIR}/src/funcheck" -type f -name "*${funame}*")
+            [[ -z "${file}" ]] && FUNCHECK_LIST+=( "${file}" )
+        done
+    fi
+    for test_main in ${FUNCHECK_LIST[@]};do
         local fun=${test_main##*funcheck_}
         fun=${fun%%\.c*}
         print_in_box -t 1 -c m " 🔸 ${Y0}funcheck for ${fun}():${E}"
@@ -533,8 +548,8 @@ for arg in "${ARGS[@]}";do
                 *) script_usage "${R0}unknown option:${RU}${symb}${char}${E}" 5 ;;
             esac
         done
-    else # TODO handle functions names given
-        echo -e "$arg is not an option"
+    else
+        FUN_NAME_PATTERN+=( "${arg}" )
         continue
     fi
 done
@@ -570,8 +585,18 @@ else
     echo -e "${BC0}${PROGRAMM}${E} is not an object file\033[m"
 fi
 # -[ SET FUN_TO_TEST && FUN_WITH_UNITEST ]--------------------------------------------------------------------
-FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
-for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")" ]] && FUN_WITH_UNITEST+=( "${fun}" );done
+if [[ ${#FUN_NAME_PATTERN[@]} -eq 0 ]];then
+    FUN_TO_TEST=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_FUN[@]}" "${FUN_TO_EXCLUDE[@]}")))
+    for fun in "${FUN_TO_TEST[@]}";do [[ -n "$(find "${PARENT_DIR}/src/unitests/" -type f -name *"${fun}.c")" ]] && FUN_WITH_UNITEST+=( "${fun}" );done
+else
+    for fun in "${FUN_NAME_PATTERN[@]}";do
+        for file in $(find "${PARENT_DIR}/src/unitests" -type f -name *"${fun}"*.c);do
+            filename=$(basename ${file})
+            filename=${filename##*\test_}
+            FUN_ASKED_FOR+=( "${filename%%\.c*}" )
+        done
+    done
+fi
 # =[ START ]==================================================================================================
 display_start
 # =[ STEPS ]==================================================================================================
@@ -584,10 +609,14 @@ if [[ ${NORM} -gt 0 ]];then
 fi
 # -[ STEP 3 | UNITESTS ]--------------------------------------------------------------------------------------
 if [[ ${USERMADE} -gt 0 ]];then
-    if [[ ${OPTI} -gt 0 ]];then
-        exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
+    if [[ ${#FUN_NAME_PATTERN[@]} -gt 0 ]];then
+        exec_anim_in_box "launch_unitests FUN_ASKED_FOR" "Launch Unitests on Minishell's functions given as script argument"
     else
-        exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
+        if [[ ${OPTI} -gt 0 ]];then
+            exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
+        else
+            exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
+        fi
     fi
 fi
 # -[ STEP 4 | FUNCHECK ]--------------------------------------------------------------------------------------
