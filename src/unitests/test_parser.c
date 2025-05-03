@@ -458,41 +458,43 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("IMBRICATION:NO PRIORITY CHANGES");
 	char *str_5="(((c1&&c2)||c3)&&c4)";
 	// CREATE NODES
-	t_token tab_40[]={{UNSET,"c1",3}, {0,0,0}};
+	t_token tab_40[]={{OPA,"&&",1}, {0,0,0}};
 	t_btree *ast_40 = create_ast_node(tab_40);
 	if (!ast_40)
 		return (1);
-	t_token tab_41[]={{OPA,"&&",3}, {0,0,0}};
+	t_token tab_41[]={{UNSET,"c4",1}, {0,0,0}};
 	t_btree *ast_41 = create_ast_node(tab_41);
 	if (!ast_41)
 		return (ft_btreedelone(&ast_40, free_asn), 1);
-	t_token tab_42[]={{UNSET,"c2",3}, {0,0,0}};
+	t_token tab_42[]={{OPO,"||",2}, {0,0,0}};
 	t_btree *ast_42 = create_ast_node(tab_42);
 	if (!ast_42)
 		return (ft_btreedelone(&ast_40, free_asn),ft_btreedelone(&ast_41, free_asn), 1);
-	t_token tab_43[]={{OPO,"||",2}, {0,0,0}};
+	t_token tab_43[]={{UNSET,"c3",2}, {0,0,0}};
 	t_btree *ast_43 = create_ast_node(tab_43);
 	if (!ast_43)
 		return (ft_btreedelone(&ast_40, free_asn),ft_btreedelone(&ast_41, free_asn),ft_btreedelone(&ast_42, free_asn), 1);
-	t_token tab_44[]={{UNSET,"c3",2}, {0,0,0}};
+	t_token tab_44[]={{OPA,"&&",3}, {0,0,0}};
 	t_btree *ast_44 = create_ast_node(tab_44);
 	if (!ast_44)
 		return (ft_btreedelone(&ast_40, free_asn),ft_btreedelone(&ast_41, free_asn),ft_btreedelone(&ast_42, free_asn),ft_btreedelone(&ast_43, free_asn), 1);
-	t_token tab_45[]={{OPA,"&&",1}, {0,0,0}};
+	t_token tab_45[]={{UNSET,"c1",3}, {0,0,0}};
 	t_btree *ast_45 = create_ast_node(tab_45);
 	if (!ast_45)
 		return (ft_btreedelone(&ast_40, free_asn),ft_btreedelone(&ast_41, free_asn),ft_btreedelone(&ast_42, free_asn),ft_btreedelone(&ast_43, free_asn),ft_btreedelone(&ast_44, free_asn), 1);
-	t_token tab_46[]={{UNSET,"c4",1}, {0,0,0}};
+	t_token tab_46[]={{UNSET,"c2",3}, {0,0,0}};
 	t_btree *ast_46 = create_ast_node(tab_46);
 	if (!ast_46)
 		return (ft_btreedelone(&ast_40, free_asn),ft_btreedelone(&ast_41, free_asn),ft_btreedelone(&ast_42, free_asn),ft_btreedelone(&ast_43, free_asn),ft_btreedelone(&ast_44, free_asn),ft_btreedelone(&ast_45, free_asn), 1);
 	//ATTACHED NODES
-	ast_41->left = ast_40;
-	ast_41->right = ast_43;
-	ast_43->left = ast_42;
-	ast_43->right = ast_45;
-	ast_45->left = ast_44;
-	ast_45->right = ast_46;
+	ast_40->left = ast_42;
+	ast_40->right = ast_41;
+
+	ast_42->left = ast_44;
+	ast_42->right = ast_43;
+
+	ast_44->left = ast_45;
+	ast_44->right = ast_46;
 	// RUN TEST
 	nb_err += test(str_5, &ast_41, ev);
 	print_sep(S2);
