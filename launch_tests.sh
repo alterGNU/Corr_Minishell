@@ -5,27 +5,35 @@
 # - This script take multiples options as arguments:
 #   - If does not start with + or -:
 #     - ADD to FUN_NAME_PATTERN list (list of name pattern to search for (unitests and funcheck))
-#   - Else, is an option
-#     - {+-h, +-help}           :        🢥  Display this script usage
-#     - {-a, --no-all}          :        🢥  Desable all options
-#     - {+a, --all}             :        🢥  Enable all options
-#     - {-b, --no-built-in}     :        🢥  Desable the listing of Minishell's built-in function found
-#     - {+b, --built-in}        :        🢥  Enable the listing of Minishell's built-in function found
-#     - {-n, --no-norm}         :        🢥  Desable the Norme-checker
-#     - {+n, --norm}            :        🢥  Enable the Norme-checker
-#     - {+c, --comp}            :        🢥  Force compilation
-#     - {+f, --funcheck}        :        🢥  Compile then run funcheck
-#     - {-o, --no-opti}         :        🢥  Desable: RUN tests on ALL Minishell's function
-#     - {+o, --opti}            :        🢥  Enable: RUN tests ONLY on Minishell's functions with unitests
-#     - {-u, --no-usermade}     :        🢥  Desable: RUN tests on ALL Minishell's usermade function
-#     - {+u, --usermade}        :        🢥  Enable: RUN tests ONLY on Minishell's usermade functions with unitests
+#   - Else, is an option:
+#     - {+a, --all}              : Enable all options
+#     - {-a, --no-all}           : Desable all options
+#     - {+b, --built-in}         : Enable the listing of Minishell's built-in function found
+#     - {-b, --no-built-in}      : Desable the listing of Minishell's built-in function found
+#     - {+c, --comp}             : Enable Force compilation
+#     - {-c, --no-comp}          : Desable Force compilation
+#     - {+d, --dlog}             : Enable Displaying Log Files
+#     - {-d, --no-dlog}          : Desable Displaying Log Files
+#     - {+f, --funcheck}         : Enable funcheck
+#     - {-f, --no-funcheck}      : Disable funcheck
+#     - {+h, --help}             : Enable help option (Display this script usage)
+#     - {-h, --no-help}          : Desable help option
+#     - {-n, --no-norm}          : Desable the Norme-checker
+#     - {+n, --norm}             : Enable the Norme-checker
+#     - {-o, --no-opti}          : Desable: RUN tests on ALL Minishell's function
+#     - {+o, --opti}             : Enable: RUN tests ONLY on Minishell's functions with unitests
+#     - {-u, --no-usermade}      : Desable: RUN tests on ALL Minishell's usermade function
+#     - {+u, --usermade}         : Enable: RUN tests ONLY on Minishell's usermade functions with unitests
+#     - {+v, --valgrind}         : Enable Valgrind option
+#     - {-v, --no-valgrind}      : Desable Valgrind option
 # - Steps:
-#   - START ) List-Options      :        🢥  Display the list of enabled/desabled options.
-#   - STEP 1) List-Builtin      :        🢥  Display the minishell buit-in functions used.
-#   - STEP 2) Norme-checker     :        🢥  Run the norminette.
-#   - STEP 3) Unitests          :        🢥  Run unitests on minishell user-made functions.
-#   - STEP 4) Funcheck          :        🢥  Compile then run funcheck on minishell's unitest create
-#   - STOP  ) Resume            :        🢥  Display a resume of failed/passed unitests.
+#   - START ) List-Options       : Display the list of enabled/desabled options.
+#   - STEP 1) List-Builtin       : Display the minishell buit-in functions used.
+#   - STEP 2) Norme-checker      : Run the norminette.
+#   - STEP 3) Unitests           : Run unitests on minishell user-made functions.
+#   - STEP 4) Displaying Log File: Display log files in terminal (if VALG enagle-->valgrind log files, else exec log files)
+#   - STEP 5) Funcheck           : Compile then run funcheck on minishell's unitest create
+#   - STOP  ) Resume             : Display a resume of failed/passed unitests.
 # ============================================================================================================
  
 # =[ VARIABLES ]==============================================================================================
@@ -38,6 +46,7 @@ MS_DIR=$(dirname $(realpath ${PARENT_DIR}))                       # ☒ Name of 
 PROGRAMM="${MS_DIR}/minishell"                                    # ☒ Object's name to test (here our executable)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"           # ☒ Name of the log folder
 LOG_FAIL="${LOG_DIR}/list_errors.log"                             # ☒ File contains list of function that failed
+DLOG_FILE="${LOG_DIR}/display.log"                                # ☒ File contains list of log to display
 BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to BSL folder
 BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
 LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a static library
@@ -51,6 +60,8 @@ BUIN=1                                                            # ☒ Display 
 COMP=0                                                            # ☒ Force compilation
 USERMADE=1                                                        # ☒ Run unitests on user-made function found
 FUNC=0                                                            # ☒ Run Funcheck tool
+VALG=1                                                            # ☒ Display (cat) Valgrind Log Files
+DLOG=0                                                            # ☒ Display (cat) Exec Log Files
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 FUN_NAME_PATTERN=( )                                              # ☒ List of function name pattern passed as argument
 FUN_ASKED_FOR=( )                                                 # ☒ List of function matching given pattern names as argument
@@ -102,9 +113,9 @@ source ${BSL_DIR}/src/print.sh
 script_usage()
 {
     local exit_value=0
-    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u] [<name_pattern>, ...]${R0}\`${E}"
+    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,u,v] [<name_pattern>, ...]${R0}\`${E}"
     if [[ ${#} -eq 2 ]];then
-        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,f,h,n,o,u] [<name_pattern>, ...]${R0}\`${E}"
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,u,v] [<name_pattern>, ...]${R0}\`${E}"
         local exit_value=${2}
     fi
     echo -e "${entete}"
@@ -114,28 +125,34 @@ script_usage()
     echo -e " 🔹 ${BCU}ARGUMENTS:${E}"
     echo -e "    ${BC0}‣ ${M0}any arg that does not start with + or - symbol is considered as an <name_pattern> (will be use to seach on unitests and funcheck file)"
     echo -e " 🔹 ${BCU}OPTIONS: (any arguments that start with an + or - symbol)${E}"
-    echo -e "    ${BC0}‣ ${M0}[+-h, --help]      ${BC0} 🢥  ${E}Display this script usage"
-    echo -e "    ${BC0}‣ ${M0}[-a, --no-all]     ${BC0} 🢥  ${E}Desable all options"
-    echo -e "    ${BC0}‣ ${M0}[+a, --all]        ${BC0} 🢥  ${E}Enable all options"
-    echo -e "    ${BC0}‣ ${M0}[-b, --no-built-in]${BC0} 🢥  ${E}Desable the list-of built-in step"
-    echo -e "    ${BC0}‣ ${M0}[+b, --built-in]   ${BC0} 🢥  ${E}Enable the list-of built-in step"
-    echo -e "    ${BC0}‣ ${M0}[-c, --no-comp]    ${BC0} 🢥  ${E}Desable Force compilation"
-    echo -e "    ${BC0}‣ ${M0}[+c, --comp]       ${BC0} 🢥  ${E}Enable Force compilation"
-    echo -e "    ${BC0}‣ ${M0}[+f, --funcheck]   ${BC0} 🢥  ${E}Enable funcheck-checker step"
-    echo -e "    ${BC0}‣ ${M0}[-f, --no-funcheck]${BC0} 🢥  ${E}Desable funcheck-checker step"
-    echo -e "    ${BC0}‣ ${M0}[-n, --no-norm]    ${BC0} 🢥  ${E}Desable the Norme-checker step"
-    echo -e "    ${BC0}‣ ${M0}[+n, --norm]       ${BC0} 🢥  ${E}Enable the Norme-checker step"
-    echo -e "    ${BC0}‣ ${M0}[-o, --no-opti]    ${BC0} 🢥  ${E}Desable: RUN tests on ${GU}ALL${E} Minishell's functions"
-    echo -e "    ${BC0}‣ ${M0}[+o, --opti]       ${BC0} 🢥  ${E}Enable: RUN tests ${GU}ONLY${E} on Minishell's functions with unitests"
-    echo -e "    ${BC0}‣ ${M0}[-u, --usermade]   ${BC0} 🢥  ${E}Desable: RUN unitests on ${GU}ALL${E} Minishell's functions"
-    echo -e "    ${BC0}‣ ${M0}[+u, --no-usermade]${BC0} 🢥  ${E}Enable: RUN tests ${GU}ONLY${E} on Minishell's functions with unitests"
+    echo -e "    ${BC0}‣ ${M0}{+a, --all}         ${BC0}: ${E}Enable all options"
+    echo -e "    ${BC0}‣ ${M0}{-a, --no-all}      ${BC0}: ${E}Desable all options"
+    echo -e "    ${BC0}‣ ${M0}{+b, --built-in}    ${BC0}: ${E}Enable the listing of Minishell's built-in function found"
+    echo -e "    ${BC0}‣ ${M0}{-b, --no-built-in} ${BC0}: ${E}Desable the listing of Minishell's built-in function found"
+    echo -e "    ${BC0}‣ ${M0}{+c, --comp}        ${BC0}: ${E}Enable Force compilation"
+    echo -e "    ${BC0}‣ ${M0}{-c, --no-comp}     ${BC0}: ${E}Desable Force compilation"
+    echo -e "    ${BC0}‣ ${M0}{+d, --dlog}        ${BC0}: ${E}Enable Displaying Log Files STEP"
+    echo -e "    ${BC0}‣ ${M0}{-d, --no-dlog}     ${BC0}: ${E}Desable Displaying Log Files STEP"
+    echo -e "    ${BC0}‣ ${M0}{+f, --funcheck}    ${BC0}: ${E}Enable funcheck"
+    echo -e "    ${BC0}‣ ${M0}{-f, --no-funcheck} ${BC0}: ${E}Disable funcheck"
+    echo -e "    ${BC0}‣ ${M0}{+h, --help}        ${BC0}: ${E}Enable help option (Display this script usage)"
+    echo -e "    ${BC0}‣ ${M0}{-h, --no-help}     ${BC0}: ${E}Desable help option"
+    echo -e "    ${BC0}‣ ${M0}{-n, --no-norm}     ${BC0}: ${E}Desable the Norme-checker"
+    echo -e "    ${BC0}‣ ${M0}{+n, --norm}        ${BC0}: ${E}Enable the Norme-checker"
+    echo -e "    ${BC0}‣ ${M0}{-o, --no-opti}     ${BC0}: ${E}Desable  RUN tests on ALL Minishell's function"
+    echo -e "    ${BC0}‣ ${M0}{+o, --opti}        ${BC0}: ${E}Enable  RUN tests ONLY on Minishell's functions with unitests"
+    echo -e "    ${BC0}‣ ${M0}{-u, --no-usermade} ${BC0}: ${E}Desable  RUN tests on ALL Minishell's usermade function"
+    echo -e "    ${BC0}‣ ${M0}{+u, --usermade}    ${BC0}: ${E}Enable  RUN tests ONLY on Minishell's usermade functions with unitests"
+    echo -e "    ${BC0}‣ ${M0}{+v, --valgrind}    ${BC0}: ${E}Enable Valgrind option"
+    echo -e "    ${BC0}‣ ${M0}{-v, --no-valgrind} ${BC0}: ${E}Desable Valgrind option"
     echo -e " 🔹 ${BCU}STEPS:${E}"
-    echo -e "   ${BC0}|START | ${GU}List-Options${E} ${BC0} 🢥  ${E}Display the list of enabled/desabled options."
-    echo -e "   ${BC0}|STEP 1| ${GU}List-Builtin${E} ${BC0} 🢥  ${E}Display the minishell buit-in functions used."
-    echo -e "   ${BC0}|STEP 2| ${GU}Norme-checker${E}${BC0} 🢥  ${E}Run the norminette."
-    echo -e "   ${BC0}|STEP 3| ${GU}Unitests${E}     ${BC0} 🢥  ${E}Run unitests on minishell user-made functions."
-    echo -e "   ${BC0}|STEP 4| ${GU}Funcheck${E}     ${BC0} 🢥  ${E}Compile minishell's unitests created for a funcheck use."
-    echo -e "   ${BC0}|STOP  | ${GU}Resume${E}       ${BC0} 🢥  ${E}Display a resume of failed/passed unitests."
+    echo -e "   ${BC0}|START | ${GU}List-Options${E} ${BC0}        :${E}Display the list of enabled/desabled options."
+    echo -e "   ${BC0}|STEP 1| ${GU}List-Builtin${E} ${BC0}        :${E}Display the minishell buit-in functions used."
+    echo -e "   ${BC0}|STEP 2| ${GU}Norme-checker${E}${BC0}        :${E}Run the norminette."
+    echo -e "   ${BC0}|STEP 3| ${GU}Unitests${E}     ${BC0}        :${E}Run unitests on minishell user-made functions."
+    echo -e "   ${BC0}|STEP 4| ${GU}Displaying Log Files${E}${BC0} :${E}Display for each fun tested its log file (if valgrind enable, displayed instead of exec file)."
+    echo -e "   ${BC0}|STEP 5| ${GU}Funcheck${E}     ${BC0}        :${E}Compile minishell's unitests created for a funcheck use."
+    echo -e "   ${BC0}|STOP  | ${GU}Resume${E}       ${BC0}        :${E}Display a resume of failed/passed unitests."
     exit ${exit_value}
 }
 # -[ MAX() ]--------------------------------------------------------------------------------------------------
@@ -182,12 +199,23 @@ exec_anim_in_box()
 display_start()
 {
     local OPTIONS=( " ${YU}Minishell's OPTIONS:${E}" )
-    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER:       ${R0}✘ Desable${E}" )
-    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER:    ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER:    ${R0}✘ Desable${E}" )
-    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} UNITESTS OPTIONS:${E}" )
-    [[ ${COMP} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Forced compilation:        ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Forced compilation:        ${R0}✘ Desable${E}" )
-    [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Run only fun with unitests:${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Run only fun with unitests:${R0}✘ Desable${E}" )
-    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER:   ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER:   ${R0}✘ Desable${E}" )
+    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER         :${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER         :${R0}✘ Desable${E}" )
+    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER      :${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER      :${R0}✘ Desable${E}" )
+    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} UNITESTS OPTIONS     :${E}" )
+    if [[ ${#FUN_NAME_PATTERN[@]} -eq 0 ]];then
+        if [[ ${OPTI} -gt 0 ]];then
+            OPTIONS+=( "      ${Y0}▸All fun. with unitests      :${G0}${#FUN_WITH_UNITEST[@]} fun. found.${E}" )
+        else
+            OPTIONS+=( "      ${Y0}▸All user-made fun.          :${G0}${#FUN_TO_TEST[@]} fun. found.${E}" )
+        fi
+    else
+        OPTIONS+=( "      ${Y0}▸Only Matching patterns fun. :${G0}${#FUN_ASKED_FOR[@]} fun. found.${E}" )
+    fi
+    [[ ${COMP} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Forced compilation          :${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Forced compilation          :${R0}✘ Desable${E}" )
+    [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Run only fun with unitests  :${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Run only fun with unitests  :${R0}✘ Desable${E}" )
+    [[ ${VALG} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Valgrind Log File Displaying:${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Valgrind Log File Displaying:${R0}✘ Desable${E}" )
+    [[ ${DLOG} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Exec Log File Displaying    :${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Exec Log File Displaying    :${R0}✘ Desable${E}" )
+    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER     :${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER     :${R0}✘ Desable${E}" )
     print_in_box -t 2 -c y \
         "     ${Y0}  __  __  _        _      _          _  _    _   _        _  _             _       ${E}" \
         "     ${Y0} |  \/  |(_) _ _  (_) ___| |_   ___ | || |  | | | | _ _  (_)| |_  ___  ___| |_  ___${E}" \
@@ -296,6 +324,7 @@ launch_unitests()
                         [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
                         rm "${FUN_LOG_DIR}/comp_stderr.log"
                     else
+                        echo -e "${FUN_LOG_DIR}/comp_stderr.log" >> ${DLOG_FILE}
                         local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
                         nb_err=$(( nb_err + 1 ))
                         echo -e "${fun}\tcompilation\t${log_comp_fail}" >> ${LOG_FAIL}
@@ -329,22 +358,27 @@ launch_unitests()
                     echo "      🔸${Y0}check log file 👉 ${M0}${exec_log_file}${E}"
                 fi
                 # STEP 3 : VALGRIND
-                if [[ ${res_tests} -ne 139 ]];then
-                    echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
-                    if [[ -f "${test_txt}" ]];then
-                        local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
-                    else
-                        local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
+                if [[ ${VALG} -gt 0 ]];then
+                    if [[ ${res_tests} -ne 139 ]];then
+                        echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
+                        if [[ -f "${test_txt}" ]];then
+                            local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
+                        else
+                            local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
+                        fi
+                        if [[ ${res_val} -ne ${VAL_ERR} ]];then
+                            echo -en " ✅ ${V0} No leak detected.${E}\n"
+                        else
+                            local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
+                            nb_err=$(( nb_err + 1 ))
+                            echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
+                            echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
+                            echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
+                        fi
+                        echo -e "${FUN_LOG_DIR}/leaks.log" >> ${DLOG_FILE}
                     fi
-                    if [[ ${res_val} -ne ${VAL_ERR} ]];then
-                        echo -en " ✅ ${V0} No leak detected.${E}\n"
-                    else
-                        local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
-                        nb_err=$(( nb_err + 1 ))
-                        echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
-                        echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
-                        echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
-                    fi
+                else
+                    echo -e "${FUN_LOG_DIR}/exec.log" >> ${DLOG_FILE}
                 fi
             else
                 echo " ${BC0} ⤷${E} ✖️  ${G0}Tests not found.${E}"
@@ -514,22 +548,26 @@ for arg in "${ARGS[@]}";do
     shift
     if [[ "$arg" =~ ^(\+\+|--).*$ ]];then
         case "${arg}" in
-            --[Hh]elp ) HELP=$(( HELP + 1 )) ;;
-            --[Nn]o-[Hh]elp ) HELP=$(max 0 $(( HELP + 1 ))) ;;
             --[Aa]ll ) NORM=1; OPTI=1; BUIN=1; COMP=1; FUNC=1; USERMADE=1 ;;
             --[Nn]o-[Aa]ll ) NORM=0; OPTI=0; BUIN=0; COMP=0; FUNC=0; USERMADE=0 ;;
+            --[Bb]uil[td]-in ) BUIN=$(( BUIN + 1 )) ;;
+            --[Nn]o-[Bb]uil[td]-in ) BUIN=$(max 0 $(( BUIN - 1 ))) ;;
+            --[Cc]omp ) COMP=$(( COMP + 1 )) ;;
+            --[Nn]o-[Cc]omp ) COMP=$(max 0 $(( COMP - 1 ))) ;;
+            --[Dd]log ) DLOG=$(( DLOG + 1 )) ;;
+            --[Nn]o-[Dd]log ) DLOG=$(max 0 $(( DLOG - 1 ))) ;;
+            --[Ff]uncheck ) FUNC=$(( FUNC + 1 )) ;;
+            --[Nn]o-[fF]uncheck ) FUNC=$(max 0 $(( FUNC - 1 ))) ;;
+            --[Hh]elp ) HELP=$(( HELP + 1 )) ;;
+            --[Nn]o-[Hh]elp ) HELP=$(max 0 $(( HELP + 1 ))) ;;
             --[Nn]orm ) NORM=$(( NORM + 1 )) ;;
             --[Nn]o-[Nn]orm ) NORM=$(max 0 $(( NORM - 1 ))) ;;
             --[Oo]pti ) OPTI=$(( OPTI + 1 )) ;;
             --[Nn]o-[Oo]pti ) OPTI=$(max 0 $(( OPTI - 1 ))) ;;
-            --[Bb]uil[td]-in ) BUIN=$(( BUIN + 1 )) ;;
-            --[Nn]o-[Bb]uil[td]-in ) BUIN=$(max 0 $(( BUIN - 1 ))) ;;
-            --[cC]omp ) COMP=$(( COMP + 1 )) ;;
-            --[Nn]o-[cC]omp ) COMP=$(max 0 $(( COMP - 1 ))) ;;
-            --[fF]uncheck ) FUNC=$(( FUNC + 1 )) ;;
-            --[Nn]o-[fF]uncheck ) FUNC=$(max 0 $(( FUNC - 1 ))) ;;
             --[Uu]sermade ) USERMADE=$(( USERMADE + 1 )) ;;
             --[Nn]o-[Uu]sermade ) USERMADE=$(max 0 $(( USERMADE - 1 ))) ;;
+            --[Vv]algrind ) VALGRIND=$(( VALGRIND + 1 )) ;;
+            --[Nn]o-[Vv]algrind ) VALGRIND=$(max 0 $(( VALGRIND - 1 ))) ;;
             *) script_usage "${R0}unknown option:${RU}${arg}${E}" 4 ;;
         esac
     elif [[ "${arg}" =~ ^[+-][^+-]*$ ]];then
@@ -537,14 +575,16 @@ for arg in "${ARGS[@]}";do
         for i in $(seq 1 $((${#arg} - 1)));do
             char="${arg:i:1}"
             case "${char}" in
-                [Hh] ) [[ "${symb}" == "+" ]] && HELP=$(( HELP + 1 )) || HELP=$(max 0 $(( HELP - 1 ))) ;;
-                [Aa] ) [[ "${symb}" == "+" ]] && { NORM=1;OPTI=1;BUIN=1;COMP=1;FUNC=1;USERMADE=1;} || { NORM=0;OPTI=0;BUIN=0;COMP=0;FUNC=0;USERMADE=0;} ;;
-                [Nn] ) [[ "${symb}" == "+" ]] && NORM=$(( NORM + 1 )) || NORM=$(max 0 $(( NORM - 1 ))) ;;
-                [Oo] ) [[ "${symb}" == "+" ]] && OPTI=$(( OPTI + 1 )) || OPTI=$(max 0 $(( OPTI - 1 ))) ;;
+                [Aa] ) [[ "${symb}" == "+" ]] && { DLOG=1;VALG=1;NORM=1;OPTI=1;BUIN=1;COMP=1;FUNC=1;USERMADE=1;} || { DLOG=0;VALG=0;NORM=0;OPTI=0;BUIN=0;COMP=0;FUNC=0;USERMADE=0;} ;;
                 [Bb] ) [[ "${symb}" == "+" ]] && BUIN=$(( BUIN + 1 )) || BUIN=$(max 0 $(( BUIN - 1 ))) ;;
                 [Cc] ) [[ "${symb}" == "+" ]] && COMP=$(( COMP + 1 )) || COMP=$(max 0 $(( COMP - 1 ))) ;;
+                [Dd] ) [[ "${symb}" == "+" ]] && DLOG=$(( DLOG + 1 )) || DLOG=$(max 0 $(( DLOG - 1 ))) ;;
                 [Ff] ) [[ "${symb}" == "+" ]] && FUNC=$(( FUNC + 1 )) || FUNC=$(max 0 $(( FUNC - 1 ))) ;;
+                [Hh] ) [[ "${symb}" == "+" ]] && HELP=$(( HELP + 1 )) || HELP=$(max 0 $(( HELP - 1 ))) ;;
+                [Nn] ) [[ "${symb}" == "+" ]] && NORM=$(( NORM + 1 )) || NORM=$(max 0 $(( NORM - 1 ))) ;;
+                [Oo] ) [[ "${symb}" == "+" ]] && OPTI=$(( OPTI + 1 )) || OPTI=$(max 0 $(( OPTI - 1 ))) ;;
                 [Uu] ) [[ "${symb}" == "+" ]] && USERMADE=$(( USERMADE + 1 )) || USERMADE=$(max 0 $(( USERMADE - 1 ))) ;;
+                [Vv] ) [[ "${symb}" == "+" ]] && VALG=$(( VALG + 1 )) || VALG=$(max 0 $(( VALG - 1 ))) ;;
                 *) script_usage "${R0}unknown option:${RU}${symb}${char}${E}" 5 ;;
             esac
         done
@@ -619,7 +659,22 @@ if [[ ${USERMADE} -gt 0 ]];then
         fi
     fi
 fi
-# -[ STEP 4 | FUNCHECK ]--------------------------------------------------------------------------------------
+# -[ STEP 4 | DISPLAY LOG FILES ]-----------------------------------------------------------------------------
+# -[ STEP 5 | FUNCHECK ]--------------------------------------------------------------------------------------
 [[ ${FUNC} -gt 0 ]] && launch_funcheck
+# -[ STEP 5 | DISPLAY LOG FILES ]-----------------------------------------------------------------------------
+if [[ -f ${DLOG_FILE} ]];then
+    print_in_box -t 2 -c y \
+    " ${Y0}    ___    _               _                   _                   ___   _   _            ${E}" \
+    " ${Y0}   |   \  (_)  ___  _ __  | |  __ _   _  _    | |     ___   __ _  | __| (_) | |  ___   ___${E}" \
+    " ${Y0}   | |) | | | (_-< | '_ \ | | / _' | | || |   | |__  / _ \ / _' | | _|  | | | | / -_) (_-<${E}" \
+    " ${Y0}   |___/  |_| /__/ | .__/ |_| \__,_|  \_, |   |____| \___/ \__, | |_|   |_| |_| \___| /__/${E}" \
+    " ${Y0}                   |_|                |__/                 |___/                          ${E}"
+    LOG_FILE_LST=( )
+    while IFS= read -r line; do LOG_FILE_LST+=( "${line}" );done < "${DLOG_FILE}"
+    for line in ${LOG_FILE_LST[@]};do
+        print_in_box -t 1 -c m "${Y0}$(basename "${line}")${E}" && cat "${line}"
+    done
+fi
 # =[ STOP ]===================================================================================================
 display_resume "Minishell's tests"
