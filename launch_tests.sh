@@ -54,15 +54,15 @@ LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a 
 MINISHELL=$(find "${MS_DIR}" -type f -name "minishell")           # ☒ minishell program
 # -[ SCRIPT OPTION ]------------------------------------------------------------------------------------------
 NB_ARG="${#}"                                                     # ☒ Number of script's arguments
+BUIN=1                                                            # ☒ Display list of built-in fun used
+COMP=0                                                            # ☒ Force compilation
+DLOG=0                                                            # ☒ Display (cat) Log Files
+EXEC=0                                                            # ☒ Run binary files instead (no log creating)
+FUNC=0                                                            # ☒ Run Funcheck tool
 HELP=0                                                            # ☒ Display script usage
 NORM=1                                                            # ☒ Norminette-checker (<=0:Desable,>0:Enable)
 OPTI=0                                                            # ☒ Run test only on fun with unitests
-BUIN=1                                                            # ☒ Display list of built-in fun used
-COMP=0                                                            # ☒ Force compilation
-FUNC=0                                                            # ☒ Run Funcheck tool
 VALG=1                                                            # ☒ Enable Valgrind step
-EXEC=0                                                            # ☒ Run binary files instead (no log creating)
-DLOG=0                                                            # ☒ Display (cat) Log Files
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 FUN_NAME_PATTERN=( )                                              # ☒ List of function name pattern passed as argument
 FUN_ASKED_FOR=( )                                                 # ☒ List of function matching given pattern names as argument
@@ -105,6 +105,7 @@ BCU="\033[4;36m"                                                   # ☒ START A
 P0="\033[0;35m"                                                    # ☒ START PINK
 G0="\033[2;37m"                                                    # ☒ START GREY
 GU="\033[4;37m"                                                    # ☒ START GREY
+CT="\033[97;100m"                                                  # ☒ START TITLE
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
@@ -114,47 +115,29 @@ source ${BSL_DIR}/src/print.sh
 script_usage()
 {
     local exit_value=0
-    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
+    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,e,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
     if [[ ${#} -eq 2 ]];then
-        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,e,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
         local exit_value=${2}
     fi
     echo -e "${entete}"
     echo -e " 🔹 ${BCU}PRE-REQUISITES:${E}"
     echo -e "    ${BC0}‣ ${BCU}i)${E} : To be cloned inside the project ${M0}path/minishell/${E} to be tested."
-    echo -e "    ${BC0}‣ ${RCU}ii)${E}: The programm ${M0}path/minishell/${V0}minishell${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
+    echo -e "    ${BC0}‣ ${BCU}ii)${E}: The programm ${M0}path/minishell/${V0}minishell${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
     echo -e " 🔹 ${BCU}ARGUMENTS:${E}"
-    echo -e "    ${BC0}‣ ${M0}any arg that does not start with + or - symbol is considered as an <name_pattern> (will be use to seach on unitests and funcheck file)"
-    echo -e " 🔹 ${BCU}OPTIONS: (any arguments that start with an + or - symbol)${E}"
-    echo -e "    ${BC0}‣ ${M0}{+a, --all}         ${BC0}: ${E}Enable all options"
-    echo -e "    ${BC0}‣ ${M0}{-a, --no-all}      ${BC0}: ${E}Desable all options"
-    echo -e "    ${BC0}‣ ${M0}{+b, --built-in}    ${BC0}: ${E}Enable the listing of Minishell's built-in function found"
-    echo -e "    ${BC0}‣ ${M0}{-b, --no-built-in} ${BC0}: ${E}Desable the listing of Minishell's built-in function found"
-    echo -e "    ${BC0}‣ ${M0}{+c, --comp}        ${BC0}: ${E}Enable Force compilation"
-    echo -e "    ${BC0}‣ ${M0}{-c, --no-comp}     ${BC0}: ${E}Desable Force compilation"
-    echo -e "    ${BC0}‣ ${M0}{+d, --dlog}        ${BC0}: ${E}Enable Displaying Log Files STEP"
-    echo -e "    ${BC0}‣ ${M0}{-d, --no-dlog}     ${BC0}: ${E}Desable Displaying Log Files STEP"
-    echo -e "    ${BC0}‣ ${M0}{+e, --exec}        ${BC0}: ${E}Enable Exec (Execute binary file instead of launching unitests)"
-    echo -e "    ${BC0}‣ ${M0}{-e, --no-exec}     ${BC0}: ${E}Desable Exec"
-    echo -e "    ${BC0}‣ ${M0}{+f, --funcheck}    ${BC0}: ${E}Enable funcheck"
-    echo -e "    ${BC0}‣ ${M0}{-f, --no-funcheck} ${BC0}: ${E}Disable funcheck"
-    echo -e "    ${BC0}‣ ${M0}{+h, --help}        ${BC0}: ${E}Enable help option (Display this script usage)"
-    echo -e "    ${BC0}‣ ${M0}{-h, --no-help}     ${BC0}: ${E}Desable help option"
-    echo -e "    ${BC0}‣ ${M0}{-n, --no-norm}     ${BC0}: ${E}Desable the Norme-checker"
-    echo -e "    ${BC0}‣ ${M0}{+n, --norm}        ${BC0}: ${E}Enable the Norme-checker"
-    echo -e "    ${BC0}‣ ${M0}{-o, --no-opti}     ${BC0}: ${E}Desable  RUN tests on ALL Minishell's function"
-    echo -e "    ${BC0}‣ ${M0}{+o, --opti}        ${BC0}: ${E}Enable  RUN tests ONLY on Minishell's functions with unitests"
-    echo -e "    ${BC0}‣ ${M0}{+v, --valgrind}    ${BC0}: ${E}Enable Valgrind option"
-    echo -e "    ${BC0}‣ ${M0}{-v, --no-valgrind} ${BC0}: ${E}Desable Valgrind option"
-    echo -e " 🔹 ${BCU}STEPS:${E}"
-    echo -e "   ${BC0}|START   | ${GU}List-Options${E} ${BC0}        :${E}Display the list of enabled/desabled options."
-    echo -e "   ${BC0}|STEP 1  | ${GU}List-Builtin${E} ${BC0}        :${E}Display the minishell buit-in functions used."
-    echo -e "   ${BC0}|STEP 2  | ${GU}Norme-checker${E}${BC0}        :${E}Run the norminette."
-    echo -e "   ${BC0}|STEP 3.1| ${GU}Unitests${E}     ${BC0}        :${E}Run unitests on minishell user-made functions."
-    echo -e "   ${BC0}|STEP 3.2| ${GU}Displaying Log Files${E}${BC0} :${E}Display for each fun tested its log file (if valgrind enable, displayed instead of exec file)."
-    echo -e "   ${BC0}|STEP 4  | ${GU}Funcheck${E}     ${BC0}        :${E}Compile minishell's unitests created for a funcheck use."
-    echo -e "   ${BC0}|STEP 5  | ${GU}Exec    ${E}     ${BC0}        :${E}Execute binary files found.(no log, can be use with name_pattern and valgrind option)"
-    echo -e "   ${BC0}|STOP    | ${GU}Resume${E}       ${BC0}        :${E}Display a resume of failed/passed unitests."
+    echo -e "    ${BC0}‣ ${E}any arg that does not start with ${V0}+${E} or ${R0}-${E} symbol is considered as an ${M0}<name_pattern>${E} ${G0}(will be use to seach on unitests and funcheck file)${E}"
+    echo -e " 🔹 ${BCU}OPTIONS:${E}"
+    echo -e "    ${CT}| VAR. NAME |  Enable options |  Desable options  | Descritions                          |${E}"
+    echo -e "    |   ${BC0}NONE ${E}   | ${V0}+${M0}a${E}, ${V0}--${M0}all       ${E}| ${R0}-${M0}a ${E},${R0}--no-${M0}all      ${E}| Enable/Desable all following options |"
+    echo -e "    |   ${BC0}\$BUIN${E}   | ${V0}+${M0}b${E}, ${V0}--${M0}built-in  ${E}| ${R0}-${M0}b ${E},${R0}--no-${M0}built-in ${E}| Check fun. used not forbidden        |"
+    echo -e "    |   ${BC0}\$COMP${E}   | ${V0}+${M0}c${E}, ${V0}--${M0}comp      ${E}| ${R0}-${M0}c ${E},${R0}--no-${M0}comp     ${E}| Force the compilation                |"
+    echo -e "    |   ${BC0}\$DLOG${E}   | ${V0}+${M0}d${E}, ${V0}--${M0}dlog      ${E}| ${R0}-${M0}d ${E},${R0}--no-${M0}dlog     ${E}| Display the log files                |"
+    echo -e "    |   ${BC0}\$EXEC${E}   | ${V0}+${M0}e${E}, ${V0}--${M0}exec      ${E}| ${R0}-${M0}e ${E},${R0}--no-${M0}exec     ${E}| Exec the binaries files              |"
+    echo -e "    |   ${BC0}\$FUNC${E}   | ${V0}+${M0}f${E}, ${V0}--${M0}funcheck  ${E}| ${R0}-${M0}f ${E},${R0}--no-${M0}funcheck ${E}| Run funcheck tooks                   |"
+    echo -e "    |   ${BC0}\$HELP${E}   | ${V0}+${M0}h${E}, ${V0}--${M0}help      ${E}| ${R0}-${M0}h ${E},${R0}--no-${M0}help     ${E}| Display usage                        |"
+    echo -e "    |   ${BC0}\$NORM${E}   | ${V0}+${M0}n${E}, ${V0}--${M0}norm      ${E}| ${R0}-${M0}n ${E},${R0}--no-${M0}norm     ${E}| Run norminette tools                 |"
+    echo -e "    |   ${BC0}\$OPTI${E}   | ${V0}+${M0}o${E}, ${V0}--${M0}opti      ${E}| ${R0}-${M0}o ${E},${R0}--no-${M0}opti     ${E}| Select only fun with unitests        |"
+    echo -e "    |   ${BC0}\$VALG${E}   | ${V0}+${M0}v${E}, ${V0}--${M0}valgrind  ${E}| ${R0}-${M0}v ${E},${R0}--no-${M0}valgrind ${E}| Run valgrind tools                   |"
     exit ${exit_value}
 }
 # -[ MAX() ]--------------------------------------------------------------------------------------------------
@@ -201,24 +184,16 @@ exec_anim_in_box()
 display_start()
 {
     local OPTIONS=( " ${YU}Minishell's OPTIONS:${E}" )
-    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER         :${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 1)${Y0} NORM CHECKER         :${R0}✘ Desable${E}" )
-    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER      :${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 2)${Y0} BUILT-IN LISTER      :${R0}✘ Desable${E}" )
-    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} UNITESTS OPTIONS     :${E}" )
-    if [[ ${#FUN_NAME_PATTERN[@]} -eq 0 ]];then
-        if [[ ${OPTI} -gt 0 ]];then
-            OPTIONS+=( "      ${Y0}▸All fun. with unitests      :${G0}${#FUN_WITH_UNITEST[@]} fun. found.${E}" )
-        else
-            OPTIONS+=( "      ${Y0}▸All user-made fun.          :${G0}${#FUN_TO_TEST[@]} fun. found.${E}" )
-        fi
-    else
-        OPTIONS+=( "      ${Y0}▸Only Matching patterns fun. :${G0}${#FUN_ASKED_FOR[@]} fun. found.${E}" )
-    fi
-    [[ ${COMP} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Forced compilation          :${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Forced compilation          :${R0}✘ Desable${E}" )
-    [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Run only fun with unitests  :${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Run only fun with unitests  :${R0}✘ Desable${E}" )
-    [[ ${VALG} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Valgrind Log File Displaying:${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Valgrind Log File Displaying:${R0}✘ Desable${E}" )
-    [[ ${DLOG} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸Exec Log File Displaying    :${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸Exec Log File Displaying    :${R0}✘ Desable${E}" )
-    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER     :${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 4)${Y0} FUNCHECK CHECKER     :${R0}✘ Desable${E}" )
-    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 5)${Y0} FUNCHECK CHECKER     :${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 5)${Y0} FUNCHECK CHECKER     :${R0}✘ Desable${E}" )
+    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "     🔸${YU}BUIN${Y0} :Check fun. used not forbidden : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}BUIN${Y0} :Check fun. used not forbidden : ${R0}✘ Desable${E}" )
+    [[ ${COMP} -gt 0 ]] && OPTIONS+=( "     🔸${YU}COMP${Y0} :Force the compilation         : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}COMP${Y0} :Force the compilation         : ${R0}✘ Desable${E}" )
+    [[ ${DLOG} -gt 0 ]] && OPTIONS+=( "     🔸${YU}DLOG${Y0} :Display the log files         : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}DLOG${Y0} :Display the log files         : ${R0}✘ Desable${E}" )
+    [[ ${EXEC} -gt 0 ]] && OPTIONS+=( "     🔸${YU}EXEC${Y0} :Exec the binaries files       : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}EXEC${Y0} :Exec the binaries files       : ${R0}✘ Desable${E}" )
+    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "     🔸${YU}FUNC${Y0} :Run funcheck on funcheck files: ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}FUNC${Y0} :Run funcheck on funcheck files: ${R0}✘ Desable${E}" )
+    [[ ${HELP} -gt 0 ]] && OPTIONS+=( "     🔸${YU}HELP${Y0} :Display usage                 : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}HELP${Y0} :Display usage                 : ${R0}✘ Desable${E}" )
+    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "     🔸${YU}NORM${Y0} :Run norminette tools          : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}NORM${Y0} :Run norminette tools          : ${R0}✘ Desable${E}" )
+    [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "     🔸${YU}OPTI${Y0} :Select only fun with unitests : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}OPTI${Y0} :Select only fun with unitests : ${R0}✘ Desable${E}" )
+    [[ ${VALG} -gt 0 ]] && OPTIONS+=( "     🔸${YU}VALG${Y0} :Run valgrind                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}VALG${Y0} :Run valgrind                  : ${R0}✘ Desable${E}" )
+
     print_in_box -t 2 -c y \
         "     ${Y0}  __  __  _        _      _          _  _    _   _        _  _             _       ${E}" \
         "     ${Y0} |  \/  |(_) _ _  (_) ___| |_   ___ | || |  | | | | _ _  (_)| |_  ___  ___| |_  ___${E}" \
@@ -628,8 +603,8 @@ for arg in "${ARGS[@]}";do
     shift
     if [[ "$arg" =~ ^(\+\+|--).*$ ]];then
         case "${arg}" in
-            --[Aa]ll ) NORM=1; OPTI=1; BUIN=1; COMP=1; FUNC=1 ;;
-            --[Nn]o-[Aa]ll ) NORM=0; OPTI=0; BUIN=0; COMP=0; FUNC=0 ;;
+            --[Aa]ll ) BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;VALG=1 ;;
+            --[Nn]o-[Aa]ll ) BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;VALG=0 ;;
             --[Bb]uil[td]-in ) BUIN=$(( BUIN + 1 )) ;;
             --[Nn]o-[Bb]uil[td]-in ) BUIN=$(max 0 $(( BUIN - 1 ))) ;;
             --[Cc]omp ) COMP=$(( COMP + 1 )) ;;
@@ -646,8 +621,8 @@ for arg in "${ARGS[@]}";do
             --[Nn]o-[Nn]orm ) NORM=$(max 0 $(( NORM - 1 ))) ;;
             --[Oo]pti ) OPTI=$(( OPTI + 1 )) ;;
             --[Nn]o-[Oo]pti ) OPTI=$(max 0 $(( OPTI - 1 ))) ;;
-            --[Vv]algrind ) VALGRIND=$(( VALGRIND + 1 )) ;;
-            --[Nn]o-[Vv]algrind ) VALGRIND=$(max 0 $(( VALGRIND - 1 ))) ;;
+            --[Vv]algrind ) VALG=$(( VALG + 1 )) ;;
+            --[Nn]o-[Vv]algrind ) VALG=$(max 0 $(( VALG - 1 ))) ;;
             *) script_usage "${R0}unknown option:${RU}${arg}${E}" 4 ;;
         esac
     elif [[ "${arg}" =~ ^[+-][^+-]*$ ]];then
@@ -655,7 +630,7 @@ for arg in "${ARGS[@]}";do
         for i in $(seq 1 $((${#arg} - 1)));do
             char="${arg:i:1}"
             case "${char}" in
-                [Aa] ) [[ "${symb}" == "+" ]] && { EXEC=1;DLOG=1;VALG=1;NORM=1;OPTI=1;BUIN=1;COMP=1;FUNC=1;} || { EXEC=0;DLOG=0;VALG=0;NORM=0;OPTI=0;BUIN=0;COMP=0;FUNC=0;} ;;
+                [Aa] ) [[ "${symb}" == "+" ]] && { BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;VALG=1;} || { BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;VALG=0;} ;;
                 [Bb] ) [[ "${symb}" == "+" ]] && BUIN=$(( BUIN + 1 )) || BUIN=$(max 0 $(( BUIN - 1 ))) ;;
                 [Cc] ) [[ "${symb}" == "+" ]] && COMP=$(( COMP + 1 )) || COMP=$(max 0 $(( COMP - 1 ))) ;;
                 [Dd] ) [[ "${symb}" == "+" ]] && DLOG=$(( DLOG + 1 )) || DLOG=$(max 0 $(( DLOG - 1 ))) ;;
