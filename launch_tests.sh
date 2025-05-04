@@ -6,35 +6,17 @@
 #   - If does not start with + or -:
 #     - ADD to FUN_NAME_PATTERN list (list of name pattern to search for (unitests and funcheck))
 #   - Else, is an option:
-#     - {+a, --all}                : Enable all options
-#     - {-a, --no-all}             : Desable all options
-#     - {+b, --built-in}           : Enable the listing of Minishell's built-in function found
-#     - {-b, --no-built-in}        : Desable the listing of Minishell's built-in function found
-#     - {+c, --comp}               : Enable Force compilation
-#     - {-c, --no-comp}            : Desable Force compilation
-#     - {+d, --dlog}               : Enable Displaying Log Files
-#     - {-d, --no-dlog}            : Desable Displaying Log Files
-#     - {+e, --exec}               : Enable Exec (Execute binary file instead of launching unitests)
-#     - {-e, --no-exec}            : Desable Exec
-#     - {+f, --funcheck}           : Enable funcheck
-#     - {-f, --no-funcheck}        : Disable funcheck
-#     - {+h, --help}               : Enable help option (Display this script usage)
-#     - {-h, --no-help}            : Desable help option
-#     - {-n, --no-norm}            : Desable the Norme-checker
-#     - {+n, --norm}               : Enable the Norme-checker
-#     - {-o, --no-opti}            : Desable: RUN tests on ALL Minishell's function
-#     - {+o, --opti}               : Enable: RUN tests ONLY on Minishell's functions with unitests
-#     - {+v, --valgrind}           : Enable Valgrind option
-#     - {-v, --no-valgrind}        : Desable Valgrind option
-# - Steps:
-#   - START ) List-Options         : Display the list of enabled/desabled options.
-#   - STEP 1) List-Builtin         : Display the minishell buit-in functions used.
-#   - STEP 2) Norme-checker        : Run the norminette.
-#   - STEP 3.1) Unitests           : Run unitests on minishell user-made functions.
-#   - STEP 3.2) Displaying Log File: Display log files in terminal (if VALG enagle-->valgrind log files, else exec log files)
-#   - STEP 4) Funcheck             : Compile then run funcheck on minishell's unitest create
-#   - STEP 5) Exec                 : Compile and run binary files
-#   - STOP  ) Resume               : Display a resume of failed/passed unitests.
+#     | NAME | ENABLE OPTION |  DESABLE OPTION  | DESCRIPTIONS                  |
+#     |$BUIN | +b --built-in | -b --no-built-in | Check fun. used not forbidden |
+#     |$COMP | +c --comp     | -c --no-comp     | Force the compilation         |
+#     |$DLOG | +d --dlog     | -d --no-dlog     | Display the log files         |
+#     |$EXEC | +e --exec     | -e --no-exec     | Exec the binaries files       |
+#     |$FUNC | +f --funcheck | -f --no-funcheck | Run funcheck tooks            |
+#     |$HELP | +h --help     | -h --no-help     | Display usage                 |
+#     |$NORM | +n --norm     | -n --no-norm     | Run norminette tools          |
+#     |$OPTI | +o --opti     | -o --no-opti     | Select only fun with unitests |
+#     |$UNIT | +u --unitests | -u --no-unitests | Run unitests                  |
+#     |$VALG | +v --valgrind | -v --no-valgrind | Run valgrind tools            |
 # ============================================================================================================
  
 # =[ VARIABLES ]==============================================================================================
@@ -54,15 +36,16 @@ LIBFT_A=$(find "${MS_DIR}" -type f -name "libft.a")               # ☒ libft.a 
 MINISHELL=$(find "${MS_DIR}" -type f -name "minishell")           # ☒ minishell program
 # -[ SCRIPT OPTION ]------------------------------------------------------------------------------------------
 NB_ARG="${#}"                                                     # ☒ Number of script's arguments
-BUIN=1                                                            # ☒ Display list of built-in fun used
-COMP=0                                                            # ☒ Force compilation
-DLOG=0                                                            # ☒ Display (cat) Log Files
-EXEC=0                                                            # ☒ Run binary files instead (no log creating)
-FUNC=0                                                            # ☒ Run Funcheck tool
-HELP=0                                                            # ☒ Display script usage
-NORM=1                                                            # ☒ Norminette-checker (<=0:Desable,>0:Enable)
-OPTI=0                                                            # ☒ Run test only on fun with unitests
-VALG=1                                                            # ☒ Enable Valgrind step
+BUIN=1                                                            # ☒ Check fun. used not forbidden 
+COMP=0                                                            # ☒ Force the compilation         
+DLOG=0                                                            # ☒ Display the log files         
+EXEC=0                                                            # ☒ Exec the binaries files       
+FUNC=0                                                            # ☒ Run funcheck tooks            
+HELP=0                                                            # ☒ Display usage                 
+NORM=1                                                            # ☒ Run norminette tools          
+OPTI=0                                                            # ☒ Select only fun with unitests 
+UNIT=1                                                            # ☒ Run unitests                  
+VALG=1                                                            # ☒ Run valgrind tools            
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 FUN_NAME_PATTERN=( )                                              # ☒ List of function name pattern passed as argument
 FUN_ASKED_FOR=( )                                                 # ☒ List of function matching given pattern names as argument
@@ -115,9 +98,9 @@ source ${BSL_DIR}/src/print.sh
 script_usage()
 {
     local exit_value=0
-    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,e,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
+    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,e,f,h,n,o,u,v] [<name_pattern>, ...]${R0}\`${E}"
     if [[ ${#} -eq 2 ]];then
-        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,e,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,e,f,h,n,o,u,v] [<name_pattern>, ...]${R0}\`${E}"
         local exit_value=${2}
     fi
     echo -e "${entete}"
@@ -137,6 +120,7 @@ script_usage()
     echo -e "    |   ${BC0}\$HELP${E}   | ${V0}+${M0}h${E}, ${V0}--${M0}help      ${E}| ${R0}-${M0}h ${E},${R0}--no-${M0}help     ${E}| Display usage                        |"
     echo -e "    |   ${BC0}\$NORM${E}   | ${V0}+${M0}n${E}, ${V0}--${M0}norm      ${E}| ${R0}-${M0}n ${E},${R0}--no-${M0}norm     ${E}| Run norminette tools                 |"
     echo -e "    |   ${BC0}\$OPTI${E}   | ${V0}+${M0}o${E}, ${V0}--${M0}opti      ${E}| ${R0}-${M0}o ${E},${R0}--no-${M0}opti     ${E}| Select only fun with unitests        |"
+    echo -e "    |   ${BC0}\$UNIT${E}   | ${V0}+${M0}u${E}, ${V0}--${M0}unitests  ${E}| ${R0}-${M0}u ${E},${R0}--no-${M0}unitests ${E}| Run unitests                         |"
     echo -e "    |   ${BC0}\$VALG${E}   | ${V0}+${M0}v${E}, ${V0}--${M0}valgrind  ${E}| ${R0}-${M0}v ${E},${R0}--no-${M0}valgrind ${E}| Run valgrind tools                   |"
     exit ${exit_value}
 }
@@ -192,6 +176,7 @@ display_start()
     [[ ${HELP} -gt 0 ]] && OPTIONS+=( "     🔸${YU}HELP${Y0} :Display usage                 : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}HELP${Y0} :Display usage                 : ${R0}✘ Desable${E}" )
     [[ ${NORM} -gt 0 ]] && OPTIONS+=( "     🔸${YU}NORM${Y0} :Run norminette tools          : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}NORM${Y0} :Run norminette tools          : ${R0}✘ Desable${E}" )
     [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "     🔸${YU}OPTI${Y0} :Select only fun with unitests : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}OPTI${Y0} :Select only fun with unitests : ${R0}✘ Desable${E}" )
+    [[ ${UNIT} -gt 0 ]] && OPTIONS+=( "     🔸${YU}UNIT${Y0} :Run unitests                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}UNIT${Y0} :Run unitests                  : ${R0}✘ Desable${E}" )
     [[ ${VALG} -gt 0 ]] && OPTIONS+=( "     🔸${YU}VALG${Y0} :Run valgrind                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}VALG${Y0} :Run valgrind                  : ${R0}✘ Desable${E}" )
 
     print_in_box -t 2 -c y \
@@ -621,6 +606,8 @@ for arg in "${ARGS[@]}";do
             --[Nn]o-[Nn]orm ) NORM=$(max 0 $(( NORM - 1 ))) ;;
             --[Oo]pti ) OPTI=$(( OPTI + 1 )) ;;
             --[Nn]o-[Oo]pti ) OPTI=$(max 0 $(( OPTI - 1 ))) ;;
+            --[Uu]nitests ) UNIT=$(( UNIT + 1 )) ;;
+            --[Nn]o-[Uu]nitests ) UNIT=$(max 0 $(( UNIT - 1 ))) ;;
             --[Vv]algrind ) VALG=$(( VALG + 1 )) ;;
             --[Nn]o-[Vv]algrind ) VALG=$(max 0 $(( VALG - 1 ))) ;;
             *) script_usage "${R0}unknown option:${RU}${arg}${E}" 4 ;;
@@ -630,7 +617,7 @@ for arg in "${ARGS[@]}";do
         for i in $(seq 1 $((${#arg} - 1)));do
             char="${arg:i:1}"
             case "${char}" in
-                [Aa] ) [[ "${symb}" == "+" ]] && { BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;VALG=1;} || { BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;VALG=0;} ;;
+                [Aa] ) [[ "${symb}" == "+" ]] && { BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;UNIT=1;VALG=1;} || { BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;UNIT=0;VALG=0;} ;;
                 [Bb] ) [[ "${symb}" == "+" ]] && BUIN=$(( BUIN + 1 )) || BUIN=$(max 0 $(( BUIN - 1 ))) ;;
                 [Cc] ) [[ "${symb}" == "+" ]] && COMP=$(( COMP + 1 )) || COMP=$(max 0 $(( COMP - 1 ))) ;;
                 [Dd] ) [[ "${symb}" == "+" ]] && DLOG=$(( DLOG + 1 )) || DLOG=$(max 0 $(( DLOG - 1 ))) ;;
@@ -639,6 +626,7 @@ for arg in "${ARGS[@]}";do
                 [Hh] ) [[ "${symb}" == "+" ]] && HELP=$(( HELP + 1 )) || HELP=$(max 0 $(( HELP - 1 ))) ;;
                 [Nn] ) [[ "${symb}" == "+" ]] && NORM=$(( NORM + 1 )) || NORM=$(max 0 $(( NORM - 1 ))) ;;
                 [Oo] ) [[ "${symb}" == "+" ]] && OPTI=$(( OPTI + 1 )) || OPTI=$(max 0 $(( OPTI - 1 ))) ;;
+                [Uu] ) [[ "${symb}" == "+" ]] && UNIT=$(( UNIT + 1 )) || UNIT=$(max 0 $(( UNIT - 1 ))) ;;
                 [Vv] ) [[ "${symb}" == "+" ]] && VALG=$(( VALG + 1 )) || VALG=$(max 0 $(( VALG - 1 ))) ;;
                 *) script_usage "${R0}unknown option:${RU}${symb}${char}${E}" 5 ;;
             esac
@@ -703,13 +691,15 @@ if [[ ${NORM} -gt 0 ]];then
     res_normi=${?}
 fi
 # -[ STEP 3.1 | UNITESTS ]------------------------------------------------------------------------------------
-if [[ ${#FUN_NAME_PATTERN[@]} -gt 0 ]];then
-    exec_anim_in_box "launch_unitests FUN_ASKED_FOR" "Launch Unitests on Minishell's functions given as script argument"
-else
-    if [[ ${OPTI} -gt 0 ]];then
-        exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
+if [[ ${UNIT} -gt 0 ]];then
+    if [[ ${#FUN_NAME_PATTERN[@]} -gt 0 ]];then
+        exec_anim_in_box "launch_unitests FUN_ASKED_FOR" "Launch Unitests on Minishell's functions given as script argument"
     else
-        exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
+        if [[ ${OPTI} -gt 0 ]];then
+            exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
+        else
+            exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
+        fi
     fi
 fi
 # -[ STEP 3.2 | DISPLAY LOG FILES ]---------------------------------------------------------------------------
