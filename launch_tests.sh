@@ -168,16 +168,16 @@ exec_anim_in_box()
 display_start()
 {
     local OPTIONS=( " ${YU}Minishell's OPTIONS:${E}" )
-    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "     🔸${YU}BUIN${Y0} :Check fun. used not forbidden : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}BUIN${Y0} :Check fun. used not forbidden : ${R0}✘ Desable${E}" )
-    [[ ${COMP} -gt 0 ]] && OPTIONS+=( "     🔸${YU}COMP${Y0} :Force the compilation         : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}COMP${Y0} :Force the compilation         : ${R0}✘ Desable${E}" )
-    [[ ${DLOG} -gt 0 ]] && OPTIONS+=( "     🔸${YU}DLOG${Y0} :Display the log files         : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}DLOG${Y0} :Display the log files         : ${R0}✘ Desable${E}" )
-    [[ ${EXEC} -gt 0 ]] && OPTIONS+=( "     🔸${YU}EXEC${Y0} :Exec the binaries files       : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}EXEC${Y0} :Exec the binaries files       : ${R0}✘ Desable${E}" )
-    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "     🔸${YU}FUNC${Y0} :Run funcheck on funcheck files: ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}FUNC${Y0} :Run funcheck on funcheck files: ${R0}✘ Desable${E}" )
-    [[ ${HELP} -gt 0 ]] && OPTIONS+=( "     🔸${YU}HELP${Y0} :Display usage                 : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}HELP${Y0} :Display usage                 : ${R0}✘ Desable${E}" )
-    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "     🔸${YU}NORM${Y0} :Run norminette tools          : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}NORM${Y0} :Run norminette tools          : ${R0}✘ Desable${E}" )
-    [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "     🔸${YU}OPTI${Y0} :Select only fun with unitests : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}OPTI${Y0} :Select only fun with unitests : ${R0}✘ Desable${E}" )
-    [[ ${UNIT} -gt 0 ]] && OPTIONS+=( "     🔸${YU}UNIT${Y0} :Run unitests                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}UNIT${Y0} :Run unitests                  : ${R0}✘ Desable${E}" )
-    [[ ${VALG} -gt 0 ]] && OPTIONS+=( "     🔸${YU}VALG${Y0} :Run valgrind                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸${YU}VALG${Y0} :Run valgrind                  : ${R0}✘ Desable${E}" )
+    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}BUIN${Y0} :Check fun. used not forbidden : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}BUIN${Y0} :Check fun. used not forbidden : ${R0}✘ Desable${E}" )
+    [[ ${COMP} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}COMP${Y0} :Force the compilation         : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}COMP${Y0} :Force the compilation         : ${R0}✘ Desable${E}" )
+    [[ ${DLOG} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}DLOG${Y0} :Display the log files         : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}DLOG${Y0} :Display the log files         : ${R0}✘ Desable${E}" )
+    [[ ${EXEC} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}EXEC${Y0} :Exec the binaries files       : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}EXEC${Y0} :Exec the binaries files       : ${R0}✘ Desable${E}" )
+    [[ ${FUNC} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}FUNC${Y0} :Run funcheck on funcheck files: ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}FUNC${Y0} :Run funcheck on funcheck files: ${R0}✘ Desable${E}" )
+    [[ ${HELP} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}HELP${Y0} :Display usage                 : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}HELP${Y0} :Display usage                 : ${R0}✘ Desable${E}" )
+    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}NORM${Y0} :Run norminette tools          : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}NORM${Y0} :Run norminette tools          : ${R0}✘ Desable${E}" )
+    [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}OPTI${Y0} :Select only fun with unitests : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}OPTI${Y0} :Select only fun with unitests : ${R0}✘ Desable${E}" )
+    [[ ${UNIT} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}UNIT${Y0} :Run unitests                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}UNIT${Y0} :Run unitests                  : ${R0}✘ Desable${E}" )
+    [[ ${VALG} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}VALG${Y0} :Run valgrind                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}VALG${Y0} :Run valgrind                  : ${R0}✘ Desable${E}" )
 
     print_in_box -t 2 -c y \
         "     ${Y0}  __  __  _        _      _          _  _    _   _        _  _             _       ${E}" \
@@ -188,12 +188,12 @@ display_start()
         "  🔶 ${OPTIONS[@]}"
 }
 
-# -[ DISPLAY_BUILTIN_USED ]-----------------------------------------------------------------------------------
-# Display built-in function detected in minishell with coloration:
-# - Grey if called by main() function
-# - Green if allowed
-# - RED if not allowed
-display_builtin_used()
+# -[ CHECK_FUNUSED ]------------------------------------------------------------------------------------------
+# Check that functions used by program are allowed:
+# - GREEN -> allowed
+# - GREY  -> called by main() function
+# - RED   -> not allowed
+check_funused()
 {
     local tot=0
     #local args=( "🔵 ${BU}BUILT-IN FUN. USED:${E}" )
@@ -446,7 +446,7 @@ exec_binary()
     [[ ${#} -eq 0 || ${#} -gt 2 ]] && { echo "${R0}WRONG USAGE OF exec_binary():wrong number of argument" && exit 2 ; }
     local -a FUN_LIST=( ) # list of all fun needed, (set as arg2 if given, else is a copy of arg1)
     [[ -n ${2} ]] && eval "local -a FUN_LIST+=( \"\${${2}[@]}\" )" || eval "local -a FUN_LIST+=( \"\${${1}[@]}\" )"
-    [[ ${#FUN_LIST[@]} -eq 0 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():FUN_LIST created is an empty list" && exit 2 ; }
+    [[ ${#FUN_LIST[@]} -eq 0 ]] && { echo "${R0}WRONG USAGE OF exec_binary():FUN_LIST created is an empty list" && exit 2 ; }
 
     for fun in ${FUN_LIST[@]};do
         local FUN_LOG_DIR="${LOG_DIR}/${fun}"
@@ -480,15 +480,15 @@ exec_binary()
             print_last -t 1 -c m
             if [[ ${VALG} -gt 0 ]];then
                 if [[ -f "${test_txt}" ]];then
-                    ${exe} "$(dirname ${test_txt})" "${FUN_LOG_DIR}"
-                else
-                    ${exe}
-                fi
-            else
-                if [[ -f "${test_txt}" ]];then
                     ${VALGRIND} ${exe} "$(dirname ${test_txt})" "${FUN_LOG_DIR}"
                 else                              
                     ${VALGRIND} ${exe}
+                fi
+            else
+                if [[ -f "${test_txt}" ]];then
+                    ${exe} "$(dirname ${test_txt})" "${FUN_LOG_DIR}"
+                else
+                    ${exe}
                 fi
             fi
         else
@@ -515,67 +515,71 @@ display_resume()
         local okc=$(printf "%02d" "${#OK_BI[@]}")
         local koc=$(printf "%02d" "${#KO_BI[@]}")
         if [[ ${#KO_BI[@]} -eq 0 ]];then
-            args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${okc} built-in fun. detected:${V0}          ✅ ALL PASS${E}" )
+            args+=( "  🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${okc} built-in fun. detected:${V0}          ✅ ALL PASS${E}" )
         else
             local TOT_BI=$(printf "%02d" $(( ${#OK_BI[@]} + ${#KO_BI[@]} )) )
-            args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${TOT_BI} built-in fun. detected:${E}" )
+            args+=( "  🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${TOT_BI} built-in fun. detected:${E}" )
             args+=( "                ✅ ${V0}${okc} Allowed${E}" )
             args+=( "                ❌ ${R0}${koc} NOT Allowed${E}" )
             args+=( "${KO_BI[@]}" )
         fi
     else
-        args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${E}                                    ${G0} ✖️  Step Desabled${E}" )
+        args+=( "  🔸 ${YU}STEP 1-BUILT-IN)${E}                                    ${G0} ✖️  Step Desabled${E}" )
     fi
     # -[ NORMINETTE STEP ]------------------------------------------------------------------------------------
     if [[ ${NORM} -gt 0 ]];then
         if [[ ${res_normi} -eq 0 ]];then
-            args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${V0}                                   ✅ ALL PASS${E}" )
+            args+=( "  🔸 ${YU}STEP 2-NORM-CHECK)${V0}                                   ✅ ALL PASS${E}" )
         else
-            args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${R0}                                   ❌ FAIL (${res_normi} wrong files detected)${E}" )
+            args+=( "  🔸 ${YU}STEP 2-NORM-CHECK)${R0}                                   ❌ FAIL (${res_normi} wrong files detected)${E}" )
         fi
     else
-        args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${E}                                 ${G0}  ✖️  Step Desabled${E}" )
+        args+=( "  🔸 ${YU}STEP 2-NORM-CHECK)${E}                                 ${G0}  ✖️  Step Desabled${E}" )
     fi
     # -[ UNITESTS STEP ]--------------------------------------------------------------------------------------
-    local short_log_dir=$(print_shorter_path ${LOG_DIR})
-    local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
-    local lst_fail=( )
-    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! "${lst_fail[@]}" =~ "${ff}" ]] && lst_fail+=( "${ff}" );done
-    if [[ ${#lst_fail[@]} -eq 0 ]];then
-        args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} $(printf "%02d" "${tot_tested}") user-made fun. have been tested:${V0} ✅ ALL PASS${E}" ) 
+    if [[ ${UNIT} -gt 0 ]];then
+        local short_log_dir=$(print_shorter_path ${LOG_DIR})
+        local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
+        local lst_fail=( )
+        [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! "${lst_fail[@]}" =~ "${ff}" ]] && lst_fail+=( "${ff}" );done
+        if [[ ${#lst_fail[@]} -eq 0 ]];then
+            args+=( "  🔸 ${YU}STEP 3-UNITESTS)${Y0} $(printf "%02d" "${tot_tested}") user-made fun. have been tested:${V0} ✅ ALL PASS${E}" ) 
+        else
+            args+=( "  🔸 ${YU}STEP 3-UNITESTS)${Y0} $(printf "%02d" "${tot_tested}") user-made fun. have been tested:${E}" )
+            args+=( \
+                "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
+                "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
+            )
+            for fun in "${lst_fail[@]}";do
+                args+=( "      ${R0}✘ ${RU}${fun}():${E}" )
+                local link1=$(awk -v f="${fun}" '$1 == f &&  $2 == "compilation" {print $3}' ${LOG_FAIL})
+                local link2=$(awk -v f="${fun}" '$1 == f &&  $2 == "errors" {print $3}' ${LOG_FAIL})
+                local link3=$(awk -v f="${fun}" '$1 == f &&  $2 == "leaks" {print $3}' ${LOG_FAIL})
+                local link4=$(awk -v f="${fun}" '$1 == f &&  $2 == "missing" {print $3}' ${LOG_FAIL})
+                local link5=$(awk -v f="${fun}" '$1 == f &&  $2 == "segfault" {print $3}' ${LOG_FAIL})
+                local link6=$(awk -v f="${fun}" '$1 == f &&  $2 == "comp-funcheck" {print $3}' ${LOG_FAIL})
+                [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling unitests:${M0}👉 ${link1}${E}" )
+                [[ -n "${link2}" ]] && args+=( "      ${R0}⤷ Error detected ${M0}👉 ${link2}${E}" )
+                [[ -n "${link3}" ]] && args+=( "      ${R0}⤷ Leaks detected ${M0}👉 ${link3}${E}" )
+                [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
+                [[ -n "${link5}" ]] && args+=( "      ${R0}⤷ Segmentation Fault${M0}👉 ${link5}${E}" )
+                [[ -n "${link6}" ]] && args+=( "      ${R0}⤷ Error occure will compilling funcheck unitest:${M0}👉 ${link6}${E}" )
+            done
+        fi
     else
-        args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} $(printf "%02d" "${tot_tested}") user-made fun. have been tested:${E}" )
-        args+=( \
-            "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
-            "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
-        )
-        for fun in "${lst_fail[@]}";do
-            args+=( "      ${R0}✘ ${RU}${fun}():${E}" )
-            local link1=$(awk -v f="${fun}" '$1 == f &&  $2 == "compilation" {print $3}' ${LOG_FAIL})
-            local link2=$(awk -v f="${fun}" '$1 == f &&  $2 == "errors" {print $3}' ${LOG_FAIL})
-            local link3=$(awk -v f="${fun}" '$1 == f &&  $2 == "leaks" {print $3}' ${LOG_FAIL})
-            local link4=$(awk -v f="${fun}" '$1 == f &&  $2 == "missing" {print $3}' ${LOG_FAIL})
-            local link5=$(awk -v f="${fun}" '$1 == f &&  $2 == "segfault" {print $3}' ${LOG_FAIL})
-            local link6=$(awk -v f="${fun}" '$1 == f &&  $2 == "comp-funcheck" {print $3}' ${LOG_FAIL})
-            [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling unitests:${M0}👉 ${link1}${E}" )
-            [[ -n "${link2}" ]] && args+=( "      ${R0}⤷ Error detected ${M0}👉 ${link2}${E}" )
-            [[ -n "${link3}" ]] && args+=( "      ${R0}⤷ Leaks detected ${M0}👉 ${link3}${E}" )
-            [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
-            [[ -n "${link5}" ]] && args+=( "      ${R0}⤷ Segmentation Fault${M0}👉 ${link5}${E}" )
-            [[ -n "${link6}" ]] && args+=( "      ${R0}⤷ Error occure will compilling funcheck unitest:${M0}👉 ${link6}${E}" )
-        done
+        args+=( "  🔸 ${YU}STEP 3-UNITESTS)${E}                                    ${G0} ✖️  Step Desabled${E}" ) 
     fi
     # -[ FUNCHECK CHECKER ] ----------------------------------------------------------------------------------
     if [[ ${FUNC} -gt 0 ]];then
-        args+=( " 🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${E}                            ${V0} ✅ Step Enable${E}" )
+        args+=( "  🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${E}                            ${V0} ✅ Step Enable${E}" )
     else
-        args+=( " 🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${E}                            ${G0} ✖️  Step Desabled${E}" )
+        args+=( "  🔸 ${YU}STEP 4-FUNCHECK-CHECKER)${E}                            ${G0} ✖️  Step Desabled${E}" )
     fi
     # -[ EXEC ] ----------------------------------------------------------------------------------------------
     if [[ ${EXEC} -gt 0 ]];then
-        args+=( " 🔸 ${YU}STEP 5-EXEC)${E}                                        ${V0} ✅ Step Enable${E}" )
+        args+=( "  🔸 ${YU}STEP 5-EXEC)${E}                                        ${V0} ✅ Step Enable${E}" )
     else
-        args+=( " 🔸 ${YU}STEP 5-EXEC)${E}                                        ${G0} ✖️  Step Desabled${E}" )
+        args+=( "  🔸 ${YU}STEP 5-EXEC)${E}                                        ${G0} ✖️  Step Desabled${E}" )
     fi
     print_in_box -t 2 -c y "${args[@]}"
 }
@@ -683,15 +687,33 @@ fi
 # =[ START ]==================================================================================================
 display_start
 # =[ STEPS ]==================================================================================================
-# -[ STEP 1 | LIST_BUILTIN ]----------------------------------------------------------------------------------
-[[ ${BUIN} -gt 0 ]] && exec_anim_in_box "display_builtin_used" "Display built-in function used"
+# -[ STEP 1 | CHECK-FUNUSED ]---------------------------------------------------------------------------------
+if [[ ${BUIN} -gt 0 ]];then
+    print_in_box -t 2 -c y \
+        "      ${Y0}   ___   _                 _       ___                 _   _                 _  ${E}" \
+        "      ${Y0}  / __| | |_    ___   __  | |__   | __|  _  _   _ _   | | | |  ___  ___   __| | ${E}" \
+        "      ${Y0} | (__  | ' \  / -_) / _| | / /   | _|  | || | | ' \  | |_| | (_-< / -_) / _' | ${E}" \
+        "      ${Y0}  \___| |_||_| \___| \__| |_\_\   |_|    \_,_| |_||_|  \___/  /__/ \___| \__,_| ${E}" \
+        "   "
+    exec_anim_in_box "check_funused" "Display built-in function used"
+fi
 # -[ STEP 2 | NORM-CHECK ]------------------------------------------------------------------------------------
 if [[ ${NORM} -gt 0 ]];then
+    print_in_box -t 2 -c y \
+    " ${Y0}                    _  _                       _                _     _          ${E}" \
+    " ${Y0}                   | \| |  ___   _ _   _ __   (_)  _ _    ___  | |_  | |_   ___  ${E}" \
+    " ${Y0}                   | .' | / _ \ | '_| | '  \  | | | ' \  / -_) |  _| |  _| / -_) ${E}" \
+    " ${Y0}                   |_|\_| \___/ |_|   |_|_|_| |_| |_||_| \___|  \__|  \__| \___| ${E}"
     exec_anim_in_box "check42_norminette ${MS_DIR}" "Check Norminette"
     res_normi=${?}
 fi
 # -[ STEP 3.1 | UNITESTS ]------------------------------------------------------------------------------------
 if [[ ${UNIT} -gt 0 ]];then
+    print_in_box -t 2 -c y \
+    " ${Y0}                     _   _   _  _   ___   _____   ___   ___   _____   ___                ${E}" \
+    " ${Y0}                    | | | | | \| | |_ _| |_   _| | __| / __| |_   _| / __|               ${E}" \
+    " ${Y0}                    | |_| | | .' |  | |    | |   | _|  \__ \   | |   \__ \               ${E}" \
+    " ${Y0}                     \___/  |_|\_| |___|   |_|   |___| |___/   |_|   |___/               ${E}"
     if [[ ${#FUN_NAME_PATTERN[@]} -gt 0 ]];then
         exec_anim_in_box "launch_unitests FUN_ASKED_FOR" "Launch Unitests on Minishell's functions given as script argument"
     else
