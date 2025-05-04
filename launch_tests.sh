@@ -24,8 +24,6 @@
 #     - {+n, --norm}               : Enable the Norme-checker
 #     - {-o, --no-opti}            : Desable: RUN tests on ALL Minishell's function
 #     - {+o, --opti}               : Enable: RUN tests ONLY on Minishell's functions with unitests
-#     - {-u, --no-usermade}        : Desable: RUN tests on ALL Minishell's usermade function
-#     - {+u, --usermade}           : Enable: RUN tests ONLY on Minishell's usermade functions with unitests
 #     - {+v, --valgrind}           : Enable Valgrind option
 #     - {-v, --no-valgrind}        : Desable Valgrind option
 # - Steps:
@@ -61,7 +59,6 @@ NORM=1                                                            # ☒ Norminet
 OPTI=0                                                            # ☒ Run test only on fun with unitests
 BUIN=1                                                            # ☒ Display list of built-in fun used
 COMP=0                                                            # ☒ Force compilation
-USERMADE=1                                                        # ☒ Run unitests on user-made function found
 FUNC=0                                                            # ☒ Run Funcheck tool
 VALG=1                                                            # ☒ Enable Valgrind step
 EXEC=0                                                            # ☒ Run binary files instead (no log creating)
@@ -117,9 +114,9 @@ source ${BSL_DIR}/src/print.sh
 script_usage()
 {
     local exit_value=0
-    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,u,v] [<name_pattern>, ...]${R0}\`${E}"
+    local entete="${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
     if [[ ${#} -eq 2 ]];then
-        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,u,v] [<name_pattern>, ...]${R0}\`${E}"
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME} ${M0}[+-][a,b,c,d,f,h,n,o,v] [<name_pattern>, ...]${R0}\`${E}"
         local exit_value=${2}
     fi
     echo -e "${entete}"
@@ -147,8 +144,6 @@ script_usage()
     echo -e "    ${BC0}‣ ${M0}{+n, --norm}        ${BC0}: ${E}Enable the Norme-checker"
     echo -e "    ${BC0}‣ ${M0}{-o, --no-opti}     ${BC0}: ${E}Desable  RUN tests on ALL Minishell's function"
     echo -e "    ${BC0}‣ ${M0}{+o, --opti}        ${BC0}: ${E}Enable  RUN tests ONLY on Minishell's functions with unitests"
-    echo -e "    ${BC0}‣ ${M0}{-u, --no-usermade} ${BC0}: ${E}Desable  RUN tests on ALL Minishell's usermade function"
-    echo -e "    ${BC0}‣ ${M0}{+u, --usermade}    ${BC0}: ${E}Enable  RUN tests ONLY on Minishell's usermade functions with unitests"
     echo -e "    ${BC0}‣ ${M0}{+v, --valgrind}    ${BC0}: ${E}Enable Valgrind option"
     echo -e "    ${BC0}‣ ${M0}{-v, --no-valgrind} ${BC0}: ${E}Desable Valgrind option"
     echo -e " 🔹 ${BCU}STEPS:${E}"
@@ -633,8 +628,8 @@ for arg in "${ARGS[@]}";do
     shift
     if [[ "$arg" =~ ^(\+\+|--).*$ ]];then
         case "${arg}" in
-            --[Aa]ll ) NORM=1; OPTI=1; BUIN=1; COMP=1; FUNC=1; USERMADE=1 ;;
-            --[Nn]o-[Aa]ll ) NORM=0; OPTI=0; BUIN=0; COMP=0; FUNC=0; USERMADE=0 ;;
+            --[Aa]ll ) NORM=1; OPTI=1; BUIN=1; COMP=1; FUNC=1 ;;
+            --[Nn]o-[Aa]ll ) NORM=0; OPTI=0; BUIN=0; COMP=0; FUNC=0 ;;
             --[Bb]uil[td]-in ) BUIN=$(( BUIN + 1 )) ;;
             --[Nn]o-[Bb]uil[td]-in ) BUIN=$(max 0 $(( BUIN - 1 ))) ;;
             --[Cc]omp ) COMP=$(( COMP + 1 )) ;;
@@ -651,8 +646,6 @@ for arg in "${ARGS[@]}";do
             --[Nn]o-[Nn]orm ) NORM=$(max 0 $(( NORM - 1 ))) ;;
             --[Oo]pti ) OPTI=$(( OPTI + 1 )) ;;
             --[Nn]o-[Oo]pti ) OPTI=$(max 0 $(( OPTI - 1 ))) ;;
-            --[Uu]sermade ) USERMADE=$(( USERMADE + 1 )) ;;
-            --[Nn]o-[Uu]sermade ) USERMADE=$(max 0 $(( USERMADE - 1 ))) ;;
             --[Vv]algrind ) VALGRIND=$(( VALGRIND + 1 )) ;;
             --[Nn]o-[Vv]algrind ) VALGRIND=$(max 0 $(( VALGRIND - 1 ))) ;;
             *) script_usage "${R0}unknown option:${RU}${arg}${E}" 4 ;;
@@ -662,7 +655,7 @@ for arg in "${ARGS[@]}";do
         for i in $(seq 1 $((${#arg} - 1)));do
             char="${arg:i:1}"
             case "${char}" in
-                [Aa] ) [[ "${symb}" == "+" ]] && { EXEC=1;DLOG=1;VALG=1;NORM=1;OPTI=1;BUIN=1;COMP=1;FUNC=1;USERMADE=1;} || { EXEC=0;DLOG=0;VALG=0;NORM=0;OPTI=0;BUIN=0;COMP=0;FUNC=0;USERMADE=0;} ;;
+                [Aa] ) [[ "${symb}" == "+" ]] && { EXEC=1;DLOG=1;VALG=1;NORM=1;OPTI=1;BUIN=1;COMP=1;FUNC=1;} || { EXEC=0;DLOG=0;VALG=0;NORM=0;OPTI=0;BUIN=0;COMP=0;FUNC=0;} ;;
                 [Bb] ) [[ "${symb}" == "+" ]] && BUIN=$(( BUIN + 1 )) || BUIN=$(max 0 $(( BUIN - 1 ))) ;;
                 [Cc] ) [[ "${symb}" == "+" ]] && COMP=$(( COMP + 1 )) || COMP=$(max 0 $(( COMP - 1 ))) ;;
                 [Dd] ) [[ "${symb}" == "+" ]] && DLOG=$(( DLOG + 1 )) || DLOG=$(max 0 $(( DLOG - 1 ))) ;;
@@ -671,7 +664,6 @@ for arg in "${ARGS[@]}";do
                 [Hh] ) [[ "${symb}" == "+" ]] && HELP=$(( HELP + 1 )) || HELP=$(max 0 $(( HELP - 1 ))) ;;
                 [Nn] ) [[ "${symb}" == "+" ]] && NORM=$(( NORM + 1 )) || NORM=$(max 0 $(( NORM - 1 ))) ;;
                 [Oo] ) [[ "${symb}" == "+" ]] && OPTI=$(( OPTI + 1 )) || OPTI=$(max 0 $(( OPTI - 1 ))) ;;
-                [Uu] ) [[ "${symb}" == "+" ]] && USERMADE=$(( USERMADE + 1 )) || USERMADE=$(max 0 $(( USERMADE - 1 ))) ;;
                 [Vv] ) [[ "${symb}" == "+" ]] && VALG=$(( VALG + 1 )) || VALG=$(max 0 $(( VALG - 1 ))) ;;
                 *) script_usage "${R0}unknown option:${RU}${symb}${char}${E}" 5 ;;
             esac
@@ -736,15 +728,13 @@ if [[ ${NORM} -gt 0 ]];then
     res_normi=${?}
 fi
 # -[ STEP 3.1 | UNITESTS ]------------------------------------------------------------------------------------
-if [[ ${USERMADE} -gt 0 ]];then
-    if [[ ${#FUN_NAME_PATTERN[@]} -gt 0 ]];then
-        exec_anim_in_box "launch_unitests FUN_ASKED_FOR" "Launch Unitests on Minishell's functions given as script argument"
+if [[ ${#FUN_NAME_PATTERN[@]} -gt 0 ]];then
+    exec_anim_in_box "launch_unitests FUN_ASKED_FOR" "Launch Unitests on Minishell's functions given as script argument"
+else
+    if [[ ${OPTI} -gt 0 ]];then
+        exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
     else
-        if [[ ${OPTI} -gt 0 ]];then
-            exec_anim_in_box "launch_unitests FUN_WITH_UNITEST" "Launch Unitests on Minishell's functions with unitests"
-        else
-            exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
-        fi
+        exec_anim_in_box "launch_unitests FUN_TO_TEST" "Launch Unitests on Minishell's functions"
     fi
 fi
 # -[ STEP 3.2 | DISPLAY LOG FILES ]---------------------------------------------------------------------------
