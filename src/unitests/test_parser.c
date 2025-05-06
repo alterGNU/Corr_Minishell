@@ -4,25 +4,25 @@
 //   ✔ : pass
 //   ✘ : fail
 //	 - | tmp | rdp | prat | examples                                           |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_a0="cmd"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_a1="<f1"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b0=" cmd1 &&cmd2||cmd3 "
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b1=" cmd1 &&cmd2||cmd3&& cmd4 "
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b2="<f0 <f1 cm <f3 ar"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b3=" cmd1 | cmd2|cmd3| cmd4 "
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b4="c1<f1 a1|c2|c3&&c4"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c0="c1&&(c2||c3)"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c1="c1&&(c2||c3)&&c4"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c2="c1&&(c2||c3&&c4)"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c3="c1&&c2||(c3&&c4)"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c4="(c1&&c2)||(c3&&c4)"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d0="((c1&&c2)||c3)&&c4"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d1="(((c1&&c2)||c3)&&c4)"
-//	 - |  ⭙  |  ✘  |   ⭙  | str_d2="( (((c1&&c2)||c3)&&c4) )"
-//	 - |  ⭙  |  ✘  |   ⭙  | str_d3="(( (((c1&&c2)||c3)&&c4)) )"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d4="((c1&&c2)||(c3&&c4))"
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"
-//	 - |  ⭙  |  ✘  |   ⭙  | str_e0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"
+//	 - |  ⭙  |  ✔  |   ⭙  | str_a0="cmd"                                       |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_a1="<f1"                                       |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b0=" cmd1 &&cmd2||cmd3 "                       |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b1=" cmd1 &&cmd2||cmd3&& cmd4 "                |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b2="<f0 <f1 cm <f3 ar"                         |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b3=" cmd1 | cmd2|cmd3| cmd4 "                  |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b4="c1<f1 a1|c2|c3&&c4"                        |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c0="c1&&(c2||c3)"                              |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c1="c1&&(c2||c3)&&c4"                          |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c2="c1&&(c2||c3&&c4)"                          |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c3="c1&&c2||(c3&&c4)"                          |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c4="(c1&&c2)||(c3&&c4)"                        |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d0="((c1&&c2)||c3)&&c4"                        |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d1="(((c1&&c2)||c3)&&c4)"                      |
+//	 - |  ⭙  |  ✘  |   ⭙  | str_d2="( (((c1&&c2)||c3)&&c4) )"                  |
+//	 - |  ⭙  |  ✘  |   ⭙  | str_d3="(( (((c1&&c2)||c3)&&c4)) )"                |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d4="((c1&&c2)||(c3&&c4))"                      |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"    |
+//	 - |  ⭙  |  ✘  |   ⭙  | str_e0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"|
 // =============================================================================
  
 // =[ INCLUDE ]=================================================================
@@ -317,19 +317,19 @@ int	main(int ac, char **av, char **ev)
 	(void) av;
 	int	nb_err = 0;
 
-	////TODO can not be tested-->if null, lexer panic and exit
-	//print_title("A| NULL CASES");
+	// =[  ]====================================================================
+	print_title("N| FAIL COMMANDS-->lexing");
+	//TODO can not be tested-->if null, lexer panic and exit
+	//print_title("N0| NULL CASES");
 	//nb_err += test(NULL, NULL, ev);
 	//print_sep(S1);
-	// =[  ]====================================================================
-	print_title("A| FAIL COMMANDS-->lexing");
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("SYNTAX ERRORS");
+	print_subtitle("N1|SYNTAX ERRORS");
 	nb_err += test("cmd>", NULL, ev);
 	nb_err += test("()", NULL, ev);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("NOT SUPPORTED OPERATORS");
+	print_subtitle("N2|NOT SUPPORTED OPERATORS");
 	nb_err += test("<(cmd)", NULL, ev);
 	nb_err += test(">(cmd)", NULL, ev);
 	nb_err += test("((((c1&&c2)||c3)&&c4))", NULL, ev);
@@ -338,7 +338,7 @@ int	main(int ac, char **av, char **ev)
 	// =[ 	 ]==================================================================
 	print_title("A| BTREE WITH ONE NODE:parsing");
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Simple node == UNSET");
+	print_subtitle("A0|Simple node == UNSET");
 	char *str_a0="cmd";
 	t_token t0[] = {{UNSET,"cmd",0},{0,0,0}};
 	t_btree *ast0 = create_ast_node(t0);
@@ -347,7 +347,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_a0, &ast0, ev);
 	print_sep(S2);
 	// -[ 	 ]------------------------------------------------------------------
-	print_subtitle("Simple node == REDIR");
+	print_subtitle("A1|Simple node == REDIR");
 	char *str_a1="<f1";
 	t_token t1[] = {{RLS,"<",0}, {UNSET,"f1",0}, {0,0,0}};
 	t_btree *ast1 = create_ast_node(t1);
@@ -359,7 +359,7 @@ int	main(int ac, char **av, char **ev)
 	// =[  ]====================================================================
 	print_title("B| BTREE WITH MULTIPLES NODES:parsing");
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Only UNSET and OPA, OPO");
+	print_subtitle("B0|Only UNSET and OPA, OPO");
 	char *str_b0=" cmd1 &&cmd2||cmd3 ";
 	/*
 	*                                  00:{OPO,"||",0}
@@ -394,7 +394,9 @@ int	main(int ac, char **av, char **ev)
 	ast_b01->right= ast_b04;
 	// RUN TEST
 	nb_err += test(str_b0, &ast_b00, ev);
-
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("B1|Only UNSET and OPA, OPO");
 	char *str_b1=" cmd1 &&cmd2||cmd3&& cmd4 ";
 	/*
 	*                                                                          10:{OPA, "&&", 0}
@@ -442,7 +444,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_b1, &ast_b10, ev);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Only UNSET and REDIR");
+	print_subtitle("B2|Only UNSET and REDIR");
 	char *str_b2="<f0 <f1 cm <f3 ar";
 	// CREATE NODES
 	t_token tab_b20[]={{RLS,"<",0}, {UNSET,"f0",0}, {0,0,0}};
@@ -469,7 +471,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_b2, &ast_b20, ev);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Only PIP");
+	print_subtitle("B3|Only PIP");
 	/*
 	*                                                   30:{PIP, "|", 0}
     *              31:{UNSET,"cmd1",2}----------------------------┘  └----------------------------32:{PIP,"|",0}
@@ -517,7 +519,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_b3, &ast_b30, ev);
 	print_sep(S2);
 	// -[  ]--------------------------------------------------------------------
-	print_subtitle("Combos");
+	print_subtitle("B4|Combos");
 	char *str_b4="c1<f1 a1|c2|c3&&c4";
 	/*
 	 *                                                                           40:{OPA, "&&", 0}
@@ -573,7 +575,7 @@ int	main(int ac, char **av, char **ev)
 	// =[  ]====================================================================
 	print_title("C| PARENTHESIS - NO IMBRICATION");
 	// -[ 	 ]------------------------------------------------------------------
-	print_subtitle("SIMPLE:CHANGES PRIORITY");
+	print_subtitle("C0|SIMPLE:CHANGES PRIORITY");
 	char *str_c0="c1&&(c2||c3)";
 	/*
 	*                               00:{OPA,"&&",0}
@@ -609,6 +611,9 @@ int	main(int ac, char **av, char **ev)
 	// RUN TEST
 	nb_err += test(str_c0, &ast_c00, ev);
 
+	print_sep(S2);
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("C1|SIMPLE:CHANGES PRIORITY");
 	char *str_c1="c1&&(c2||c3)&&c4";
 	/*
 	*                                       10:{OPA,"&&",0}
@@ -656,6 +661,8 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_c1, &ast_c10, ev);
 	print_sep(S2);
 
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("C2|SIMPLE:CHANGES PRIORITY");
 	char *str_c2="c1&&(c2||c3&&c4)";
 	/*
 	*                                       20:{OPA,"&&",0}
@@ -703,6 +710,8 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_c2, &ast_c20, ev);
 	print_sep(S2);
 
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("C3|SIMPLE:CHANGES PRIORITY");
 	char *str_c3="c1&&c2||(c3&&c4)";
 	/*
 	*                                                  30:{OPO,"||",0}
@@ -750,6 +759,8 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_c3, &ast_c30, ev);
 	print_sep(S2);
 
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("C4|SIMPLE:CHANGES PRIORITY");
 	char *str_c4="(c1&&c2)||(c3&&c4)";
 	/*
 	*                                                  40:{OPO,"||",0}
@@ -800,7 +811,7 @@ int	main(int ac, char **av, char **ev)
 	// =[  ]====================================================================
 	print_title("D| PARENTHESIS - IMBRICATION");
 	// -[ 	 ]------------------------------------------------------------------
-	print_subtitle("IMBRICATION:NO PRIORITY CHANGES");
+	print_subtitle("D0|IMBRICATION:NO PRIORITY CHANGES");
 	char *str_d0="((c1&&c2)||c3)&&c4";
 	/*
 	*                                                                          00:{OPA, "&&", 0}
@@ -848,6 +859,8 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_d0, &ast_d00, ev);
 	print_sep(S2);
 
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("D1|IMBRICATION:NO PRIORITY CHANGES");
 	char *str_d1="(((c1&&c2)||c3)&&c4)";
 	/*
 	*                                                                          10:{OPA, "&&", 1}
@@ -895,6 +908,8 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_d1, &ast_d10, ev);
 	print_sep(S2);
 
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("D2|IMBRICATION:NO PRIORITY CHANGES");
 	char *str_d2="( (((c1&&c2)||c3)&&c4) )";
 	/*
 	*                                                                          20:{OPA, "&&", 2}
@@ -942,6 +957,8 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_d2, &ast_d20, ev);
 	print_sep(S2);
 
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("D3|IMBRICATION:NO PRIORITY CHANGES");
 	char *str_d3="(( (((c1&&c2)||c3)&&c4)) )";
 	/*
 	*                                                                          30:{OPA, "&&", 2}
@@ -989,7 +1006,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_d3, &ast_d30, ev);
 	print_sep(S2);
 	// -[ 	 ]------------------------------------------------------------------
-	print_subtitle("IMBRICATION:CHANGES PRIORITY");
+	print_subtitle("D4|IMBRICATION:CHANGES PRIORITY");
 	char *str_d4="((c1&&c2)||(c3&&c4))";
 	/*
 	*                                                  40:{OPO,"||",1}
@@ -1035,6 +1052,9 @@ int	main(int ac, char **av, char **ev)
 	ast_d42->right = ast_d46;
 	// RUN TEST
 	nb_err += test(str_d4, &ast_d40, ev);
+	print_sep(S2);
+	// -[ 	 ]------------------------------------------------------------------
+	print_subtitle("D5|IMBRICATION:CHANGES PRIORITY");
     //            12222222222211111000111112222222222210
 	char *str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))";
 	/*
@@ -1127,7 +1147,7 @@ int	main(int ac, char **av, char **ev)
 	// =[  ]====================================================================
 	print_title("E| COMBOS - REAL COMMANDS");
 	// -[ 	 ]------------------------------------------------------------------
-	print_subtitle("PAR-IMBRICATION:NO PRIORITY CHANGES");
+	print_subtitle("E0|PAR-IMBRICATION:NO PRIORITY CHANGES");
 	// -[  ]--------------------------------------------------------------------
 	//PARENTHESIS 123444444444444444444433332223444444443333321112222222210
 	char *str_e0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))";
