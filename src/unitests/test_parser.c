@@ -27,14 +27,14 @@
 //	 - |  ⭙  |  ✔  |   ⭙  | str_d4="((c1&&c2)||(c3&&c4))"                        CHANGES|
 //	 - |  ⭙  |  ✔  |   ⭙  | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"      CHANGES|
 //	 ---------------------| E| PARENTHESIS - REDIR and UNSET                            |
-//	 - |  ⭙  |  ✘  |   ⭙  | str_e0="(c1)>f1>f2>f3                             NO_CHANGES|
-//	 - |  ⭙  |  ✘  |   ⭙  | str_e1="(c1>f1)>f2>f3                                CHANGES|
-//	 - |  ⭙  |  ✘  |   ⭙  | str_e2="(c1>f1>f2)>f3                                CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_e0="(c1)>f1>f2>f3                             NO_CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_e1="(c1>f1)>f2>f3                                CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_e2="(c1>f1>f2)>f3                                CHANGES|
 //	 ---------------------| F| PARENTHESIS - REDIR and UNSET IMBRICATION                |
-//	 - |  ⭙  |  ✘  |   ⭙  | str_f0="((c1)>f1)>f2>f3                              CHANGES|
-//	 - |  ⭙  |  ✘  |   ⭙  | str_f1="((c1)>f1>f2)>f3                              CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_f0="((c1)>f1)>f2>f3                              CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_f1="((c1)>f1>f2)>f3                              CHANGES|
 //	 - |  ⭙  |  ✘  |   ⭙  | str_f2="((c1)>f1>f2>f3)                           NO_CHANGES|
-//	 - |  ⭙  |  ✘  |   ⭙  | str_f3="(((c1)>f1)>f2)>f3                            CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_f3="(((c1)>f1)>f2)>f3                            CHANGES|
 //	 - |  ⭙  |  ✘  |   ⭙  | str_f4="(((c1)>f1)>f2>f3)                            CHANGES|
 //	 - |  ⭙  |  ✘  |   ⭙  | str_f5="((((c1)>f1)>f2)>f3)                          CHANGES|
 //	 ---------------------| G| COMBOS - REAL COMMANDS                                   |
@@ -1373,13 +1373,13 @@ int	main(int ac, char **av, char **ev)
 	//            12333222211110000
 	char *str_f3="(((c1)>f1)>f2)>f3";
 	/*
-	 *                                      30:{RRS, ">f1", 0}
+	 *                                      30:{RRS, ">f3", 0}
 	 *                          31:{RRS,">",1},{UNSET,"f2",1}
-	 *              32:{RRS,">",2},{UNSET,"f3",2}
+	 *              32:{RRS,">",2},{UNSET,"f1",2}
 	 * 33:{UNSET,"c1",3}
 	 */
 	// CREATE NODES
-	t_token tab_f30[]={{RRS,">",0},{UNSET,"f1",0}, {0,0,0}};
+	t_token tab_f30[]={{RRS,">",0},{UNSET,"f3",0}, {0,0,0}};
 	t_btree *ast_f30 = create_ast_node(tab_f30);
 	if (!ast_f30)
 		return (1);
@@ -1387,7 +1387,7 @@ int	main(int ac, char **av, char **ev)
 	t_btree *ast_f31 = create_ast_node(tab_f31);
 	if (!ast_f31)
 		return (ft_btreedelone(&ast_f30, free_asn), 1);
-	t_token tab_f32[]={{RRS,">",2},{UNSET,"f3",2}, {0,0,0}};
+	t_token tab_f32[]={{RRS,">",2},{UNSET,"f1",2}, {0,0,0}};
 	t_btree *ast_f32 = create_ast_node(tab_f32);
 	if (!ast_f32)
 		return (ft_btreedelone(&ast_f30, free_asn),ft_btreedelone(&ast_f31, free_asn), 1);
@@ -1473,8 +1473,8 @@ int	main(int ac, char **av, char **ev)
 	print_sep(S1);
 	// =[  ]====================================================================
 	print_title("G| COMBOS - REAL COMMANDS");
-	print_subtitle("G0|PAR-IMBRICATION:NO PRIORITY CHANGES");
 	// -[  ]--------------------------------------------------------------------
+	print_subtitle("G0|PAR-IMBRICATION:NO PRIORITY CHANGES");
 	//PARENTHESIS 123444444444444444444433332223444444443333321112222222210
 	char *str_g0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))";
 	/*
