@@ -18,8 +18,8 @@
 //	 - |  ⭙  |  ✔  |   ⭙  | str_c4="(c1&&c2)||(c3&&c4)"                        |
 //	 - |  ⭙  |  ✔  |   ⭙  | str_d0="((c1&&c2)||c3)&&c4"                        |
 //	 - |  ⭙  |  ✔  |   ⭙  | str_d1="(((c1&&c2)||c3)&&c4)"                      |
-//	 - |  ⭙  |  ✘  |   ⭙  | str_d2="( (((c1&&c2)||c3)&&c4) )"                  |
-//	 - |  ⭙  |  ✘  |   ⭙  | str_d3="(( (((c1&&c2)||c3)&&c4)) )"                |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d2="( (((c1&&c2)||c3)&&c4) )"                  |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d3="(( (((c1&&c2)||c3)&&c4)) )"                |
 //	 - |  ⭙  |  ✔  |   ⭙  | str_d4="((c1&&c2)||(c3&&c4))"                      |
 //	 - |  ⭙  |  ✔  |   ⭙  | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"    |
 //	 - |  ⭙  |  ✘  |   ⭙  | str_e0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"|
@@ -959,39 +959,40 @@ int	main(int ac, char **av, char **ev)
 
 	// -[ 	 ]------------------------------------------------------------------
 	print_subtitle("D3|IMBRICATION:NO PRIORITY CHANGES");
+	//            12234555555544444333332110
 	char *str_d3="(( (((c1&&c2)||c3)&&c4)) )";
 	/*
-	*                                                                          30:{OPA, "&&", 2}
-	*                                  31:{OPO,"||",3}<----------------------------------| |----------------------------->32:{UNSET, "c4", 2}
-	*                    33:{OPA,"&&",4}<------| |---->34:{UNSET, "c3", 3}                              
-	* 35:{UNSET,"c1",4}<------| |---->36:{UNSET, "c2", 4}                                              
+	*                                                                          30:{OPA, "&&", 3}
+	*                                  31:{OPO,"||",4}<----------------------------------| |----------------------------->32:{UNSET, "c4", 3}
+	*                    33:{OPA,"&&",5}<------| |---->34:{UNSET, "c3", 4}                              
+	* 35:{UNSET,"c1",5}<------| |---->36:{UNSET, "c2", 5}                                              
 	*/
 	// create nodes
-	t_token tab_d30[]={{OPA,"&&",2}, {0,0,0}};
+	t_token tab_d30[]={{OPA,"&&",3}, {0,0,0}};
 	t_btree *ast_d30 = create_ast_node(tab_d30);
 	if (!ast_d30)
 		return (1);
-	t_token tab_d31[]={{OPO,"||", 3}, {0,0,0}};
+	t_token tab_d31[]={{OPO,"||", 4}, {0,0,0}};
 	t_btree *ast_d31 = create_ast_node(tab_d31);
 	if (!ast_d31)
 		return (ft_btreedelone(&ast_d30, free_asn), 1);
-	t_token tab_d32[]={{UNSET,"c4",2}, {0,0,0}};
+	t_token tab_d32[]={{UNSET,"c4",3}, {0,0,0}};
 	t_btree *ast_d32 = create_ast_node(tab_d32);
 	if (!ast_d32)
 		return (ft_btreedelone(&ast_d30, free_asn),ft_btreedelone(&ast_d31, free_asn), 1);
-	t_token tab_d33[]={{OPA,"&&",4}, {0,0,0}};
+	t_token tab_d33[]={{OPA,"&&",5}, {0,0,0}};
 	t_btree *ast_d33 = create_ast_node(tab_d33);
 	if (!ast_d33)
 		return (ft_btreedelone(&ast_d30, free_asn),ft_btreedelone(&ast_d31, free_asn),ft_btreedelone(&ast_d32, free_asn), 1);
-	t_token tab_d34[]={{UNSET,"c3",3}, {0,0,0}};
+	t_token tab_d34[]={{UNSET,"c3",4}, {0,0,0}};
 	t_btree *ast_d34 = create_ast_node(tab_d34);
 	if (!ast_d34)
 		return (ft_btreedelone(&ast_d30, free_asn),ft_btreedelone(&ast_d31, free_asn),ft_btreedelone(&ast_d32, free_asn),ft_btreedelone(&ast_d33, free_asn), 1);
-	t_token tab_d35[]={{UNSET,"c1",4}, {0,0,0}};
+	t_token tab_d35[]={{UNSET,"c1",5}, {0,0,0}};
 	t_btree *ast_d35 = create_ast_node(tab_d35);
 	if (!ast_d35)
 		return (ft_btreedelone(&ast_d30, free_asn),ft_btreedelone(&ast_d31, free_asn),ft_btreedelone(&ast_d32, free_asn),ft_btreedelone(&ast_d33, free_asn),ft_btreedelone(&ast_d34, free_asn), 1);
-	t_token tab_d36[]={{UNSET,"c2",4}, {0,0,0}};
+	t_token tab_d36[]={{UNSET,"c2",5}, {0,0,0}};
 	t_btree *ast_d36 = create_ast_node(tab_d36);
 	if (!ast_d36)
 		return (ft_btreedelone(&ast_d30, free_asn),ft_btreedelone(&ast_d31, free_asn),ft_btreedelone(&ast_d32, free_asn),ft_btreedelone(&ast_d33, free_asn),ft_btreedelone(&ast_d34, free_asn),ft_btreedelone(&ast_d35, free_asn), 1);
