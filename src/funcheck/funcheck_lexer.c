@@ -172,6 +172,7 @@ int	test(char **ev, char *str, t_token tab_res[])
 	}
 	printntime(S3, LEN - print_sofar);
 	printf("\n");
+	fflush(stdout);
 	// STEP 0
 	t_data *dt = init_data(ev);
 	if (!dt)

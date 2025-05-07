@@ -277,4 +277,3 @@ int	main(void)
 	print_sep(S1);
 	return (nb_err);
 }
-
