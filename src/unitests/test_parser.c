@@ -3,26 +3,42 @@
 // CASES:
 //   ✔ : pass
 //   ✘ : fail
-//	 - | tmp | rdp | prat | examples                                           |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_a0="cmd"                                       |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_a1="<f1"                                       |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b0=" cmd1 &&cmd2||cmd3 "                       |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b1=" cmd1 &&cmd2||cmd3&& cmd4 "                |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b2="<f0 <f1 cm <f3 ar"                         |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b3=" cmd1 | cmd2|cmd3| cmd4 "                  |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b4="c1<f1 a1|c2|c3&&c4"                        |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c0="c1&&(c2||c3)"                              |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c1="c1&&(c2||c3)&&c4"                          |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c2="c1&&(c2||c3&&c4)"                          |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c3="c1&&c2||(c3&&c4)"                          |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c4="(c1&&c2)||(c3&&c4)"                        |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d0="((c1&&c2)||c3)&&c4"                        |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d1="(((c1&&c2)||c3)&&c4)"                      |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d2="( (((c1&&c2)||c3)&&c4) )"                  |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d3="(( (((c1&&c2)||c3)&&c4)) )"                |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d4="((c1&&c2)||(c3&&c4))"                      |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"    |
-//	 - |  ⭙  |  ✘  |   ⭙  | str_e0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"|
+//	 - | tmp | rdp | prat | examples                                                    |
+//   ---------------------| A| SINGLE NODE                                              |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_a0="cmd"                                                |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_a1="<f1"                                                |
+//   ---------------------| B| MULTIPLE NODES                                           |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b0=" cmd1 &&cmd2||cmd3 "                                |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b1=" cmd1 &&cmd2||cmd3&& cmd4 "                         |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b2="<f0 <f1 cm <f3 ar"                                  |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b3=" cmd1 | cmd2|cmd3| cmd4 "                           |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_b4="c1<f1 a1|c2|c3&&c4"                                 |
+//   ---------------------| C| PARENTHESIS - LOGIC OPERATOR                             |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c0="c1&&(c2||c3)"                                CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c1="c1&&(c2||c3)&&c4"                            CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c2="c1&&(c2||c3&&c4)"                            CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c3="c1&&c2||(c3&&c4)"                            CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_c4="(c1&&c2)||(c3&&c4)"                          CHANGES|
+//   ---------------------| D| PARENTHESIS - LOGIC OPERATOR IMBRICATION                 |
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d0="((c1&&c2)||c3)&&c4"                       NO_CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d1="(((c1&&c2)||c3)&&c4)"                     NO_CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d2="( (((c1&&c2)||c3)&&c4) )"                 NO_CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d3="(( (((c1&&c2)||c3)&&c4)) )"               NO_CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d4="((c1&&c2)||(c3&&c4))"                        CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"      CHANGES|
+//	 ---------------------| E| PARENTHESIS - REDIR and UNSET                            |
+//	 - |  ⭙  |  ✘  |   ⭙  | str_e0="(c1)>f1>f2>f3                             NO_CHANGES|
+//	 - |  ⭙  |  ✘  |   ⭙  | str_e1="(c1>f1)>f2>f3                                CHANGES|
+//	 - |  ⭙  |  ✘  |   ⭙  | str_e2="(c1>f1>f2)>f3                                CHANGES|
+//	 ---------------------| F| PARENTHESIS - REDIR and UNSET IMBRICATION                |
+//	 - |  ⭙  |  ✘  |   ⭙  | str_f0="((c1)>f1)>f2>f3                              CHANGES|
+//	 - |  ⭙  |  ✘  |   ⭙  | str_f1="((c1)>f1>f2)>f3                              CHANGES|
+//	 - |  ⭙  |  ✘  |   ⭙  | str_f2="((c1)>f1>f2>f3)                           NO_CHANGES|
+//	 - |  ⭙  |  ✘  |   ⭙  | str_f3="(((c1)>f1)>f2)>f3                            CHANGES|
+//	 - |  ⭙  |  ✘  |   ⭙  | str_f4="(((c1)>f1)>f2>f3)                            CHANGES|
+//	 - |  ⭙  |  ✘  |   ⭙  | str_f5="((((c1)>f1)>f2)>f3)                          CHANGES|
+//	 ---------------------| G| COMBOS - REAL COMMANDS                                   |
+//	 - |  ⭙  |  ✘  |   ⭙  | str_g0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"|
 // =============================================================================
  
 // =[ INCLUDE ]=================================================================
@@ -362,10 +378,10 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("B0|Only UNSET and OPA, OPO");
 	char *str_b0=" cmd1 &&cmd2||cmd3 ";
 	/*
-	*                                  00:{OPO,"||",0}
-	*                    01:{OPA,"&&",0}<------| |---->02:{UNSET, "cmd3", 0}                              
-	* 03:{UNSET,"cmd1",2}<------| |---->04:{UNSET, "cmd2", 0}                                              
-	*/
+	 *                                  00:{OPO,"||",0}
+	 *                    01:{OPA,"&&",0}<------| |---->02:{UNSET, "cmd3", 0}                              
+	 * 03:{UNSET,"cmd1",2}<------| |---->04:{UNSET, "cmd2", 0}                                              
+	 */
 	// CREATE NODES
 	t_token tab_b00[]={{OPO,"||",0}, {0,0,0}};
 	t_btree *ast_b00 = create_ast_node(tab_b00);
@@ -399,11 +415,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("B1|Only UNSET and OPA, OPO");
 	char *str_b1=" cmd1 &&cmd2||cmd3&& cmd4 ";
 	/*
-	*                                                                          10:{OPA, "&&", 0}
-	*                                  11:{OPO,"||",0}<----------------------------------| |----------------------------->12:{UNSET, "cmd4", 0}
-	*                    13:{OPA,"&&",0}<------| |---->14:{UNSET, "cmd3", 0}                              
-	* 15:{UNSET,"cmd1",2}<------| |---->16:{UNSET, "cmd2", 0}                                              
-	*/
+	 *                                                                          10:{OPA, "&&", 0}
+	 *                                  11:{OPO,"||",0}<----------------------------------| |----------------------------->12:{UNSET, "cmd4", 0}
+	 *                    13:{OPA,"&&",0}<------| |---->14:{UNSET, "cmd3", 0}                              
+	 * 15:{UNSET,"cmd1",2}<------| |---->16:{UNSET, "cmd2", 0}                                              
+	 */
 	// CREATE NODES
 	t_token tab_b10[]={{OPA,"&&",0}, {0,0,0}};
 	t_btree *ast_b10 = create_ast_node(tab_b10);
@@ -473,11 +489,11 @@ int	main(int ac, char **av, char **ev)
 	// -[  ]--------------------------------------------------------------------
 	print_subtitle("B3|Only PIP");
 	/*
-	*                                                   30:{PIP, "|", 0}
-    *              31:{UNSET,"cmd1",2}----------------------------┘  └----------------------------32:{PIP,"|",0}
-    *                                                                   33:{UNSET, "cmd2", 0}------------┘  └------------34:{PIP,"|",0}
-    *                                                                                                 35:{UNSET, "cmd3", 0}----┘  └----35:{UNSET, "cmd4", 0}
-	*/
+	 *                                                   30:{PIP, "|", 0}
+     *              31:{UNSET,"cmd1",2}----------------------------┘  └----------------------------32:{PIP,"|",0}
+     *                                                                   33:{UNSET, "cmd2", 0}------------┘  └------------34:{PIP,"|",0}
+     *                                                                                                 35:{UNSET, "cmd3", 0}----┘  └----35:{UNSET, "cmd4", 0}
+	 */
 	char *str_b3=" cmd1 | cmd2|cmd3| cmd4 ";
 	// CREATE NODES
 	t_token tab_b30[]={{PIP,"|",0}, {0,0,0}};
@@ -578,10 +594,10 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("C0|SIMPLE:CHANGES PRIORITY");
 	char *str_c0="c1&&(c2||c3)";
 	/*
-	*                               00:{OPA,"&&",0}
-	*           01:{UNSET,"c1",0}<------------| |---->02:{OPO, "||", 1}                              
-	*                                   03:{UNSET,"c2",1}<------| |---->04:{UNSET, "c3", 1}                                              
-	*/
+	 *                               00:{OPA,"&&",0}
+	 *           01:{UNSET,"c1",0}<------------| |---->02:{OPO, "||", 1}                              
+	 *                                   03:{UNSET,"c2",1}<------| |---->04:{UNSET, "c3", 1}                                              
+	 */
 	// CREATE NODES
 	t_token tab_c00[]={{OPA,"&&",0}, {0,0,0}};
 	t_btree *ast_c00 = create_ast_node(tab_c00);
@@ -616,11 +632,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("C1|SIMPLE:CHANGES PRIORITY");
 	char *str_c1="c1&&(c2||c3)&&c4";
 	/*
-	*                                       10:{OPA,"&&",0}
-	*                  11:{OPA,"&&",0}<------------| |---->12:{UNSET, "c4", 0}                              
-	* 13:{UNSET,"c1",0}<------| |---->14:{OPO, "||", 1}                                              
-	*                  15:{UNSET,"c2",1}<------| |---->16:{UNSET, "c3", 1}                                              
-	*/
+	 *                                       10:{OPA,"&&",0}
+	 *                  11:{OPA,"&&",0}<------------| |---->12:{UNSET, "c4", 0}                              
+	 * 13:{UNSET,"c1",0}<------| |---->14:{OPO, "||", 1}                                              
+	 *                  15:{UNSET,"c2",1}<------| |---->16:{UNSET, "c3", 1}                                              
+	 */
 	// CREATE NODES
 	t_token tab_c10[]={{OPA,"&&",0}, {0,0,0}};
 	t_btree *ast_c10 = create_ast_node(tab_c10);
@@ -665,11 +681,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("C2|SIMPLE:CHANGES PRIORITY");
 	char *str_c2="c1&&(c2||c3&&c4)";
 	/*
-	*                                       20:{OPA,"&&",0}
-	*                  21:{UNSET,"c1",0}<------------| |---->22:{OPA, "&&", 1}                              
-	*                                          23:{OPO,"||",1}<------| |---->24:{UNSET, "c4", 1}                                              
-	*                          25:{UNSET,"c2",1}<------| |---->26:{UNSET, "c3", 1}                                              
-	*/
+	 *                                       20:{OPA,"&&",0}
+	 *                  21:{UNSET,"c1",0}<------------| |---->22:{OPA, "&&", 1}                              
+	 *                                          23:{OPO,"||",1}<------| |---->24:{UNSET, "c4", 1}                                              
+	 *                          25:{UNSET,"c2",1}<------| |---->26:{UNSET, "c3", 1}                                              
+	 */
 	// CREATE NODES
 	t_token tab_c20[]={{OPA,"&&",0}, {0,0,0}};
 	t_btree *ast_c20 = create_ast_node(tab_c20);
@@ -714,11 +730,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("C3|SIMPLE:CHANGES PRIORITY");
 	char *str_c3="c1&&c2||(c3&&c4)";
 	/*
-	*                                                  30:{OPO,"||",0}
-	*                  31:{OPA,"&&",0}<------------------------| |------------------------>32:{OPA, "&&", 1}                              
-	*33:{UNSET,"c1",0}<------| |---->34:{UNSET, "c2", 0}                    35:{UNSET,"c3",1}<------| |---->36:{UNSET, "c4", 1}                                              
-	*                                               
-	*/
+	 *                                                  30:{OPO,"||",0}
+	 *                  31:{OPA,"&&",0}<------------------------| |------------------------>32:{OPA, "&&", 1}                              
+	 *33:{UNSET,"c1",0}<------| |---->34:{UNSET, "c2", 0}                    35:{UNSET,"c3",1}<------| |---->36:{UNSET, "c4", 1}                                              
+	 *                                               
+	 */
 	// CREATE NODES
 	t_token tab_c30[]={{OPO,"||",0}, {0,0,0}};
 	t_btree *ast_c30 = create_ast_node(tab_c30);
@@ -763,11 +779,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("C4|SIMPLE:CHANGES PRIORITY");
 	char *str_c4="(c1&&c2)||(c3&&c4)";
 	/*
-	*                                                  40:{OPO,"||",0}
-	*                  41:{OPA,"&&",1}<------------------------| |------------------------>42:{OPA, "&&", 1}                              
-	*43:{UNSET,"c1",1}<------| |---->44:{UNSET, "c2", 1}                    45:{UNSET,"c3",1}<------| |---->46:{UNSET, "c4", 1}                                              
-	*                                               
-	*/
+	 *                                                  40:{OPO,"||",0}
+	 *                  41:{OPA,"&&",1}<------------------------| |------------------------>42:{OPA, "&&", 1}                              
+	 *43:{UNSET,"c1",1}<------| |---->44:{UNSET, "c2", 1}                    45:{UNSET,"c3",1}<------| |---->46:{UNSET, "c4", 1}                                              
+	 *                                               
+	 */
 	// CREATE NODES
 	t_token tab_c40[]={{OPO,"||",0}, {0,0,0}};
 	t_btree *ast_c40 = create_ast_node(tab_c40);
@@ -814,11 +830,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("D0|IMBRICATION:NO PRIORITY CHANGES");
 	char *str_d0="((c1&&c2)||c3)&&c4";
 	/*
-	*                                                                          00:{OPA, "&&", 0}
-	*                                  01:{OPO,"||",1}<----------------------------------| |----------------------------->02:{UNSET, "c4", 0}
-	*                    03:{OPA,"&&",2}<------| |---->04:{UNSET, "c3", 1}                              
-	* 05:{UNSET,"c1",2}<------| |---->06:{UNSET, "c2", 2}                                              
-	*/
+	 *                                                                          00:{OPA, "&&", 0}
+	 *                                  01:{OPO,"||",1}<----------------------------------| |----------------------------->02:{UNSET, "c4", 0}
+	 *                    03:{OPA,"&&",2}<------| |---->04:{UNSET, "c3", 1}                              
+	 * 05:{UNSET,"c1",2}<------| |---->06:{UNSET, "c2", 2}                                              
+	 */
 	// CREATE NODES
 	t_token tab_d00[]={{OPA,"&&",0}, {0,0,0}};
 	t_btree *ast_d00 = create_ast_node(tab_d00);
@@ -863,11 +879,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("D1|IMBRICATION:NO PRIORITY CHANGES");
 	char *str_d1="(((c1&&c2)||c3)&&c4)";
 	/*
-	*                                                                          10:{OPA, "&&", 1}
-	*                                  11:{OPO,"||",2}<----------------------------------| |----------------------------->12:{UNSET, "c4", 1}
-	*                    13:{OPA,"&&",3}<------| |---->14:{UNSET, "c3", 2}                              
-	* 15:{UNSET,"c1",3}<------| |---->16:{UNSET, "c2", 3}                                              
-	*/
+	 *                                                                          10:{OPA, "&&", 1}
+	 *                                  11:{OPO,"||",2}<----------------------------------| |----------------------------->12:{UNSET, "c4", 1}
+	 *                    13:{OPA,"&&",3}<------| |---->14:{UNSET, "c3", 2}                              
+	 * 15:{UNSET,"c1",3}<------| |---->16:{UNSET, "c2", 3}                                              
+	 */
 	// CREATE NODES
 	t_token tab_d10[]={{OPA,"&&",1}, {0,0,0}};
 	t_btree *ast_d10 = create_ast_node(tab_d10);
@@ -912,11 +928,11 @@ int	main(int ac, char **av, char **ev)
 	print_subtitle("D2|IMBRICATION:NO PRIORITY CHANGES");
 	char *str_d2="( (((c1&&c2)||c3)&&c4) )";
 	/*
-	*                                                                          20:{OPA, "&&", 2}
-	*                                  21:{OPO,"||",3}<----------------------------------| |----------------------------->22:{UNSET, "c4", 2}
-	*                    23:{OPA,"&&",4}<------| |---->24:{UNSET, "c3", 3}                              
-	* 25:{UNSET,"c1",4}<------| |---->26:{UNSET, "c2", 4}                                              
-	*/
+	 *                                                                          20:{OPA, "&&", 2}
+	 *                                  21:{OPO,"||",3}<----------------------------------| |----------------------------->22:{UNSET, "c4", 2}
+	 *                    23:{OPA,"&&",4}<------| |---->24:{UNSET, "c3", 3}                              
+	 * 25:{UNSET,"c1",4}<------| |---->26:{UNSET, "c2", 4}                                              
+	 */
 	// create nodes
 	t_token tab_d20[]={{OPA,"&&",2}, {0,0,0}};
 	t_btree *ast_d20 = create_ast_node(tab_d20);
@@ -962,11 +978,11 @@ int	main(int ac, char **av, char **ev)
 	//            12234555555544444333332110
 	char *str_d3="(( (((c1&&c2)||c3)&&c4)) )";
 	/*
-	*                                                                          30:{OPA, "&&", 3}
-	*                                  31:{OPO,"||",4}<----------------------------------| |----------------------------->32:{UNSET, "c4", 3}
-	*                    33:{OPA,"&&",5}<------| |---->34:{UNSET, "c3", 4}                              
-	* 35:{UNSET,"c1",5}<------| |---->36:{UNSET, "c2", 5}                                              
-	*/
+	 *                                                                          30:{OPA, "&&", 3}
+	 *                                  31:{OPO,"||",4}<----------------------------------| |----------------------------->32:{UNSET, "c4", 3}
+	 *                    33:{OPA,"&&",5}<------| |---->34:{UNSET, "c3", 4}                              
+	 * 35:{UNSET,"c1",5}<------| |---->36:{UNSET, "c2", 5}                                              
+	 */
 	// create nodes
 	t_token tab_d30[]={{OPA,"&&",3}, {0,0,0}};
 	t_btree *ast_d30 = create_ast_node(tab_d30);
@@ -1146,12 +1162,321 @@ int	main(int ac, char **av, char **ev)
 	print_sep(S2);
 	print_sep(S1);
 	// =[  ]====================================================================
-	print_title("E| COMBOS - REAL COMMANDS");
-	//// -[ 	 ]------------------------------------------------------------------
+	print_title("E| PARENTHESIS - REDIR and UNSET");
+	print_subtitle("E0|NO PRIORITY CHANGES");
+	//            1110000000000
+	char *str_e0="(c1)>f1>f2>f3";
+	/*
+	 *                                      00:{RRS, ">f1", 0}
+	 *                          01:{RRS,">f2",0}
+	 *              02:{RRS,">f3",0}
+	 * 03:{UNSET,"c1",1}
+	 */
+	// CREATE NODES
+	t_token tab_e00[]={{RRS,">f1",0}, {0,0,0}};
+	t_btree *ast_e00 = create_ast_node(tab_e00);
+	if (!ast_e00)
+		return (1);
+	t_token tab_e01[]={{RRS,">f2", 0}, {0,0,0}};
+	t_btree *ast_e01 = create_ast_node(tab_e01);
+	if (!ast_e01)
+		return (ft_btreedelone(&ast_e00, free_asn), 1);
+	t_token tab_e02[]={{RRS,">f3",0}, {0,0,0}};
+	t_btree *ast_e02 = create_ast_node(tab_e02);
+	if (!ast_e02)
+		return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn), 1);
+	t_token tab_e03[]={{UNSET,"c1",1}, {0,0,0}};
+	t_btree *ast_e03 = create_ast_node(tab_e03);
+	if (!ast_e03)
+		return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn),ft_btreedelone(&ast_e02, free_asn), 1);
+	//ATTACHED NODES
+	ast_e00->left = ast_e01;
+	ast_e01->left = ast_e02;
+	ast_e02->left = ast_e03;
+	// RUN TEST
+	nb_err += test(str_e0, &ast_e00, ev);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("E1|CHANGES PRIORITY");
+	//            1111110000000
+	char *str_e1="(c1>f1)>f2>f3";
+	/*
+	 *                                      10:{RRS, ">f2", 0}
+	 *                          11:{RRS,">f3",0}
+	 *              12:{RRS,">f1",0}
+	 * 13:{UNSET,"c1",1}
+	 */
+	// CREATE NODES
+	t_token tab_e10[]={{RRS,">f2",0}, {0,0,0}};
+	t_btree *ast_e10 = create_ast_node(tab_e10);
+	if (!ast_e10)
+		return (1);
+	t_token tab_e11[]={{RRS,">f3", 0}, {0,0,0}};
+	t_btree *ast_e11 = create_ast_node(tab_e11);
+	if (!ast_e11)
+		return (ft_btreedelone(&ast_e10, free_asn), 1);
+	t_token tab_e12[]={{RRS,">f1",0}, {0,0,0}};
+	t_btree *ast_e12 = create_ast_node(tab_e12);
+	if (!ast_e12)
+		return (ft_btreedelone(&ast_e10, free_asn),ft_btreedelone(&ast_e11, free_asn), 1);
+	t_token tab_e13[]={{UNSET,"c1",1}, {0,0,0}};
+	t_btree *ast_e13 = create_ast_node(tab_e13);
+	if (!ast_e13)
+		return (ft_btreedelone(&ast_e10, free_asn),ft_btreedelone(&ast_e11, free_asn),ft_btreedelone(&ast_e12, free_asn), 1);
+	//ATTACHED NODES
+	ast_e10->left = ast_e11;
+	ast_e11->left = ast_e12;
+	ast_e12->left = ast_e13;
+	// RUN TEST
+	nb_err += test(str_e1, &ast_e00, ev);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("E2|CHANGES PRIORITY");
+	//            1111111110000
+	char *str_e2="(c1>f1>f2)>f3";
+	/*
+	 *                                      20:{RRS, ">f3", 0}
+	 *                          21:{RRS,">f1",1}
+	 *              22:{RRS,">f2",1}
+	 * 23:{UNSET,"c1",1}
+	 */
+	// CREATE NODES
+	t_token tab_e20[]={{RRS,">f3",0}, {0,0,0}};
+	t_btree *ast_e20 = create_ast_node(tab_e20);
+	if (!ast_e20)
+		return (1);
+	t_token tab_e21[]={{RRS,">f1", 1}, {0,0,0}};
+	t_btree *ast_e21 = create_ast_node(tab_e21);
+	if (!ast_e21)
+		return (ft_btreedelone(&ast_e20, free_asn), 1);
+	t_token tab_e22[]={{RRS,">f2",1}, {0,0,0}};
+	t_btree *ast_e22 = create_ast_node(tab_e22);
+	if (!ast_e22)
+		return (ft_btreedelone(&ast_e20, free_asn),ft_btreedelone(&ast_e21, free_asn), 1);
+	t_token tab_e23[]={{UNSET,"c1",1}, {0,0,0}};
+	t_btree *ast_e23 = create_ast_node(tab_e23);
+	if (!ast_e23)
+		return (ft_btreedelone(&ast_e20, free_asn),ft_btreedelone(&ast_e21, free_asn),ft_btreedelone(&ast_e22, free_asn), 1);
+	//ATTACHED NODES
+	ast_e20->left = ast_e21;
+	ast_e21->left = ast_e22;
+	ast_e22->left = ast_e23;
+	// RUN TEST
+	nb_err += test(str_e2, &ast_e20, ev);
+	print_sep(S2);
+	print_sep(S1);
+	// =[  ]====================================================================
+	print_title("F| PARENTHESIS - REDIR and UNSET IMBRICATION");
+	print_subtitle("F0|CHANGES PRIORITY");
+	//            122211110000000
+	char *str_f0="((c1)>f1)>f2>f3";
+	/*
+	 *                                      00:{RRS, ">f2", 0}
+	 *                          01:{RRS,">f3",0}
+	 *              02:{RRS,">f1",1}
+	 * 03:{UNSET,"c1",2}
+	 */
+	// CREATE NODES
+	t_token tab_f00[]={{RRS,">f2",0}, {0,0,0}};
+	t_btree *ast_f00 = create_ast_node(tab_f00);
+	if (!ast_f00)
+		return (1);
+	t_token tab_f01[]={{RRS,">f3", 0}, {0,0,0}};
+	t_btree *ast_f01 = create_ast_node(tab_f01);
+	if (!ast_f01)
+		return (ft_btreedelone(&ast_f00, free_asn), 1);
+	t_token tab_f02[]={{RRS,">f1",1}, {0,0,0}};
+	t_btree *ast_f02 = create_ast_node(tab_f02);
+	if (!ast_f02)
+		return (ft_btreedelone(&ast_f00, free_asn),ft_btreedelone(&ast_f01, free_asn), 1);
+	t_token tab_f03[]={{UNSET,"c1",2}, {0,0,0}};
+	t_btree *ast_f03 = create_ast_node(tab_f03);
+	if (!ast_f03)
+		return (ft_btreedelone(&ast_f00, free_asn),ft_btreedelone(&ast_f01, free_asn),ft_btreedelone(&ast_f02, free_asn), 1);
+	//ATTACHED NODES
+	ast_f00->left = ast_f01;
+	ast_f01->left = ast_f02;
+	ast_f02->left = ast_f03;
+	// RUN TEST
+	nb_err += test(str_f0, &ast_f00, ev);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("F1|CHANGES PRIORITY");
+	//            122211111110000
+	char *str_f1="((c1)>f1>f2)>f3";
+	/*
+	 *                                      10:{RRS, ">f3", 0}
+	 *                          11:{RRS,">f1",1}
+	 *              12:{RRS,">f2",1}
+	 * 13:{UNSET,"c1",2}
+	 */
+	// CREATE NODES
+	t_token tab_f10[]={{RRS,">f3",0}, {0,0,0}};
+	t_btree *ast_f10 = create_ast_node(tab_f10);
+	if (!ast_f10)
+		return (1);
+	t_token tab_f11[]={{RRS,">f1", 1}, {0,0,0}};
+	t_btree *ast_f11 = create_ast_node(tab_f11);
+	if (!ast_f11)
+		return (ft_btreedelone(&ast_f10, free_asn), 1);
+	t_token tab_f12[]={{RRS,">f2",1}, {0,0,0}};
+	t_btree *ast_f12 = create_ast_node(tab_f12);
+	if (!ast_f12)
+		return (ft_btreedelone(&ast_f10, free_asn),ft_btreedelone(&ast_f11, free_asn), 1);
+	t_token tab_f13[]={{UNSET,"c1",2}, {0,0,0}};
+	t_btree *ast_f13 = create_ast_node(tab_f13);
+	if (!ast_f13)
+		return (ft_btreedelone(&ast_f10, free_asn),ft_btreedelone(&ast_f11, free_asn),ft_btreedelone(&ast_f12, free_asn), 1);
+	//ATTACHED NODES
+	ast_f10->left = ast_f11;
+	ast_f11->left = ast_f12;
+	ast_f12->left = ast_f13;
+	// RUN TEST
+	nb_err += test(str_f1, &ast_f10, ev);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("F2|NO PRIORITY CHANGES");
+	//            122211111111110
+	char *str_f2="((c1)>f1>f2>f3)";
+	/*
+	 *                                      20:{RRS, ">f1", 1}
+	 *                          21:{RRS,">f2",1}
+	 *              22:{RRS,">f3",1}
+	 * 23:{UNSET,"c1",2}
+	 */
+	// CREATE NODES
+	t_token tab_f20[]={{RRS,">f1",1}, {0,0,0}};
+	t_btree *ast_f20 = create_ast_node(tab_f20);
+	if (!ast_f20)
+		return (1);
+	t_token tab_f21[]={{RRS,">f2", 1}, {0,0,0}};
+	t_btree *ast_f21 = create_ast_node(tab_f21);
+	if (!ast_f21)
+		return (ft_btreedelone(&ast_f20, free_asn), 1);
+	t_token tab_f22[]={{RRS,">f3",1}, {0,0,0}};
+	t_btree *ast_f22 = create_ast_node(tab_f22);
+	if (!ast_f22)
+		return (ft_btreedelone(&ast_f20, free_asn),ft_btreedelone(&ast_f21, free_asn), 1);
+	t_token tab_f23[]={{UNSET,"c1",2}, {0,0,0}};
+	t_btree *ast_f23 = create_ast_node(tab_f23);
+	if (!ast_f23)
+		return (ft_btreedelone(&ast_f20, free_asn),ft_btreedelone(&ast_f21, free_asn),ft_btreedelone(&ast_f22, free_asn), 1);
+	//ATTACHED NODES
+	ast_f20->left = ast_f21;
+	ast_f21->left = ast_f22;
+	ast_f22->left = ast_f23;
+	// RUN TEST
+	nb_err += test(str_f2, &ast_f20, ev);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("F3|CHANGES PRIORITY");
+	//            12333222211110000
+	char *str_f3="(((c1)>f1)>f2)>f3";
+	/*
+	 *                                      30:{RRS, ">f1", 0}
+	 *                          31:{RRS,">f2",1}
+	 *              32:{RRS,">f3",2}
+	 * 33:{UNSET,"c1",3}
+	 */
+	// CREATE NODES
+	t_token tab_f30[]={{RRS,">f1",0}, {0,0,0}};
+	t_btree *ast_f30 = create_ast_node(tab_f30);
+	if (!ast_f30)
+		return (1);
+	t_token tab_f31[]={{RRS,">f2", 1}, {0,0,0}};
+	t_btree *ast_f31 = create_ast_node(tab_f31);
+	if (!ast_f31)
+		return (ft_btreedelone(&ast_f30, free_asn), 1);
+	t_token tab_f32[]={{RRS,">f3",2}, {0,0,0}};
+	t_btree *ast_f32 = create_ast_node(tab_f32);
+	if (!ast_f32)
+		return (ft_btreedelone(&ast_f30, free_asn),ft_btreedelone(&ast_f31, free_asn), 1);
+	t_token tab_f33[]={{UNSET,"c1",3}, {0,0,0}};
+	t_btree *ast_f33 = create_ast_node(tab_f33);
+	if (!ast_f33)
+		return (ft_btreedelone(&ast_f30, free_asn),ft_btreedelone(&ast_f31, free_asn),ft_btreedelone(&ast_f32, free_asn), 1);
+	//ATTACHED NODES
+	ast_f30->left = ast_f31;
+	ast_f31->left = ast_f32;
+	ast_f32->left = ast_f33;
+	// RUN TEST
+	nb_err += test(str_f3, &ast_f30, ev);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("F4|CHANGES PRIORITY");
+	//            12333222211111110
+	char *str_f4="(((c1)>f1)>f2>f3)";
+	/*
+	 *                                      40:{RRS, ">f2", 1}
+	 *                          41:{RRS,">f3",1}
+	 *              42:{RRS,">f1",2}
+	 * 43:{UNSET,"c1",3}
+	 */
+	// CREATE NODES
+	t_token tab_f40[]={{RRS,">f2",1}, {0,0,0}};
+	t_btree *ast_f40 = create_ast_node(tab_f40);
+	if (!ast_f40)
+		return (1);
+	t_token tab_f41[]={{RRS,">f3", 1}, {0,0,0}};
+	t_btree *ast_f41 = create_ast_node(tab_f41);
+	if (!ast_f41)
+		return (ft_btreedelone(&ast_f40, free_asn), 1);
+	t_token tab_f42[]={{RRS,">f1",2}, {0,0,0}};
+	t_btree *ast_f42 = create_ast_node(tab_f42);
+	if (!ast_f42)
+		return (ft_btreedelone(&ast_f40, free_asn),ft_btreedelone(&ast_f41, free_asn), 1);
+	t_token tab_f43[]={{UNSET,"c1",3}, {0,0,0}};
+	t_btree *ast_f43 = create_ast_node(tab_f43);
+	if (!ast_f43)
+		return (ft_btreedelone(&ast_f40, free_asn),ft_btreedelone(&ast_f41, free_asn),ft_btreedelone(&ast_f42, free_asn), 1);
+	//ATTACHED NODES
+	ast_f40->left = ast_f41;
+	ast_f41->left = ast_f42;
+	ast_f42->left = ast_f43;
+	// RUN TEST
+	nb_err += test(str_f4, &ast_f40, ev);
+	print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("F5|CHANGES PRIORITY");
+	//            1234443333222211110
+	char *str_f5="((((c1)>f1)>f2)>f3)";
+	/*
+	 *                                      50:{RRS, ">f3", 1}
+	 *                          51:{RRS,">f2",2}
+	 *              52:{RRS,">f1",3}
+	 * 53:{UNSET,"c1",4}
+	 */
+	// CREATE NODES
+	t_token tab_f50[]={{RRS,">f3",1}, {0,0,0}};
+	t_btree *ast_f50 = create_ast_node(tab_f50);
+	if (!ast_f50)
+		return (1);
+	t_token tab_f51[]={{RRS,">f2", 2}, {0,0,0}};
+	t_btree *ast_f51 = create_ast_node(tab_f51);
+	if (!ast_f51)
+		return (ft_btreedelone(&ast_f50, free_asn), 1);
+	t_token tab_f52[]={{RRS,">f1",3}, {0,0,0}};
+	t_btree *ast_f52 = create_ast_node(tab_f52);
+	if (!ast_f52)
+		return (ft_btreedelone(&ast_f50, free_asn),ft_btreedelone(&ast_f51, free_asn), 1);
+	t_token tab_f53[]={{UNSET,"c1",4}, {0,0,0}};
+	t_btree *ast_f53 = create_ast_node(tab_f53);
+	if (!ast_f53)
+		return (ft_btreedelone(&ast_f50, free_asn),ft_btreedelone(&ast_f51, free_asn),ft_btreedelone(&ast_f52, free_asn), 1);
+	//ATTACHED NODES
+	ast_f50->left = ast_f51;
+	ast_f51->left = ast_f52;
+	ast_f52->left = ast_f53;
+	// RUN TEST
+	nb_err += test(str_f5, &ast_f50, ev);
+	print_sep(S2);
+	print_sep(S1);
+	// =[  ]====================================================================
+	print_title("G| COMBOS - REAL COMMANDS");
 	//print_subtitle("E0|PAR-IMBRICATION:NO PRIORITY CHANGES");
 	//// -[  ]--------------------------------------------------------------------
 	////PARENTHESIS 123444444444444444444433332223444444443333321112222222210
-	//char *str_e0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))";
+	//char *str_g0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))";
 	///*
 	// *                                                                                                                           00:{OPA, "&&", 1}
 	// *                                                                        01:{OPA,"&&",2}<------------------------------------------| |------------------------------------------>02:{RLS,"<"->"f2",2}
@@ -1160,53 +1485,53 @@ int	main(int ac, char **av, char **ev)
 	// *                                                                  08:{UNSET,"cat",4}<-------| |------>|XX|
 	// */
 	//// CREATE NODES
-	//t_token tab_e00[]={{OPA,"&&",1}, {0,0,0}};
-	//t_btree *ast_e00 = create_ast_node(tab_e00);
-	//if (!ast_e00)
+	//t_token tab_g00[]={{OPA,"&&",1}, {0,0,0}};
+	//t_btree *ast_g00 = create_ast_node(tab_g00);
+	//if (!ast_g00)
 	//	return (1);
-	//t_token tab_e01[]={{OPA,"&&",2}, {1,0,0}};
-	//t_btree *ast_e01 = create_ast_node(tab_e01);
-	//if (!ast_e01)
-	//	return (ft_btreedelone(&ast_e00, free_asn), 1);
-	//t_token tab_e02[]={{RLS,"<",2}, {UNSET,"f2",2}, {0,0,0}};
-	//t_btree *ast_e02 = create_ast_node(tab_e02);
-	//if (!ast_e02)
-	//	return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn), 1);
-	//t_token tab_e03[]={{RRS,">",3}, {UNSET,"f1",3}, {1,0,0}};
-	//t_btree *ast_e03 = create_ast_node(tab_e03);
-	//if (!ast_e03)
-	//	return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn),ft_btreedelone(&ast_e02, free_asn), 1);
-	//t_token tab_e04[]={{RRS,">",3}, {UNSET,"f2",3}, {0,0,0}};
-	//t_btree *ast_e04 = create_ast_node(tab_e04);
-	//if (!ast_e04)
-	//	return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn),ft_btreedelone(&ast_e02, free_asn),ft_btreedelone(&ast_e03, free_asn), 1);
-	//t_token tab_e05[]={{UNSET,"cat",2}, {0,0,0}};
-	//t_btree *ast_e05 = create_ast_node(tab_e05);
-	//if (!ast_e05)
-	//	return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn),ft_btreedelone(&ast_e02, free_asn),ft_btreedelone(&ast_e03, free_asn),ft_btreedelone(&ast_e04, free_asn), 1);
-	//t_token tab_e06[]={{UNSET,"echo",4}, {UNSET,"\"inside f1\"",4}, {0,0,0}};
-	//t_btree *ast_e06 = create_ast_node(tab_e06);
-	//if (!ast_e06)
-	//	return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn),ft_btreedelone(&ast_e02, free_asn),ft_btreedelone(&ast_e03, free_asn),ft_btreedelone(&ast_e04, free_asn),ft_btreedelone(&ast_e05, free_asn), 1);
-	//t_token tab_e07[]={{RLS,"<",4}, {UNSET,"f1",4}, {0,0,0}};
-	//t_btree *ast_e07 = create_ast_node(tab_e07);
-	//if (!ast_e07)
-	//	return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn),ft_btreedelone(&ast_e02, free_asn),ft_btreedelone(&ast_e03, free_asn),ft_btreedelone(&ast_e04, free_asn),ft_btreedelone(&ast_e05, free_asn),ft_btreedelone(&ast_e06, free_asn), 1);
-	//t_token tab_e08[]={{UNSET,"cat",4}, {0,0,0}};
-	//t_btree *ast_e08 = create_ast_node(tab_e08);
-	//if (!ast_e08)
-	//	return (ft_btreedelone(&ast_e00, free_asn),ft_btreedelone(&ast_e01, free_asn),ft_btreedelone(&ast_e02, free_asn),ft_btreedelone(&ast_e03, free_asn),ft_btreedelone(&ast_e04, free_asn),ft_btreedelone(&ast_e05, free_asn),ft_btreedelone(&ast_e06, free_asn),ft_btreedelone(&ast_e07, free_asn), 1);
+	//t_token tab_g01[]={{OPA,"&&",2}, {1,0,0}};
+	//t_btree *ast_g01 = create_ast_node(tab_g01);
+	//if (!ast_g01)
+	//	return (ft_btreedelone(&ast_g00, free_asn), 1);
+	//t_token tab_g02[]={{RLS,"<",2}, {UNSET,"f2",2}, {0,0,0}};
+	//t_btree *ast_g02 = create_ast_node(tab_g02);
+	//if (!ast_g02)
+	//	return (ft_btreedelone(&ast_g00, free_asn),ft_btreedelone(&ast_g01, free_asn), 1);
+	//t_token tab_g03[]={{RRS,">",3}, {UNSET,"f1",3}, {1,0,0}};
+	//t_btree *ast_g03 = create_ast_node(tab_g03);
+	//if (!ast_g03)
+	//	return (ft_btreedelone(&ast_g00, free_asn),ft_btreedelone(&ast_g01, free_asn),ft_btreedelone(&ast_g02, free_asn), 1);
+	//t_token tab_g04[]={{RRS,">",3}, {UNSET,"f2",3}, {0,0,0}};
+	//t_btree *ast_g04 = create_ast_node(tab_g04);
+	//if (!ast_g04)
+	//	return (ft_btreedelone(&ast_g00, free_asn),ft_btreedelone(&ast_g01, free_asn),ft_btreedelone(&ast_g02, free_asn),ft_btreedelone(&ast_g03, free_asn), 1);
+	//t_token tab_g05[]={{UNSET,"cat",2}, {0,0,0}};
+	//t_btree *ast_g05 = create_ast_node(tab_g05);
+	//if (!ast_g05)
+	//	return (ft_btreedelone(&ast_g00, free_asn),ft_btreedelone(&ast_g01, free_asn),ft_btreedelone(&ast_g02, free_asn),ft_btreedelone(&ast_g03, free_asn),ft_btreedelone(&ast_g04, free_asn), 1);
+	//t_token tab_g06[]={{UNSET,"echo",4}, {UNSET,"\"inside f1\"",4}, {0,0,0}};
+	//t_btree *ast_g06 = create_ast_node(tab_g06);
+	//if (!ast_g06)
+	//	return (ft_btreedelone(&ast_g00, free_asn),ft_btreedelone(&ast_g01, free_asn),ft_btreedelone(&ast_g02, free_asn),ft_btreedelone(&ast_g03, free_asn),ft_btreedelone(&ast_g04, free_asn),ft_btreedelone(&ast_g05, free_asn), 1);
+	//t_token tab_g07[]={{RLS,"<",4}, {UNSET,"f1",4}, {0,0,0}};
+	//t_btree *ast_g07 = create_ast_node(tab_g07);
+	//if (!ast_g07)
+	//	return (ft_btreedelone(&ast_g00, free_asn),ft_btreedelone(&ast_g01, free_asn),ft_btreedelone(&ast_g02, free_asn),ft_btreedelone(&ast_g03, free_asn),ft_btreedelone(&ast_g04, free_asn),ft_btreedelone(&ast_g05, free_asn),ft_btreedelone(&ast_g06, free_asn), 1);
+	//t_token tab_g08[]={{UNSET,"cat",4}, {0,0,0}};
+	//t_btree *ast_g08 = create_ast_node(tab_g08);
+	//if (!ast_g08)
+	//	return (ft_btreedelone(&ast_g00, free_asn),ft_btreedelone(&ast_g01, free_asn),ft_btreedelone(&ast_g02, free_asn),ft_btreedelone(&ast_g03, free_asn),ft_btreedelone(&ast_g04, free_asn),ft_btreedelone(&ast_g05, free_asn),ft_btreedelone(&ast_g06, free_asn),ft_btreedelone(&ast_g07, free_asn), 1);
 	////ATTACHED NODES
-	//ast_e00->left = ast_e01;
-	//ast_e00->right = ast_e02;
-	//ast_e02->left = ast_e05;
-	//ast_e01->left = ast_e03;
-	//ast_e01->right = ast_e04;
-	//ast_e03->left = ast_e06;
-	//ast_e04->left = ast_e07;
-	//ast_e07->left = ast_e08;
+	//ast_g00->left = ast_g01;
+	//ast_g00->right = ast_g02;
+	//ast_g02->left = ast_g05;
+	//ast_g01->left = ast_g03;
+	//ast_g01->right = ast_g04;
+	//ast_g03->left = ast_g06;
+	//ast_g04->left = ast_g07;
+	//ast_g07->left = ast_g08;
 	//// RUN TEST
-	//nb_err += test(str_e0, &ast_e00, ev);
+	//nb_err += test(str_g0, &ast_g00, ev);
 	//print_sep(S2);
 	print_sep(S1);
 	return (nb_err);
