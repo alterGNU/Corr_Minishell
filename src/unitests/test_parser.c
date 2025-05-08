@@ -33,12 +33,12 @@
 //	 ---------------------| F| PARENTHESIS - REDIR and UNSET IMBRICATION                |
 //	 - |  ⭙  |  ✔  |   ⭙  | str_f0="((c1)>f1)>f2>f3                              CHANGES|
 //	 - |  ⭙  |  ✔  |   ⭙  | str_f1="((c1)>f1>f2)>f3                              CHANGES|
-//	 - |  ⭙  |  ✘  |   ⭙  | str_f2="((c1)>f1>f2>f3)                           NO_CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_f2="((c1)>f1>f2>f3)                           NO_CHANGES|
 //	 - |  ⭙  |  ✔  |   ⭙  | str_f3="(((c1)>f1)>f2)>f3                            CHANGES|
-//	 - |  ⭙  |  ✘  |   ⭙  | str_f4="(((c1)>f1)>f2>f3)                            CHANGES|
-//	 - |  ⭙  |  ✘  |   ⭙  | str_f5="((((c1)>f1)>f2)>f3)                          CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_f4="(((c1)>f1)>f2>f3)                            CHANGES|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_f5="((((c1)>f1)>f2)>f3)                          CHANGES|
 //	 ---------------------| G| COMBOS - REAL COMMANDS                                   |
-//	 - |  ⭙  |  ✘  |   ⭙  | str_g0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"|
+//	 - |  ⭙  |  ✔  |   ⭙  | str_g0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"|
 // =============================================================================
  
 // =[ INCLUDE ]=================================================================
