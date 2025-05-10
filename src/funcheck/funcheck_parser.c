@@ -1,44 +1,51 @@
 // =============================================================================
 // test parser()
 // CASES:
+//   ⭙ : unknown
 //   ✔ : pass
 //   ✘ : fail
-//	 - | tmp | rdp | prat | examples                                                    |
-//   ---------------------| A| SINGLE NODE                                              |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_a0="cmd"                                                |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_a1="<f1"                                                |
-//   ---------------------| B| MULTIPLE NODES                                           |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b0=" cmd1 &&cmd2||cmd3 "                                |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b1=" cmd1 &&cmd2||cmd3&& cmd4 "                         |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b2="<f0 <f1 cm <f3 ar"                                  |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b3=" cmd1 | cmd2|cmd3| cmd4 "                           |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_b4="c1<f1 a1|c2|c3&&c4"                                 |
-//   ---------------------| C| PARENTHESIS - LOGIC OPERATOR                             |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c0="c1&&(c2||c3)"                                CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c1="c1&&(c2||c3)&&c4"                            CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c2="c1&&(c2||c3&&c4)"                            CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c3="c1&&c2||(c3&&c4)"                            CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_c4="(c1&&c2)||(c3&&c4)"                          CHANGES|
-//   ---------------------| D| PARENTHESIS - LOGIC OPERATOR IMBRICATION                 |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d0="((c1&&c2)||c3)&&c4"                       NO_CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d1="(((c1&&c2)||c3)&&c4)"                     NO_CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d2="( (((c1&&c2)||c3)&&c4) )"                 NO_CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d3="(( (((c1&&c2)||c3)&&c4)) )"               NO_CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d4="((c1&&c2)||(c3&&c4))"                        CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"      CHANGES|
-//	 ---------------------| E| PARENTHESIS - REDIR and UNSET                            |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_e0="(c1)>f1>f2>f3                             NO_CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_e1="(c1>f1)>f2>f3                                CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_e2="(c1>f1>f2)>f3                                CHANGES|
-//	 ---------------------| F| PARENTHESIS - REDIR and UNSET IMBRICATION                |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_f0="((c1)>f1)>f2>f3                              CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_f1="((c1)>f1>f2)>f3                              CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_f2="((c1)>f1>f2>f3)                           NO_CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_f3="(((c1)>f1)>f2)>f3                            CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_f4="(((c1)>f1)>f2>f3)                            CHANGES|
-//	 - |  ⭙  |  ✔  |   ⭙  | str_f5="((((c1)>f1)>f2)>f3)                          CHANGES|
-//	 ---------------------| G| COMBOS - REAL COMMANDS                                   |
-//	 - |  ⭙  |  ✔  |   ⭙  | str_g0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"|
+//	 - | unitest | funcheck | examples                                                                     |
+//   -----------------------| A| SINGLE NODE                                                               |
+//	 - |    ✔    |     ✔    | str_a0="cmd"                                                                 |
+//	 - |    ✔    |     ✔    | str_a1="<f1"                                                                 |
+//   -----------------------| B| MULTIPLE NODES                                                            |
+//	 - |    ✔    |     ✔    | str_b0=" cmd1 &&cmd2||cmd3 "                                                 |
+//	 - |    ✔    |     ✔    | str_b1=" cmd1 &&cmd2||cmd3&& cmd4 "                                          |
+//	 - |    ✔    |     ✔    | str_b2="<f0 <f1 cm <f3 ar"                                                   |
+//	 - |    ✔    |     ✔    | str_b3=" cmd1 | cmd2|cmd3| cmd4 "                                            |
+//	 - |    ✔    |     ✔    | str_b4="c1<f1 a1|c2|c3&&c4"                                                  |
+//   -----------------------| C| PARENTHESIS - LOGIC OPERATOR                                              |
+//	 - |    ✔    |     ✘    | str_c0="c1&&(c2||c3)"                                                 CHANGES|
+//	 - |    ✔    |     ✘    | str_c1="c1&&(c2||c3)&&c4"                                             CHANGES|
+//	 - |    ✔    |     ✘    | str_c2="c1&&(c2||c3&&c4)"                                             CHANGES|
+//	 - |    ✔    |     ✘    | str_c3="c1&&c2||(c3&&c4)"                                             CHANGES|
+//	 - |    ✔    |     ✘    | str_c4="(c1&&c2)||(c3&&c4)"                                           CHANGES|
+//   -----------------------| D| PARENTHESIS - LOGIC OPERATOR IMBRICATION                                  |
+//	 - |    ✔    |     ✘    | str_d0="((c1&&c2)||c3)&&c4"                                        NO_CHANGES|
+//	 - |    ✔    |     ✘    | str_d1="(((c1&&c2)||c3)&&c4)"                                      NO_CHANGES|
+//	 - |    ✔    |     ✘    | str_d2="( (((c1&&c2)||c3)&&c4) )"                                  NO_CHANGES|
+//	 - |    ✔    |     ✘    | str_d3="(( (((c1&&c2)||c3)&&c4)) )"                                NO_CHANGES|
+//	 - |    ✔    |     ✘    | str_d4="((c1&&c2)||(c3&&c4))"                                         CHANGES|
+//	 - |    ✔    |     ✘    | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"                       CHANGES|
+//	 -----------------------| E| PARENTHESIS - REDIR and UNSET                                             |
+//	 - |    ✔    |     ✘    | str_e0="(c1)>f1>f2>f3                                              NO_CHANGES|
+//	 - |    ✔    |     ✘    | str_e1="(c1>f1)>f2>f3                                                 CHANGES|
+//	 - |    ✔    |     ✘    | str_e2="(c1>f1>f2)>f3                                                 CHANGES|
+//	 -----------------------| F| PARENTHESIS - REDIR and UNSET IMBRICATION                                 |
+//	 - |    ✔    |     ✘    | str_f0="((c1)>f1)>f2>f3                                               CHANGES|
+//	 - |    ✔    |     ✘    | str_f1="((c1)>f1>f2)>f3                                               CHANGES|
+//	 - |    ✔    |     ✘    | str_f2="((c1)>f1>f2>f3)                                            NO_CHANGES|
+//	 - |    ✔    |     ✘    | str_f3="(((c1)>f1)>f2)>f3                                             CHANGES|
+//	 - |    ✔    |     ✘    | str_f4="(((c1)>f1)>f2>f3)                                             CHANGES|
+//	 - |    ✔    |     ✘    | str_f5="((((c1)>f1)>f2)>f3)                                           CHANGES|
+//	 -----------------------| G| MULTIPLE NESTED PAR                                                       |
+//   - |    ✔    |     ✘    | str_h0"( ( c2 ) )", &ast_g00, ev);                                 NO_CHANGES|
+//   - |    ✔    |     ✘    | str_h1"(( ( c3 )) )", &ast_g01, ev);                               NO_CHANGES|
+//   - |    ✔    |     ✘    | str_h2"( (( c3 ) )) ", &ast_g02, ev);                              NO_CHANGES|
+//   - |    ✔    |     ✘    | str_h3" ( (( ( ( c5 )) ) )) ", &ast_g03, ev);                      NO_CHANGES|
+//	 -----------------------| H| COMBOS                                                                    |
+//	 - |    ✔    |     ✘    | str_h00="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"NO_CHANGES|
+//   - |    ✔    |     ✘    | str_h10="((((c1)>f1)&&((<f2 c2) >f3))&&(<f4 c4))"                  NO_CHANGES|
 // =============================================================================
  
 // =[ INCLUDE ]=================================================================
@@ -339,19 +346,19 @@ int	main(int ac, char **av, char **ev)
 	//print_title("N0| NULL CASES");
 	//nb_err += test(NULL, NULL, ev);
 	//print_sep(S1);
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("N1|SYNTAX ERRORS");
-	nb_err += test("cmd>", NULL, ev);
+	//// -[  ]--------------------------------------------------------------------
+	//print_subtitle("N1|SYNTAX ERRORS");
+	//nb_err += test("cmd>", NULL, ev);
 	//nb_err += test("()", NULL, ev);
-	print_sep(S2);
-	// -[  ]--------------------------------------------------------------------
-	print_subtitle("N2|NOT SUPPORTED OPERATORS");
+	//print_sep(S2);
+	//// -[  ]--------------------------------------------------------------------
+	//print_subtitle("N2|NOT SUPPORTED OPERATORS");
 	//nb_err += test("<(cmd)", NULL, ev);
 	//nb_err += test(">(cmd)", NULL, ev);
-	nb_err += test("((((c1&&c2)||c3)&&c4))", NULL, ev);
-	print_sep(S2);
-	print_sep(S1);
-	// =[ 	 ]==================================================================
+	//nb_err += test("((((c1&&c2)||c3)&&c4))", NULL, ev);
+	//print_sep(S2);
+	//print_sep(S1);
+	//// =[ 	 ]==================================================================
 	//print_title("A| BTREE WITH ONE NODE:parsing");
 	//// -[  ]--------------------------------------------------------------------
 	//print_subtitle("A0|Simple node == UNSET");
@@ -1160,7 +1167,7 @@ int	main(int ac, char **av, char **ev)
 	// RUN TEST
 	nb_err += test(str_d5, &ast_d_5_00, ev);
 	print_sep(S2);
-	print_sep(S1);
+	//print_sep(S1);
 	//// =[  ]====================================================================
 	//print_title("E| PARENTHESIS - REDIR and UNSET");
 	//print_subtitle("E0|NO PRIORITY CHANGES");
@@ -1436,43 +1443,43 @@ int	main(int ac, char **av, char **ev)
 	//// RUN TEST
 	//nb_err += test(str_f4, &ast_f40, ev);
 	//print_sep(S2);
-	//// -[  ]--------------------------------------------------------------------
-	//print_subtitle("F5|CHANGES PRIORITY");
-	////            1234443333222211110
-	//char *str_f5="((((c1)>f1)>f2)>f3)";
-	///*
-	// *                                      50:{RRS, ">f3", 1}
-	// *                          51:{RRS,">",2},{UNSET,"f2",2}
-	// *              52:{RRS,">",3},{UNSET,"f1",3}
-	// * 53:{UNSET,"c1",4}
-	// */
-	//// CREATE NODES
-	//t_token tab_f50[]={{RRS,">",1},{UNSET,"f3",1}, {0,0,0}};
-	//t_btree *ast_f50 = create_ast_node(tab_f50);
-	//if (!ast_f50)
-	//	return (1);
-	//t_token tab_f51[]={{RRS,">",2},{UNSET,"f2",2}, {0,0,0}};
-	//t_btree *ast_f51 = create_ast_node(tab_f51);
-	//if (!ast_f51)
-	//	return (ft_btreedelone(&ast_f50, free_asn), 1);
-	//t_token tab_f52[]={{RRS,">",3},{UNSET,"f1",3}, {0,0,0}};
-	//t_btree *ast_f52 = create_ast_node(tab_f52);
-	//if (!ast_f52)
-	//	return (ft_btreedelone(&ast_f50, free_asn),ft_btreedelone(&ast_f51, free_asn), 1);
-	//t_token tab_f53[]={{UNSET,"c1",4}, {0,0,0}};
-	//t_btree *ast_f53 = create_ast_node(tab_f53);
-	//if (!ast_f53)
-	//	return (ft_btreedelone(&ast_f50, free_asn),ft_btreedelone(&ast_f51, free_asn),ft_btreedelone(&ast_f52, free_asn), 1);
-	////ATTACHED NODES
-	//ast_f50->left = ast_f51;
-	//ast_f51->left = ast_f52;
-	//ast_f52->left = ast_f53;
-	//// RUN TEST
-	//nb_err += test(str_f5, &ast_f50, ev);
-	//print_sep(S2);
+	// -[  ]--------------------------------------------------------------------
+	print_subtitle("F5|CHANGES PRIORITY");
+	//            1234443333222211110
+	char *str_f5="((((c1)>f1)>f2)>f3)";
+	/*
+	 *                                      50:{RRS, ">f3", 1}
+	 *                          51:{RRS,">",2},{UNSET,"f2",2}
+	 *              52:{RRS,">",3},{UNSET,"f1",3}
+	 * 53:{UNSET,"c1",4}
+	 */
+	// CREATE NODES
+	t_token tab_f50[]={{RRS,">",1},{UNSET,"f3",1}, {0,0,0}};
+	t_btree *ast_f50 = create_ast_node(tab_f50);
+	if (!ast_f50)
+		return (1);
+	t_token tab_f51[]={{RRS,">",2},{UNSET,"f2",2}, {0,0,0}};
+	t_btree *ast_f51 = create_ast_node(tab_f51);
+	if (!ast_f51)
+		return (ft_btreedelone(&ast_f50, free_asn), 1);
+	t_token tab_f52[]={{RRS,">",3},{UNSET,"f1",3}, {0,0,0}};
+	t_btree *ast_f52 = create_ast_node(tab_f52);
+	if (!ast_f52)
+		return (ft_btreedelone(&ast_f50, free_asn),ft_btreedelone(&ast_f51, free_asn), 1);
+	t_token tab_f53[]={{UNSET,"c1",4}, {0,0,0}};
+	t_btree *ast_f53 = create_ast_node(tab_f53);
+	if (!ast_f53)
+		return (ft_btreedelone(&ast_f50, free_asn),ft_btreedelone(&ast_f51, free_asn),ft_btreedelone(&ast_f52, free_asn), 1);
+	//ATTACHED NODES
+	ast_f50->left = ast_f51;
+	ast_f51->left = ast_f52;
+	ast_f52->left = ast_f53;
+	// RUN TEST
+	nb_err += test(str_f5, &ast_f50, ev);
+	print_sep(S2);
 	//print_sep(S1);
 	//// =[  ]====================================================================
-	print_title("G| MULTIPLE NESTED PARENTHESIS:");
+	//print_title("G| MULTIPLE NESTED PARENTHESIS:");
 	//t_token tab_g00[]={{UNSET,"c2",2}, {0,0,0}};
 	//t_btree *ast_g00 = create_ast_node(tab_g00);
 	//if (!ast_g00)
@@ -1491,15 +1498,15 @@ int	main(int ac, char **av, char **ev)
 	//	return (1);
 	//nb_err += test("( (( c3 ) )) ", &ast_g02, ev);
 
-	t_token tab_g03[]={{UNSET,"c5",5}, {0,0,0}};
-	t_btree *ast_g03 = create_ast_node(tab_g03);
-	if (!ast_g03)
-		return (1);
-	nb_err += test(" ( (( ( ( c5 )) ) )) ", &ast_g03, ev);
-	print_sep(S1);
-	// =[  ]====================================================================
-	print_title("H| COMBOS - REAL COMMANDS");
-	// -[  ]--------------------------------------------------------------------
+	//t_token tab_g03[]={{UNSET,"c5",5}, {0,0,0}};
+	//t_btree *ast_g03 = create_ast_node(tab_g03);
+	//if (!ast_g03)
+	//	return (1);
+	//nb_err += test(" ( (( ( ( c5 )) ) )) ", &ast_g03, ev);
+	//print_sep(S1);
+	//// =[  ]====================================================================
+	//print_title("H| COMBOS - REAL COMMANDS");
+	//// -[  ]--------------------------------------------------------------------
 	print_subtitle("H0|PAR-IMBRICATION:NO PRIORITY CHANGES");
 	//PARENTHESIS 123444444444444444444433332223444444443333321112222222210
 	char *str_h0="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))";
