@@ -85,11 +85,11 @@ int	test_build_env_lst(char **ev)
 	ft_lstiter(res, print_struct_env);
 	printf(" ⮡ NULL }\n");
 	fflush(stdout);
-	if (!ev)
+	if (!res)
 	{
-		if (!res)
-			return (ft_lstclear(&res, free_env), printntime(S3, LEN - 5), printf(FAIL), 1);
-		return (ft_lstclear(&res, free_env), printntime(S3, LEN - 5), printf(PASS), 0);
+		if (!ev || !*ev)
+			return (ft_lstclear(&res, free_env), printntime(S3, LEN - 5), printf(PASS), 0);
+		return (ft_lstclear(&res, free_env), printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
 	return (ft_lstclear(&res, free_env), printntime(S3, LEN - 5), printf(PASS), 0);
 }
