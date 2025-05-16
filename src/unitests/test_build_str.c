@@ -140,16 +140,16 @@ int	main(int ac, char **av, char **ev)
 	t_data	*dt = init_data(ev);
 	if (!dt)
 		return (ft_fprintf(2, ER"fail init_data()"CE));
-	add_env_lst_node(&dt->env, NULL);
-	add_env_lst_node(&dt->env, "N0=");
-	add_env_lst_node(&dt->env, "Dq=\"\"");
-	add_env_lst_node(&dt->env, "Sq=''");
-	add_env_lst_node(&dt->env, "v1=toto");
-	add_env_lst_node(&dt->env, "v_2=titi");
-	add_env_lst_node(&dt->env, "v3= 'with' \"quotes\"");
-	add_env_lst_node(&dt->env, "v4= spaces before and after ");
+	add_env_lst_node(&dt->env_lst, NULL);
+	add_env_lst_node(&dt->env_lst, "N0=");
+	add_env_lst_node(&dt->env_lst, "Dq=\"\"");
+	add_env_lst_node(&dt->env_lst, "Sq=''");
+	add_env_lst_node(&dt->env_lst, "v1=toto");
+	add_env_lst_node(&dt->env_lst, "v_2=titi");
+	add_env_lst_node(&dt->env_lst, "v3= 'with' \"quotes\"");
+	add_env_lst_node(&dt->env_lst, "v4= spaces before and after ");
 	//ft_printf("ENV=");
-	//print_env_lst(dt->env);
+	//print_env_lst(dt->env_lst);
 	//ft_printf("\n");
 	int	nb_err = 0;
 	// =[  ]====================================================================

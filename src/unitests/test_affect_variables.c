@@ -134,8 +134,8 @@ int	print_raw(t_dlist *raw)
  * step1) create a dt from <char **ev>
  * step2) build raw from tab_res
  * step3) call affect_variables(dt, raw)
- * step4) check effect of call on dt->env
- *        for each env in tab env in dt->env
+ * step4) check effect of call on dt->env_lst
+ *        for each env in tab env in dt->env_lst
  * void	affect_variables(t_data **dt, t_dlist *raw)
  */
 int	test(char **ev, t_token tab_raw[], t_env tab_res[])
@@ -178,22 +178,22 @@ int	test(char **ev, t_token tab_raw[], t_env tab_res[])
 	// PRINT RAW
 	print_raw(raw);
 	ft_printf(CB);
-	print_env_lst(data->env);
+	print_env_lst(data->env_lst);
 	ft_printf(CE);
 	// STEP3) call affect_variables
 	affect_variables(&data, raw);
 	ft_printf(CY);
-	print_env_lst(data->env);
+	print_env_lst(data->env_lst);
 	ft_printf(CE);
 
 	// STEP4) check affectation
-	// Check that every tab_res t_env has been correctly add to data->env
+	// Check that every tab_res t_env has been correctly add to data->env_lst
 	i = 0;
 	while (tab_res[i].name)
 	{
-		t_list	*env_lst_node_found = tester_get_env_lst_node(data->env, tab_res[i].name);
+		t_list	*env_lst_node_found = tester_get_env_lst_node(data->env_lst, tab_res[i].name);
 		if (!env_lst_node_found)
-			return (ft_printf(CR"act_env={%s,%s} NOT FOUND IN data->env\n"CE, tab_res[i].name, tab_res[i].value), ft_dlstclear(&raw, free_token),free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
+			return (ft_printf(CR"act_env={%s,%s} NOT FOUND IN data->env_lst\n"CE, tab_res[i].name, tab_res[i].value), ft_dlstclear(&raw, free_token),free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 		// compare_env(t_env *, t_env)
 		t_env *act_env = (t_env *)env_lst_node_found->content;
 		int act_name_len = ft_strlen(act_env->name);
@@ -210,10 +210,10 @@ int	test(char **ev, t_token tab_raw[], t_env tab_res[])
 			return (ft_printf(CR"act_env={%s,%s}--> %s != %s\n"CE,tab_res[i].name,tab_res[i].value,act_env->value, tab_res[i].value), ft_dlstclear(&raw, free_token),free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 		i++;
 	}
-	// Check data->env is valid:
+	// Check data->env_lst is valid:
 	//   1|all t_env has valid key
 	//   2|all t_env key is uniq
-	t_list	*act_1 = data->env;
+	t_list	*act_1 = data->env_lst;
 	while (act_1)
 	{
 		char *act_1_name = ((t_env *)act_1)->name;
