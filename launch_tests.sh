@@ -24,8 +24,8 @@
 ARGS=()                                                           # ☒ Copy of arguments pass to the script
 for arg in "${@}";do ARGS+=( "${arg}" );done
 SCRIPTNAME=${0##*\/}                                              # ☒ Script's name (no path)
-PARENT_DIR=$(dirname $(realpath ${0}))                            # ☒ Name of parent directory (TEST_DIR)
-MS_DIR=$(dirname $(realpath ${PARENT_DIR}))                       # ☒ Name of great-parent directory (MINISHELL_DIR)
+PARENT_DIR=$(cd $(dirname ${0}) && pwd)                           # ☒ Name of parent directory (TEST_DIR)
+MS_DIR=$(cd $(dirname ${PARENT_DIR}) && pwd)                      # ☒ Name of great-parent directory (MINISHELL_DIR)
 PROGRAMM="${MS_DIR}/minishell"                                    # ☒ Object's name to test (here our executable)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"           # ☒ Name of the log folder
 LOG_FAIL="${LOG_DIR}/list_errors.log"                             # ☒ File contains list of function that failed
@@ -282,7 +282,7 @@ launch_unitests()
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
                 # cases where compilation needed: (1:no binary),(2:unitests source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:minishell newer than bin)
                 if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || ( "${test_main}" -nt "${exe}" ) || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || ( "${LIBFT_A}" -nt "${exe}" ) || ( "${MINISHELL}" -nt "${exe}" ) ]];then
-                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
+                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
                         [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
                         rm "${FUN_LOG_DIR}/comp_stderr.log"
@@ -392,7 +392,7 @@ launch_funcheck()
         local res_compile=0
         # cases where compilation needed: (1:if -c option enable),(2:if no bin alwready found),(3:if source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:if minishell newer than bin)
         if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || ( "${test_main}" -nt "${exe}" ) || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || ( "${LIBFT_A}" -nt "${exe}" ) || ( "${MINISHELL}" -nt "${exe}" ) ]];then
-            res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
+            res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
             if [[ "${res_compile}" -eq 0 ]];then
                 [[ ${COMP} -gt 0 ]] && print_in_box -t 0 -c m "${M0}1) ⚙️  Compilation: ✅ ${V0} SUCCESS. ${G0}(forced)${E}" || print_in_box -t 0 -c m "${M0}1) ⚙️  Compilation: ✅ ${V0} SUCCESS.${E}"
                 rm "${FUN_LOG_DIR}/comp_stderr.log"
@@ -460,7 +460,7 @@ exec_binary()
             exe="${BIN_DIR}/test_${fun}"
             # cases where compilation needed: (1:no binary),(2:unitests source code newer than bin),(3:text exist and newer than binary), (4:libft.a newer than bin), (5:minishell newer than bin)
             if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || ( "${test_main}" -nt "${exe}" ) || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) || ( "${LIBFT_A}" -nt "${exe}" ) || ( "${MINISHELL}" -nt "${exe}" ) ]];then
-                local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
+                local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                 if [[ "${res_compile}" -eq 0 ]];then
                     [[ ${COMP} -gt 0 ]] && echol -i 0 -c m -t 1 " ⚙️  ${BU}Compilation:${E}  ✅ ${V0} Successfull. ${G0}(forced)${E}" || echol -i 0 -c m -t 1 " ⚙️  ${BU}Compilation:${E}  ✅ ${V0} Successfull.${E} "
                     rm "${FUN_LOG_DIR}/comp_stderr.log"
