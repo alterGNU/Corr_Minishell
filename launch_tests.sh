@@ -202,7 +202,7 @@ check_funused()
     local glibc_calls=( )
     for function in "${BUILTIN_FUNUSED[@]}";do
         local fun="${function%%\@*}"
-        if [[ "${fun}" == "_"* ]];then
+        if [[ ( "${fun}" == "_"* ) || ( "${FUN_TO_EXCLUDE[@]}" =~ "${fun}" ) ]];then
             main_calls+=( "${G0}• ${fun%%\@*}()${E}" )
         else
             if [[ "${ALLOWED_FUN[@]}" =~ "${fun}" ]];then
