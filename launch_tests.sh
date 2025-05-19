@@ -50,7 +50,8 @@ VALG=1                                                            # ☒ Run valg
 FUN_NAME_PATTERN=( )                                              # ☒ List of function name pattern passed as argument
 FUN_ASKED_FOR=( )                                                 # ☒ List of function matching given pattern names as argument
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
-FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of function name to exclude
+FUN_TO_EXCLUDE=( "_fini" "main" "_start" "_init" "_end" "_stop" ) # ☒ List of LINUX's function names to exclude
+FUN_TO_EXCLUDE+=( "dyld_stub_binder" "stub_binder" )              # ☒ List of MacOS's function names to exclude 
 FUN_TO_TEST=( )                                                   # ☒ List of user created function specific to minishell
 FUN_WITH_UNITEST=( )                                              # ☒ List of user created function specific to minishell that have a test founded
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in minishell
@@ -189,14 +190,13 @@ display_start()
 }
 
 # -[ CHECK_FUNUSED ]------------------------------------------------------------------------------------------
-# Check that functions used by program are allowed:
+# Check that functions used by program are allowed: If elem of BUILTIN_FUNUSED not in ALLOWED_FUN
 # - GREEN -> allowed
 # - GREY  -> called by main() function
 # - RED   -> not allowed
 check_funused()
 {
     local tot=0
-    #local args=( "🔵 ${BU}BUILT-IN FUN. USED:${E}" )
     local args=( )
     local main_calls=( )
     local glibc_calls=( )
@@ -647,27 +647,47 @@ done
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ SET LISTS ]==============================================================================================
+# -[ CHECK IF OS KNOWN ]--------------------------------------------------------------------------------------
+[[ ( "$(uname)" != "Linux" ) && ( "$(uname)" != "Darwin" ) ]] && { echo "${R0}UNKNOWN OS${E}" && exit 3 ; }
 # -[ SET LIBFT_FUN ]------------------------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
-    for fun in $(nm -g "${LIBFT_A}" | grep " T " | awk '{print $NF}' | sort | uniq);do
-        [[ ! "${LIBFT_FUN[@]}" =~ "${fun}" ]] && LIBFT_FUN+=( "${fun}" )
+    for fun in $(nm -g "${LIBFT_A}" 2>/dev/null | grep " T " | awk '{print $NF}' | sort | uniq);do
+        if [[ ! "${LIBFT_FUN[@]}" =~ "${fun}" ]];then
+            [[ "$(uname)" == "Linux" ]] && LIBFT_FUN+=( "${fun}" ) || LIBFT_FUN+=( "${fun#*\_}" )
+        fi
     done
 else
     echo -e "LIBFT_A=${BC0}${LIBFT_A}${E} is not an object file\033[m"
 fi
 # -[ SET HOMEMADE_FUNUSED & BUILTIN_FUNUSED ]-----------------------------------------------------------------
 if file "${PROGRAMM}" | grep -qE 'relocatable|executable|shared object|ar archive';then
-    for fun in $(nm -g "${PROGRAMM}" | grep " T " | awk '{print $NF}' | sort | uniq);do
-        [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]] && HOMEMADE_FUNUSED+=( "${fun}" )
-        if [[ "${FUN_TO_EXCLUDE[@]}" =~ "${fun}" && " ${fun} " != " main " ]];then
-            [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
-        fi
-    done
-    for fun in $(nm -g "${PROGRAMM}" | grep " U " | awk '{print $NF}' | sort | uniq);do
-        if [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]];then
-            [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
-        fi
-    done
+    if [[ "$(uname)" == "Linux" ]];then
+        for fun in $(nm -g "${PROGRAMM}" 2>/dev/null | grep " T " | awk '{print $NF}' | sort | uniq);do
+            if [[ "${FUN_TO_EXCLUDE[@]}" =~ "${fun}" && " ${fun} " != " main " ]];then
+                [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
+            else
+                [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]] && HOMEMADE_FUNUSED+=( "${fun}" )
+            fi
+        done
+        for fun in $(nm -g "${PROGRAMM}" 2>/dev/null | grep " U " | awk '{print $NF}' | sort | uniq);do
+            if [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]];then
+                [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
+            fi
+        done
+    else
+        for fun in $(nm -g "${PROGRAMM}" 2>/dev/null | grep " T " | awk '{print $NF}' | sort | uniq);do
+            if [[ "${FUN_TO_EXCLUDE[@]}" =~ "${fun#*_}" && " ${fun#*_} " != " main " ]];then
+                [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun#*_}" ]] && BUILTIN_FUNUSED+=( "${fun#*_}" )
+            else
+                [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun#*_}" ]] && HOMEMADE_FUNUSED+=( "${fun#*_}" )
+            fi
+        done
+        for fun in $(nm -g "${PROGRAMM}" 2>/dev/null | grep " U " | awk '{print $NF}' | sort | uniq);do
+            if [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun#*_}" ]];then
+                [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun#*_}" ]] && BUILTIN_FUNUSED+=( "${fun#*_}" )
+            fi
+        done
+    fi
 else
     echo -e "${BC0}${PROGRAMM}${E} is not an object file\033[m"
 fi
