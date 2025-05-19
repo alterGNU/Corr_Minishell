@@ -65,7 +65,7 @@ ALLOWED_FUN+=( "readline" "rl_clear_history" "rl_on_new_line" "rl_replace_line" 
     "tgoto" "tputs" )
 OBJ=( )                                                           # ☒ List of object.o (no main function in it)
 # add to OBJ list all '.o' files founded in minishell/build/ folders that do not contains a main() function
-for obj in $(find ${MS_DIR}/build -type f -name '*.o');do if ! nm "${obj}" | grep -qE '\<main\>';then OBJ+=( "${obj}" );fi;done
+for obj in $(find ${MS_DIR}/build -type f -name '*.o');do if ! nm "${obj}" 2>/dev/null | grep -qE 'T [_]*main';then OBJ+=( "${obj}" );fi;done
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
 CC="cc -Wall -Wextra -Werror -I${MS_DIR}/include -I${MS_DIR}/libft/include ${OBJ[@]}"
 VAL_ERR=42
