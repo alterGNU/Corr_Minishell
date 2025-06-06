@@ -1,4 +1,3 @@
-// =============================================================================
 // test parser()
 // CASES:
 //   ⭙ : unknown
@@ -28,21 +27,21 @@
 //	 - |    ✔    |     ✘    | str_d4="((c1&&c2)||(c3&&c4))"                                         CHANGES|
 //	 - |    ✔    |     ✘    | str_d5="((c1&&c2||c3)&&c4)||(c5&&(c6||c7&&c8))"                       CHANGES|
 //	 -----------------------| E| PARENTHESIS - REDIR and UNSET                                             |
-//	 - |    ✔    |     ✘    | str_e0="(c1)>f1>f2>f3                                              NO_CHANGES|
-//	 - |    ✔    |     ✘    | str_e1="(c1>f1)>f2>f3                                                 CHANGES|
-//	 - |    ✔    |     ✘    | str_e2="(c1>f1>f2)>f3                                                 CHANGES|
+//	 - |    ✔    |     ✔    | str_e0="(c1)>f1>f2>f3                                              NO_CHANGES|
+//	 - |    ✔    |     ✔    | str_e1="(c1>f1)>f2>f3                                                 CHANGES|
+//	 - |    ✔    |     ✔    | str_e2="(c1>f1>f2)>f3                                                 CHANGES|
 //	 -----------------------| F| PARENTHESIS - REDIR and UNSET IMBRICATION                                 |
-//	 - |    ✔    |     ✘    | str_f0="((c1)>f1)>f2>f3                                               CHANGES|
-//	 - |    ✔    |     ✘    | str_f1="((c1)>f1>f2)>f3                                               CHANGES|
-//	 - |    ✔    |     ✘    | str_f2="((c1)>f1>f2>f3)                                            NO_CHANGES|
-//	 - |    ✔    |     ✘    | str_f3="(((c1)>f1)>f2)>f3                                             CHANGES|
-//	 - |    ✔    |     ✘    | str_f4="(((c1)>f1)>f2>f3)                                             CHANGES|
-//	 - |    ✔    |     ✘    | str_f5="((((c1)>f1)>f2)>f3)                                           CHANGES|
+//	 - |    ✔    |     ✔    | str_f0="((c1)>f1)>f2>f3                                               CHANGES|
+//	 - |    ✔    |     ✔    | str_f1="((c1)>f1>f2)>f3                                               CHANGES|
+//	 - |    ✔    |     ✔    | str_f2="((c1)>f1>f2>f3)                                            NO_CHANGES|
+//	 - |    ✔    |     ✔    | str_f3="(((c1)>f1)>f2)>f3                                             CHANGES|
+//	 - |    ✔    |     ✔    | str_f4="(((c1)>f1)>f2>f3)                                             CHANGES|
+//	 - |    ✔    |     ✔    | str_f5="((((c1)>f1)>f2)>f3)                                           CHANGES|
 //	 -----------------------| G| MULTIPLE NESTED PAR                                                       |
-//   - |    ✔    |     ✘    | str_h0"( ( c2 ) )", &ast_g00, ev);                                 NO_CHANGES|
-//   - |    ✔    |     ✘    | str_h1"(( ( c3 )) )", &ast_g01, ev);                               NO_CHANGES|
-//   - |    ✔    |     ✘    | str_h2"( (( c3 ) )) ", &ast_g02, ev);                              NO_CHANGES|
-//   - |    ✔    |     ✘    | str_h3" ( (( ( ( c5 )) ) )) ", &ast_g03, ev);                      NO_CHANGES|
+//   - |    ✔    |     ✘    | str_g0="( ( c2 ) )"                                                NO_CHANGES|
+//   - |    ✔    |     ✘    | str_g1="(( ( c3 )) )"                                              NO_CHANGES|
+//   - |    ✔    |     ✘    | str_g2="( (( c3 ) )) "                                             NO_CHANGES|
+//   - |    ✔    |     ✘    | str_g3=" ( (( ( ( c5 )) ) )) "                                     NO_CHANGES|
 //	 -----------------------| H| COMBOS                                                                    |
 //	 - |    ✔    |     ✘    | str_h00="((((echo \"inside f1\")>f1)&&((<f1 cat) >f2))&&(<f2 cat))"NO_CHANGES|
 //   - |    ✔    |     ✘    | str_h10="((((c1)>f1)&&((<f2 c2) >f3))&&(<f4 c4))"                  NO_CHANGES|
@@ -1567,7 +1566,7 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(str_h0, &ast_h00, ev);
 	print_sep(S2);
 
-	print_subtitle("H0|PAR-IMBRICATION:NO PRIORITY CHANGES");
+	print_subtitle("H1|PAR-IMBRICATION:NO PRIORITY CHANGES");
 	//PARENTHESIS 123444333322234444444333332111222222210
 	char *str_h10="((((c1)>f1)&&((<f2 c2) >f3))&&(<f4 c4))";
 	/*
