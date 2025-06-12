@@ -249,11 +249,20 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(env_lst_1, d4, rd4);
 	print_sep(S2);
 
+	print_subtitle("COMBOS DOUBLE x SINGLE x BACKSLASHS x DOLLARS");
+	char *d5 = "\"\'$v1\' \'$\'v1 \'$v\'1 \'$\'\'v\'\'1\'\'\"";
+	char *rd5 = "\'A\' \'$\'v1 \'\'1 \'$\'\'v\'\'1\'\'";
+	nb_err += test(env_lst_1, d5, rd5);
+	print_sep(S2);
+
+	print_sep(S1);
+
 	// =[ 	COMBOS SINGLE QUOTES ] =============================================
 	print_title("COMBOS SINGLES");
-	print_subtitle("COMBOS SINGLE x BACKSLASHS");
-	char *e1 = "\'\\\\ \\a\\b\\ \\c\\d\'";
-	char *re1 = "\\\\ \\a\\b\\ \\c\\d";
+
+	print_subtitle("COMBOS SINGLE x DOUBLE");
+	char *e1 = "\'\"$v_4\" \"$\"v_4 \"$v\"_4\'";
+	char *re1 = "\"$v_4\" \"$\"v_4 \"$v\"_4";
 	nb_err += test(env_lst_1, e1, re1);
 	print_sep(S2);
 
@@ -263,10 +272,16 @@ int	main(int ac, char **av, char **ev)
 	nb_err += test(env_lst_1, e2, re2);
 	print_sep(S2);
 
-	print_subtitle("COMBOS SINGLE x BACKSLASHS x DOLLARS");
-	char *e3 = "\'$v1 $\\v1 \\$v1\'";
-	char *re3 = "$v1 $\\v1 \\$v1";
+	print_subtitle("COMBOS SINGLE x BACKSLASHS");
+	char *e3 = "\'\\\\ \\a\\b\\ \\c\\d\'";
+	char *re3 = "\\\\ \\a\\b\\ \\c\\d";
 	nb_err += test(env_lst_1, e3, re3);
+	print_sep(S2);
+
+	print_subtitle("COMBOS SINGLE x BACKSLASHS x DOLLARS");
+	char *e4 = "\'$v1 $\\v1 \\$v1\'";
+	char *re4 = "$v1 $\\v1 \\$v1";
+	nb_err += test(env_lst_1, e4, re4);
 	print_sep(S2);
 	
 	print_sep(S1);
