@@ -169,26 +169,31 @@ int	main(int ac, char **av, char **ev)
 	char *b9 = "$ var";
 	char *rb9 = "$ var";
 	nb_err += test(env_lst_1, b9, rb9);
-	char *b10 = "$$ $$$ $$$$";
-	char *rb10 = "PID PID$ PIDPID";
-	nb_err += test(env_lst_1, b10, rb10);
+	// TODO: Implement ft_get_pid() and then compare with real get_pid() value
+	//char *b10 = "$$ $$$ $$$$";
+	//char *rb10 = "PID PID$ PIDPID";
+	//nb_err += test(env_lst_1, b10, rb10);
 	char *b11 = "$ $v1 v2:$v2 $ v3:$v3 $ unk=<$unk>";
-	char *rb11 = "$ A v2:B $ v3: $ un=<>";
+	char *rb11 = "$ A v2:B $ v3: $ unk=<>";
+	ft_printf(CB"ENV_LST=\n"CY);
+	print_env_lst(env_lst_1);
+	ft_printf(CE);
 	nb_err += test(env_lst_1, b11, rb11);
 	print_sep(S2);
 
-	//print_subtitle("ONLY BACKSLASH");
-	//char *b11 = "\a\b\c\d";
-	//char *b12 = "\\a\b\c\d";
-	//print_sep(S2);
-
+	print_subtitle("ONLY BACKSLASH");
+	char *b12 = "\\a\\b\\ \\c\\d" ;
+	char *rb12 = "ab cd";
+	nb_err += test(env_lst_1, b12, rb12);
+	char *b13 = "\\\\a\\\\b\\\\ \\\\c\\\\d" ;
+	char *rb13 = "\\a\\b\\ \\c\\d";
+	nb_err += test(env_lst_1, b13, rb13);
+	print_sep(S2);
 	print_sep(S1);
-	//// =[  ]====================================================================
-	//print_title("C| SINGLE VAR IN STR");
-	//print_sep(S1);
-	//// =[  ]====================================================================
-	//print_title("D| MULTIPLE VAR IN STR");
-	//print_sep(S1);
+
+	// =[ 	COMBOS NO QUOTES ]==================================================
+	print_title("C| COMBOS WITHOUT QUOTES");
+	print_sep(S1);
 	
 	// =[ 	FREE ENV_LST ]======================================================
 	ft_lstclear(&real_env_lst, free_env);
