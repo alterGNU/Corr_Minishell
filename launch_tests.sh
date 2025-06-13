@@ -70,7 +70,7 @@ for obj in $(find ${MS_DIR}/build -type f -name '*.o');do if ! nm "${obj}" 2>/de
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
 CC="cc -Wall -Wextra -Werror -I${MS_DIR}/include -I${MS_DIR}/libft/include ${OBJ[@]}"
 VAL_ERR=42
-VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}"
+VALGRIND="valgrind --leak-check=full --track-fds=yes --show-leak-kinds=all --error-exitcode=${VAL_ERR}"
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                            # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
