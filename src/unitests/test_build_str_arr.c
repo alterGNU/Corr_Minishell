@@ -222,31 +222,47 @@ int	print_raw(t_dlist *raw)
  */
 int	test(char **ev, t_token tab_raw[], char **res)
 {
-	//// -[ 	STEP 0: PRINT TEST HEADER ]-----------------------------------------
-	//int print_sofar = printf("%s(dt, ", f_name);
-	//print_sofar += print_tab_raw(tab_raw);
-	//print_sofar += printf(")");
-	//printntime(S3, LEN - print_sofar);
-	//printf("\n");
-	//print_tab_res(tab_res);
-	//printf("\n");
+	// -[ 	STEP 0: PRINT TEST HEADER ]-----------------------------------------
+	int psf = printf("%s(dt, ", f_name);
+	psf += print_tab_raw(tab_raw);
+	psf += printf(")");
+	printntime(S3, LEN - psf);
+	printf(CY"\nres="CV);
+	fflush(stdout);
+	ft_print_str_array(res);
+	printf(CY"\nev ="CM);
+	fflush(stdout);
+	ft_print_str_array(ev);
+	printf("\n"CE);
 
-	//// -[ 	STEP1: BUILD RAW FROM TAB_RAW ]-------------------------------------
-	//t_dlist *raw = create_raw_from_tab_raw(tab_raw);
-	//if (!raw)
-	//	return (42);
-	//print_raw(raw);
-	//
-	//// -[ STEP2: BUILD T_DATA ]-------------------------------------------------
-	//t_data	*data = init_data(ev);
-	//if (!data)
-	//	return (ft_dlstclear(&raw, free_token), 42);
-	//printf(CY"BEFORE data->env_lst=\n"CB"{\n");
-	//fflush(stdout);
-	//print_env_lst(data->env_lst);
-	//printf("}\n"CE);
-	//
-	//
+	// -[ 	STEP1: BUILD RAW FROM TAB_RAW ]-------------------------------------
+	t_dlist *raw = create_raw_from_tab_raw(tab_raw);
+	if (!raw)
+		return (42);
+	print_raw(raw);
+	
+	// -[ 	STEP2: SET_RAW_TYPE(ACT_NODE->RAW) --> PRINT ]----------------------
+	set_raw_type(raw);
+	printf("AFTER set_raw_type():\n"CV);
+	print_raw(raw);
+	printf(CE);
+
+	// -[ STEP3: CREATE A DT FROM <EV> ]----------------------------------------
+	t_data	*data = init_data(ev);
+	if (!data)
+		return (ft_dlstclear(&raw, free_token), 42);
+	printf(CY"env_lst=\n"CB"{\n"CM);
+	fflush(stdout);
+	print_env_lst(data->env_lst);
+	printf(CB"}\n"CE);
+	
+	// -[ STEP4: CALL FT=BUILD_STR_ARR(DT, RAW) ]-------------------------------
+	char **ft = build_str_arr(&data, raw);
+	printf(CY"\nft =");
+	fflush(stdout);
+	ft_print_str_array(ft);
+
+	return (ft_dlstclear(&raw, free_token),free_data(&data), ft_free_str_array(&ft),printntime(S3, LEN - 5), printf(PASS), 0);
 	//// -[ STEP3: CALL build_str_arr ]----------------------------------------
 	//build_str_arr(&data, raw);
 	//printf(CY"AFTER data->env_lst=\n"CB"{\n");
@@ -282,8 +298,8 @@ int	main(int ac, char **av, char **ev)
 
 	/*
 	 * A| No AFF. No expand, (no skip aff. mecanism)
-	 *  A.1 No args: `ls`
-	 *  A.2 Cmd with args: `echo toto tata titi tutu`
+	 *  ✅A.1 No args: `ls`
+	 *  ✅A.2 Cmd with args: `echo toto tata titi tutu`
 	 * B| No AFF. EXPAND, (no skip aff. mecanism)
 	 *  B.1 No args: `'l's`
 	 *  B.2 No args: `$var` [{var, "ls"}]
@@ -293,50 +309,22 @@ int	main(int ac, char **av, char **ev)
 	 *  C.2 in quote                        : `"$cmd_arg" "v1=$v1 v2=$v2" 'v1=$v1 v2=$v2'` [{cmd_arg,"echo \"arg 1\" 'arg 2'"},{v1,toto},{v2,tata}]
 	 *  C.3 in quote                        : `"$cmd_arg v1=$v1 v2=$v2" 'v1=$v1 v2=$v2'` [{cmd_arg,"echo \"arg 1\" 'arg 2'"},{v1,toto},{v2,tata}]
 	 *  C.4 in quote                        : `'$cmd_arg' "v1=$v1 v2=$v2" 'v1=$v1 v2=$v2'` [{cmd_arg,"echo \"arg 1\" 'arg 2'"},{v1,toto},{v2,tata}]
+	 *  TODO : DO NOT FORGET TO ADD THE OTHER TESTS (other combinaison+null *  cases)
 	 */
-	print_title("A| SIMPLE AFFECTATION ");
+	print_title("A| NO AFFECTATION AND NO EXPAND");
 
-	print_subtitle("A.1| ADD AFFECTATION TO ENV_LST");
-	char *ev_a1[]		= {"old_1=a","old2=",NULL};
-	t_token tab_raw_a1[]= {{AFF,"new_1=val_1",0},{CMD,"ls",0},{0,0,0}};
+	print_subtitle("A.1| NO ARGS");
+	char *ev_a1[]		= {"v1=val1","v2=val2",NULL};
+	t_token tab_raw_a1[]= {{UNSET,"ls",0},{0,0,0}};
 	char *res_a1[]	= {"ls", NULL};
 	nb_err += test(ev_a1, tab_raw_a1, res_a1);
 	print_sep(S2);
 
-	print_subtitle("A.2| UPDATE AFFECTATION IN ENV_LST");
-	char *ev_a2[]		= {"v1=old_value_1","v2=old_value_2'",NULL};
-	t_token tab_raw_a2[]= {{AFF,"v1=new_value_1",0},{AFF,"v2='new value 2'",0},{AFF,"v3=\"new value 3\"",0},{0,0,0}};
-	t_env tab_res_a2[]	= {{"v1","new_value_1"},{"v2","new value 2"},{"v3","new value 3"},{0,0}};
-	nb_err += test(ev_a2, tab_raw_a2, tab_res_a2);
-	print_sep(S2);
-
-	print_sep(S1);
-	
-	// =[ 	B | SPECIAL AFF ]===================================================
-	print_title("B| SPECIAL AFFECTATION ");
-
-	print_subtitle("B.1| ADD && UPDATE WITH MULTIPLE EQUALS");
-	char *ev_b1[]		= {"v1=a","v2=b",NULL};
-	t_token tab_raw_b1[]= {{AFF,"v1==",0},{AFF,"v2=E=e",0},{AFF,"v_3===e==",0},{0,0,0}};
-	t_env tab_res_b1[]	= {{"v1","="},{"v2","E=e"},{"v_3","==e=="},{0,0}};
-	nb_err += test(ev_b1, tab_raw_b1, tab_res_b1);
-	print_sep(S2);
-
-	print_subtitle("B.2| ADD && UPDATE WITH QUOTES");
-	char *ev_b2[]		= {"v1=old_value_1","v2='old value 2'","v3=\"old value 3\"",NULL};
-	t_token tab_raw_b2[]= {{AFF,"v1=new_value_1",0},{AFF,"v2='new value 2'",0},{AFF,"v3=\"new value 3\"",0},{0,0,0}};
-	t_env tab_res_b2[]	= {{"v1","new_value_1"},{"v2","new value 2"},{"v3","new value 3"},{0,0}};
-	nb_err += test(ev_b2, tab_raw_b2, tab_res_b2);
-	print_sep(S2);
-	
-	// =[ 	C | CHAIN AFF ]=====================================================
-	print_title("C| CHAIN AFFECTATION ");
-
-	print_subtitle("C.1| ADD && UPDATE WITH DOLLARS SYMBOL-->SWAP");
-	char *ev_c1[]		= {"v1=val2","v2=val1",NULL};
-	t_token tab_raw_c1[]= {{AFF,"tmp=$v1",0},{AFF,"v1=$v2",0},{AFF,"v2=$tmp",0},{AFF,"tmp=",0},{0,0,0}};
-	t_env tab_res_c1[]	= {{"tmp",""},{"v1","val1"},{"v2","val2"},{0,0}};
-	nb_err += test(ev_c1, tab_raw_c1, tab_res_c1);
+	print_subtitle("A.2| CMD WITH ARGS");
+	char *ev_a2[]		= {"v1=val1","v2=val2",NULL};
+	t_token tab_raw_a2[]= {{UNSET,"echo",0},{UNSET,"toto",0},{UNSET,"\"ta ta\"",0},{UNSET,"\'ti ti\'",0},{0,0,0}};
+	char *res_a2[]	= {"echo","toto","ta ta","ti ti",0};
+	nb_err += test(ev_a2, tab_raw_a2, res_a2);
 	print_sep(S2);
 
 	print_sep(S1);
