@@ -118,6 +118,7 @@ int	print_env_lst_oneline(t_list *env_lst)
 
 	if (!env_lst)
 		return (printf(CM"NULL"CE), 4);
+	psf = 0;
 	act = env_lst;
 	while (act)
 	{

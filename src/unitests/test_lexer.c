@@ -177,8 +177,11 @@ int	test(char **ev, char *str, t_token tab_res[])
 	t_data *dt = init_data(ev);
 	if (!dt)
 		return (ft_fprintf(2, "init_data()->fail"));
+	dt->line = strdup(str);
+	if (!dt->line)
+		return (free_data(&dt), ft_fprintf(2, "init_data()->fail"));
 	// STEP 1
-	lexer(str, &dt);
+	lexer(&dt);
 	// CHECK TOK_LST == NULL
 	if (!dt->tok_lst)
 	{

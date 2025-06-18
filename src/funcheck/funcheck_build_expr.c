@@ -192,11 +192,14 @@ int	test(char *str, t_btree **add_res, char **ev)
 	if (!data)
 		return (ft_btreeclear(add_res, free_asn), 1);
 	data->debug_mode = 1;
+	data->line = strdup(str);
+	if (!data->line)
+		return (ft_btreeclear(add_res, free_asn), free_data(&data), 1);
 	// Print test header
-	int print_sofar = printf("%s(\"%s\")", f_name, str);
-	if (str)
+	int print_sofar = printf("%s(\"%s\")", f_name, data->line);
+	if (data->line)
 	{
-		int c = count_char_in_str('\t', str);
+		int c = count_char_in_str('\t', data->line);
 		if (c)
 			print_sofar+=c*4;
 	}
@@ -204,7 +207,7 @@ int	test(char *str, t_btree **add_res, char **ev)
 	printf("\n");
 	fflush(stdout);
 	// LEXING
-	lexer(str, &data);
+	lexer(&data);
 	if (!data->tok_lst)
 		write(1, "\n", 1);
 	// PARSER
