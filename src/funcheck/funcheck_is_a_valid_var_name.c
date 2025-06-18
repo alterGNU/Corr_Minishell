@@ -97,7 +97,7 @@ int	test(char **keys, int res)
 		else
 			printntime(".", LEN - 4 - psf), printf(PASS);
 	}
-	return (res);
+	return (tot_err);
 }
 
 int	main(int ac, char **av, char **ev)
