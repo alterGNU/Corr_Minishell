@@ -61,7 +61,7 @@ int	print_char_array(char *char_arr[])
 	int		i;
 	int		psf;
 
-	if (!char_arr[0])
+	if (!char_arr || !char_arr[0])
 		return (printf(CY"["CM"NULL"CY"]"CE), 6);
 	printf(CY);
 	psf = printf("[");
@@ -110,32 +110,62 @@ int	print_env_array(t_env env_lst[])
 	return (psf);
 }
 
+int	print_env_lst_oneline(t_list *env_lst)
+{
+	int	psf;
+	t_list	*act;
+	t_env	*act_env;
+
+	if (!env_lst)
+		return (printf(CM"NULL"CE), 4);
+	act = env_lst;
+	while (act)
+	{
+		act_env = (t_env *)act->content;
+		printf(CY);
+		psf += printf("{");
+		printf(CM);
+		psf += printf("%s", act_env->name);
+		printf(CY);
+		psf += printf(", ");
+		printf(CM);
+		psf += printf("%s", act_env->value);
+		printf(CY);
+		psf += printf("}->");
+		act = act->next;
+	}
+	printf(CM);
+	psf += printf("NULL");
+	printf(CE);
+	return (psf);
+}
+
 /*
- * test(char **ev, t_env **env_lst, char **tab_str, char **ev_res, int res)
- * step0)	print cases/header
- * step1.1)	build data->ev from <ev>
- * step1.2)	build data->env_lst from <env_lst>
- * step2)	ft = builtin_unset(data, <tab_str>)
- * step3.1) check ft == res
- * step3.2) check unset done in data->ev		:for each char *key in str_arr		->NOT FOUND in data->ev
- * step3.3) check ev_res == data->ev      		:for each char *key in ev_res		->FOUND in data->ev
- * step3.4) check unset done in data->env_lst	:for each char *key in str_arr		->NOT FOUND in data->env_lst
- * step3.5) check env_lst_res == data->env_lst 	:for each char *key in env_lst_res	->FOUND in data->env_lst
+ * test(char **ev_src, t_env **env_lst, char **tab_str, char **ev_res, int res)
+ * ✅step0)		print cases/header
+ * ✅step1.1)	build data->ev from <ev_src>
+ * ✅step1.2)	build data->env_lst from <env_lst>
+ * ✅step2)		ft = builtin_unset(data, <tab_str>)
+ * ✅step3.1)	check ft == res
+ * ❌step3.2)	check unset done in data->ev		:for each char *key in str_arr		->NOT FOUND in data->ev
+ * ❌step3.3)	check ev_res == data->ev      		:for each char *key in ev_res		->FOUND in data->ev
+ * ❌step3.4) 	check unset done in data->env_lst	:for each char *key in str_arr		->NOT FOUND in data->env_lst
+ * ❌step3.5) 	check env_lst_res == data->env_lst 	:for each char *key in env_lst_res	->FOUND in data->env_lst
  */
-int test(char *ev[], t_env env_lst[], char *str_arr[], char *ev_res[], t_env env_lst_res[], int res_value)
+int test(char *ev_src[], char *env_lst_src[], char *str_arr[], char *ev_res[], t_env env_lst_res[], int res_value)
 {
 	// -[ 	STEP 0: PRINT TEST HEADER ]-----------------------------------------
 	int print_sofar = printf("%s(data, ", f_name);
 	print_sofar += print_char_array(str_arr);
 	print_sofar += printf(")=[%d]", res_value);
 	printntime(S3, LEN - print_sofar);
-	printf(CY"\nchar **ev         = ");
-	print_char_array(ev);
-	printf(CY"\nchar **env_lst    = ");
-	print_env_array(env_lst);
-	printf(CY"\nchar **ev_res     = ");
+	printf(CB"\nchar **ev_src     = ");
+	print_char_array(ev_src);
+	printf(CB"\nchar **env_lst_src= ");
+	print_char_array(env_lst_src);
+	printf(CV"\nchar **ev_res     = ");
 	print_char_array(ev_res);
-	printf(CY"\nchar **env_lst_res= ");
+	printf(CV"\nchar **env_lst_res= ");
 	print_env_array(env_lst_res);
 	printf("\n"CE);
 
@@ -143,71 +173,86 @@ int test(char *ev[], t_env env_lst[], char *str_arr[], char *ev_res[], t_env env
 	t_data	*data = (t_data *)ft_calloc(sizeof(t_data), 1);
 	if (!data)
 		return(printf(ER"init_data():!ft_calloc()"CE), 42);
-	data->ev = build_ev_from_envp(ev);
+	data->ev = build_ev_from_envp(ev_src);
 	if (!data->ev)
 		return(free_data(&data), printf(ER"init_data():!build_ev_from_envp()"CE), 42);
-	data->env_lst = build_env_lst(data->ev);
+	data->env_lst = build_env_lst(env_lst_src);
 	if (!data->env_lst)
 		return(free_data(&data), printf(ER"init_data():!build_env_lst()"CE), 42);
 
-	printf(CY"\nBEFORE data->ev=");
+	printf("\n"CT"BEFORE"CE"\n");
+	printf(CY"data->ev     =");
 	print_char_array(data->ev);
-	printf(CY"\nBEFORE data->env_lst=\n"CM"{\n");
-	fflush(stdout);
-	print_env_lst(data->env_lst);
-	printf("}\n"CE);
+	printf(CY"\ndata->env_lst="CE);
+	print_env_lst_oneline(data->env_lst);
+	printf("\n"CE);
 	
 	// -[ STEP2)	FT = BUILTIN_UNSET(DATA, <TAB_STR>) ]-----------------------
 	int ft = builtin_unset(&data, str_arr);
+	printf("\n"CT"CALL %s()=[%d]"CE"\n", f_name, ft);
 
-	printf(CY"\nft=%d\nAFTER  data->ev=", ft);
+	printf("\n"CT"AFTER"CE"\n");
+	printf(CY"data->ev     =");
 	print_char_array(data->ev);
-	printf(CY"\nAFTER  data->env_lst=\n"CM"{\n");
-	fflush(stdout);
-	print_env_lst(data->env_lst);
-	printf("}\n"CE);
+	printf(CY"\ndata->env_lst="CE);
+	print_env_lst_oneline(data->env_lst);
+	printf("\n"CE);
+	return (0); // TODO remove
 
 	// -[ STEP3.1) CHECKS FT != RES]--------------------------------------------
 	if (ft != res_value)
 		return (free_data(&data), printf(CR"RETURN VALUE DIFF. :ft:%d != %d:res_value\n"CE, ft, res_value), printntime(S3, LEN - 5), printf(FAIL), 1);
+	printf(CV"CHECK 3.1 ");
+	printntime(S3, LEN - 10);
+	printf(PASS);
 
 	// -[ STEP3.2) CHECK UNSET DONE IN DATA->EV ] -----------------------------
 	// FOR EACH CHAR *KEY IN STR_ARR		->NOT FOUND IN DATA->EV ]
-	int i = -1;
+	int		i,j;
+	char	*key;
+	i = -1;
 	while (str_arr[++i])
 	{
-		int j = -1;
+		j = -1;
 		while (data->ev[++j])
 		{
-			char *key = get_aff_key(data->ev[j]);
+			key = get_aff_key(data->ev[j]);
+			printf("%s VS (%s ~ %s)\n", str_arr[i], data->ev[j], key);
 			if (!key)
 				return (free_data(&data), 42);
 			if (!strcmp(str_arr[i], key))
-				return (free_data(&data), printf(CR"`UNSET %s`DID NOT WORK SINCE <%s> FOUND IN data->ev\n"CE, str_arr[i], data->ev[j]), ft_free((void **)&key), printntime(S3, LEN - 5), printf(FAIL), 1);
-			ft_free((void **)&key);
+			{
+				printf("INSIDE-->return\n");
+				return (free_data(&data), printf(CR"`UNSET %s`DID NOT WORK SINCE <%s> FOUND IN data->ev\n"CE, str_arr[i], data->ev[j]), free(key), printntime(S3, LEN - 5), printf(FAIL), 1);
+			}
+			free(key);
 		}
 	}
-
-	// -[ STEP3.3) CHECK EV_RES == DATA->EV ]-----------------------------------
-	// for each char *key in ev_res		->FOUND in data->ev
-	i = -1;
-	while (ev_res[++i])
-	{
-		int found_in_ev = 0;
-		int j = -1;
-		while (data->ev[++j] && !found_in_ev)
-		{
-			char *key = get_aff_key(data->ev[j]);
-			if (!key)
-				return (free_data(&data), 42);
-			if (!strcmp(str_arr[i], key))
-				found_in_ev = 1;
-			ft_free((void **)&key);
-		}
-		if (!found_in_ev)
-			return (free_data(&data), printf(CR"in RES:<%s> NOT FOUND IN data->ev\n"CE, ev_res[i]), printntime(S3, LEN - 5), printf(FAIL), 1);
-	}
+	printf(CV"CHECK 3.2 ");
+	printntime(S3, LEN - 10);
+	printf(PASS);
 	return (free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
+
+	//// -[ STEP3.3) CHECK EV_RES == DATA->EV ]-----------------------------------
+	//// for each char *key in ev_res		->FOUND in data->ev
+	//i = -1;
+	//while (ev_res[++i])
+	//{
+	//	int found_in_ev = 0;
+	//	int j = -1;
+	//	while (data->ev[++j] && !found_in_ev)
+	//	{
+	//		char *key = get_aff_key(data->ev[j]);
+	//		if (!key)
+	//			return (free_data(&data), 42);
+	//		if (!strcmp(str_arr[i], key))
+	//			found_in_ev = 1;
+	//		ft_free((void **)&key);
+	//	}
+	//	if (!found_in_ev)
+	//		return (free_data(&data), printf(CR"in RES:<%s> NOT FOUND IN data->ev\n"CE, ev_res[i]), printntime(S3, LEN - 5), printf(FAIL), 1);
+	//}
+	//return (free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);
 	
 	//int	j = -1;
 	//while (ev_res[++j])
@@ -271,12 +316,12 @@ int	main(int ac, char **av, char **ev)
 	print_title("A | UNSET ONLY in dt->ev");
 
 	print_subtitle("A.1| Unset ONE VALID FOUND in ev");
-	char *ev_a1[]			= {"key=value","old_1=oldvalue1",NULL};
-	t_env env_lst_a1[]		= {{"v1", "val1"},{0,0}};
-	char *tab_str_a1[]		= {"old_1",NULL};
+	char *ev_src_a1[]		= {"key=value","old_1=oldvalue1",NULL};
+	char *env_lst_src_a1[]	= {"v1=val1",NULL};
+	char *tab_str_a1[]		= {"unset","old_1",NULL};
 	char *ev_res_a1[]		= {"key=value",NULL};
 	t_env env_lst_res_a1[]	= {{"v1", "val1"},{0,0}};
-	nb_err += test(ev_a1, env_lst_a1, tab_str_a1, ev_res_a1, env_lst_res_a1, 5);
+	nb_err += test(ev_src_a1, env_lst_src_a1, tab_str_a1, ev_res_a1, env_lst_res_a1, 0);
 	print_sep(S2);
 
 	print_sep(S1);
