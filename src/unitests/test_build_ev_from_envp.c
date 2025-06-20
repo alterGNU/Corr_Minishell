@@ -168,7 +168,7 @@ int main(int AC, char **AV, char **EV)
 	free(buffer); // cwd == buffer
 	if (!res0[0])
 		return (ft_free_str_array(&res0), 42);
-	res0[1] = strdup("SHLVL=1");
+	res0[1] = strdup("SHLVL=0");
 	if (!res0[1])
 		return (ft_free_str_array(&res0), 42);
 	res0[2] = strdup("_=./minishell");
