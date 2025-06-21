@@ -252,14 +252,15 @@ int	test(char **ev, t_token tab_raw[], char **res)
 		return (42);
 	//print_raw(raw);
 	
-	// -[ 	STEP2: SET_RAW_TYPE(ACT_NODE->RAW) --> PRINT ]----------------------
-	set_raw_type(raw);
-	print_raw(raw);
-
-	// -[ STEP3: CREATE A DT FROM <EV> ]----------------------------------------
+	// -[ STEP2: CREATE A DT FROM <EV> ]----------------------------------------
 	t_data	*data = init_data(ev);
 	if (!data)
 		return (ft_dlstclear(&raw, free_token), 42);
+	
+	// -[ 	STEP3: SET_RAW_TYPE(ACT_NODE->RAW) --> PRINT ]----------------------
+	set_raw_type(&data, raw);
+	print_raw(raw);
+
 	
 	// -[ STEP4: CALL FT=BUILD_STR_ARR(DT, RAW) ]-------------------------------
 	char **ft = build_str_arr(&data, raw);
