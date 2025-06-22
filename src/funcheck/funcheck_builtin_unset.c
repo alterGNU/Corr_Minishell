@@ -7,7 +7,7 @@
 // =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "builtin_unset"
-#define CE "\033[0m"      // COLOR END
+#define E "\033[0m"      // COLOR END
 #define CR "\033[0;31m"   // COLOR RED
 #define CV "\033[0;32m"   // COLOR GREEN
 #define CM "\033[0;33m"   // COLOR BROWN
@@ -17,8 +17,8 @@
 #define CT "\033[97;100m" // COLOR GREY
 #define PASS "> \033[37;42m ✓ \033[0m\n"
 #define	FAIL "> \033[30;41m ✗ \033[0m\n"
-#define	S1 CT"="CE
-#define	S2 CB"*"CE
+#define	S1 CT"="E
+#define	S2 CB"*"E
 #define	S3 "-"
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
@@ -34,7 +34,7 @@ void print_title(char *title)
 	printf(S1""CT);
 	int psf = printf("[ %s ]", title);
 	printntime(S1, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SUB_TITLE ]---------------------------------------------------------
 void print_subtitle(char *subtitle)
@@ -42,7 +42,7 @@ void print_subtitle(char *subtitle)
 	printf(S2""CB);
 	int psf = printf("( %s )", subtitle);
 	printntime(S2, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SEP ]---------------------------------------------------------------
 void print_sep(char *sep)
@@ -62,7 +62,7 @@ int	print_char_array(char *char_arr[])
 	int		psf;
 
 	if (!char_arr || !char_arr[0])
-		return (printf(CY"["CM"NULL"CY"]"CE), 6);
+		return (printf(CY"["CM"NULL"CY"]"E), 6);
 	printf(CY);
 	psf = printf("[");
 	i = 0;
@@ -79,7 +79,7 @@ int	print_char_array(char *char_arr[])
 	psf += printf("NULL");
 	printf(CY);
 	psf += printf("]");
-	printf(CE);
+	printf(E);
 	return (psf);
 }
 
@@ -89,7 +89,7 @@ int	print_env_array(t_env env_lst[])
 	int		psf;
 
 	if (!env_lst[0].name || !env_lst[0].value)
-		return (printf(CY"["CM"NULL"CY"]"CE), 6);
+		return (printf(CY"["CM"NULL"CY"]"E), 6);
 	printf(CY);
 	psf = printf("[");
 	i = 0;
@@ -106,7 +106,7 @@ int	print_env_array(t_env env_lst[])
 	psf += printf("NULL");
 	printf(CY);
 	psf += printf("]");
-	printf(CE);
+	printf(E);
 	return (psf);
 }
 
@@ -117,14 +117,14 @@ int	print_env_lst_oneline(t_list *env_lst)
 	t_env	*act_env;
 
 	if (!env_lst)
-		return (printf(CM"NULL"CE), 4);
+		return (printf(CM"NULL"E), 4);
 	psf = 0;
 	act = env_lst;
 	while (act)
 	{
 		act_env = (t_env *)act->content;
 		if (!act_env)
-			printf(CR"[missing content in env_lst]"CE);
+			printf(CR"[missing content in env_lst]"E);
 		printf(CY);
 		psf += printf("{");
 		printf(CM);
@@ -139,7 +139,7 @@ int	print_env_lst_oneline(t_list *env_lst)
 	}
 	printf(CM);
 	psf += printf("NULL");
-	printf(CE);
+	printf(E);
 	return (psf);
 }
 
@@ -170,40 +170,40 @@ int test(char *ev_src[], char *env_lst_src[], char *str_arr[], char *ev_res[], t
 	print_char_array(ev_res);
 	printf(CV"\nchar **env_lst_res= ");
 	print_env_array(env_lst_res);
-	printf("\n"CE);
+	printf("\n"E);
 
 	// -[ STEP1:	BUILD DT->EV FROM <EV> ]------------------------------------
 	t_data	*data = (t_data *)ft_calloc(1, sizeof(t_data));
 	if (!data)
-		return(printf(ER"init_data():!ft_calloc()"CE), 42);
+		return(printf(ER"init_data():!ft_calloc()"E), 42);
 	data->ev = build_ev_from_envp(ev_src);
 	if (!data->ev)
-		return(free_data(&data), printf(ER"init_data():!build_ev_from_envp()"CE), 42);
+		return(free_data(&data), printf(ER"init_data():!build_ev_from_envp()"E), 42);
 	data->env_lst = build_env_lst(env_lst_src);
 	if (!data->env_lst)
-		return(free_data(&data), printf(ER"init_data():!build_env_lst()"CE), 42);
+		return(free_data(&data), printf(ER"init_data():!build_env_lst()"E), 42);
 
-	printf("\n"CT"BEFORE"CE"\n");
+	printf("\n"CT"BEFORE"E"\n");
 	printf(CY"data->ev     =");
 	print_char_array(data->ev);
-	printf(CY"\ndata->env_lst="CE);
+	printf(CY"\ndata->env_lst="E);
 	print_env_lst_oneline(data->env_lst);
-	printf("\n"CE);
+	printf("\n"E);
 	
 	// -[ STEP2)	FT = BUILTIN_UNSET(DATA, <TAB_STR>) ]-----------------------
 	int ft = builtin_unset(&data, str_arr);
-	printf("\n"CT"CALL %s()=[%d]"CE"\n", f_name, ft);
+	printf("\n"CT"CALL %s()=[%d]"E"\n", f_name, ft);
 
-	printf("\n"CT"AFTER"CE"\n");
+	printf("\n"CT"AFTER"E"\n");
 	printf(CY"data->ev     =");
 	print_char_array(data->ev);
-	printf(CY"\ndata->env_lst="CE);
+	printf(CY"\ndata->env_lst="E);
 	print_env_lst_oneline(data->env_lst);
-	printf("\n"CE);
+	printf("\n"E);
 
 	// -[ STEP3.1) CHECKS FT != RES]--------------------------------------------
 	if (ft != res_value)
-		return (free_data(&data), printf(CR"RETURN VALUE DIFF. :ft:%d != %d:res_value\n"CE, ft, res_value), printntime(S3, LEN - 5), printf(FAIL), 1);
+		return (free_data(&data), printf(CR"RETURN VALUE DIFF. :ft:%d != %d:res_value\n"E, ft, res_value), printntime(S3, LEN - 5), printf(FAIL), 1);
 	//printf(CV"\nCHECK 3.1 ");
 	//printntime(S3, LEN - 15);
 	//printf(PASS);
@@ -219,7 +219,7 @@ int test(char *ev_src[], char *env_lst_src[], char *str_arr[], char *ev_res[], t
 		while (data->ev[++j])
 		{
 			if (!data->ev[j])
-				return (free_data(&data), printf(CR"PANIC\n"CE), printntime(S3, LEN - 5), printf(FAIL), 42);
+				return (free_data(&data), printf(CR"PANIC\n"E), printntime(S3, LEN - 5), printf(FAIL), 42);
 			key = get_aff_key(data->ev[j]);
 			//printf("%s VS (%s ~ %s)\n", str_arr[i], data->ev[j], key);
 			if (!key)
@@ -227,7 +227,7 @@ int test(char *ev_src[], char *env_lst_src[], char *str_arr[], char *ev_res[], t
 			if (!strcmp(str_arr[i], key))
 			{
 				printf("INSIDE-->return\n");
-				return (ft_free((void **)&key), printf(CR"`UNSET %s`DID NOT WORK SINCE <%s> FOUND IN data->ev\n"CE, str_arr[i], data->ev[j]), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
+				return (ft_free((void **)&key), printf(CR"`UNSET %s`DID NOT WORK SINCE <%s> FOUND IN data->ev\n"E, str_arr[i], data->ev[j]), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 			}
 			ft_free((void **)&key);
 		}
@@ -250,7 +250,7 @@ int test(char *ev_src[], char *env_lst_src[], char *str_arr[], char *ev_res[], t
 				found_in_ev = 1;
 		}
 		if (!found_in_ev)
-			return (free_data(&data), printf(CR"in RES:<%s> NOT FOUND IN data->ev\n"CE, ev_res[i]), printntime(S3, LEN - 5), printf(FAIL), 1);
+			return (free_data(&data), printf(CR"in RES:<%s> NOT FOUND IN data->ev\n"E, ev_res[i]), printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
 	//printf(CV"CHECK 3.3 ");
 	//printntime(S3, LEN - 15);
@@ -271,7 +271,7 @@ int test(char *ev_src[], char *env_lst_src[], char *str_arr[], char *ev_res[], t
 			if (!strcmp(str_arr[i], act_name))
 			{
 				printf("INSIDE-->return\n");
-				return (printf(CR"`UNSET %s`DID NOT WORK SINCE <{%s, %s}> FOUND IN data->env_lst\n"CE, str_arr[i], act_name, ((t_env *)act->content)->value), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
+				return (printf(CR"`UNSET %s`DID NOT WORK SINCE <{%s, %s}> FOUND IN data->env_lst\n"E, str_arr[i], act_name, ((t_env *)act->content)->value), free_data(&data), printntime(S3, LEN - 5), printf(FAIL), 1);
 			}
 			act = act->next;
 		}
@@ -296,7 +296,7 @@ int test(char *ev_src[], char *env_lst_src[], char *str_arr[], char *ev_res[], t
 			act = act->next;
 		}
 		if (!found_in_env_lst)
-			return (free_data(&data), printf(CR"in RES:<%s> NOT FOUND IN data->env_lst\n"CE, env_lst_res[i].name), printntime(S3, LEN - 5), printf(FAIL), 1);
+			return (free_data(&data), printf(CR"in RES:<%s> NOT FOUND IN data->env_lst\n"E, env_lst_res[i].name), printntime(S3, LEN - 5), printf(FAIL), 1);
 		i++;
 	}
 	//printf(CV"CHECK 3.3 ");

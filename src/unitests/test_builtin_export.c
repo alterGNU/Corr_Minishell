@@ -7,7 +7,7 @@
 // =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "builtin_export"
-#define CE "\033[0m"      // COLOR END
+#define E "\033[0m"      // COLOR END
 #define CR "\033[0;31m"   // COLOR RED
 #define CV "\033[0;32m"   // COLOR GREEN
 #define CM "\033[0;33m"   // COLOR BROWN
@@ -17,8 +17,8 @@
 #define CT "\033[97;100m" // COLOR GREY
 #define PASS "> \033[37;42m ✓ \033[0m\n"
 #define	FAIL "> \033[30;41m ✗ \033[0m\n"
-#define	S1 CT"="CE
-#define	S2 CB"*"CE
+#define	S1 CT"="E
+#define	S2 CB"*"E
 #define	S3 "-"
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
@@ -34,7 +34,7 @@ void print_title(char *title)
 	printf(S1""CT);
 	int psf = printf("[ %s ]", title);
 	printntime(S1, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SUB_TITLE ]---------------------------------------------------------
 void print_subtitle(char *subtitle)
@@ -42,7 +42,7 @@ void print_subtitle(char *subtitle)
 	printf(S2""CB);
 	int psf = printf("( %s )", subtitle);
 	printntime(S2, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SEP ]---------------------------------------------------------------
 void print_sep(char *sep)
@@ -75,7 +75,7 @@ int	print_char_array(char *char_arr[])
 		i++;
 	}
 	psf += printf("]");
-	printf(CE);
+	printf(E);
 	return (psf);
 }
 
@@ -101,7 +101,7 @@ int	print_tab_res(char *tab_res[])
 		i++;
 	}
 	psf += printf("]");
-	printf(CE);
+	printf(E);
 	return (psf);
 }
 
@@ -128,13 +128,13 @@ int	test(char **ev, char *str_arr[], char *tab_res[], int res_value)
 	// -[ 	STEP 1: BUILD DATA FROM EV ]----------------------------------------
 	t_data	*data = init_data(ev);
 	if (!data)
-		return (ft_printf(CR"MALLOC FAILLED\n"CE), printntime(S3, LEN - 5), printf(FAIL), 42);
+		return (ft_printf(CR"MALLOC FAILLED\n"E), printntime(S3, LEN - 5), printf(FAIL), 42);
 	printf(CY"BEFORE data->ev     ="CB);
 	print_sofar += print_char_array(data->ev);
 	printf(CY"\nBEFORE data->env_lst=\n"CB"{\n");
 	fflush(stdout);
 	print_env_lst(data->env_lst);
-	printf("}\n"CE);
+	printf("}\n"E);
 	
 	// -[ STEP 2 : CALL builtin_export ]----------------------------------------
 	int ft = builtin_export(&data, str_arr);
@@ -143,12 +143,12 @@ int	test(char **ev, char *str_arr[], char *tab_res[], int res_value)
 	printf(CY"\nAFTER  data->env_lst=\n"CB"{\n");
 	fflush(stdout);
 	print_env_lst(data->env_lst);
-	printf("}\n"CE);
+	printf("}\n"E);
 
 	// -[ STEP 3 : COMPARE WITH RESULT ]----------------------------------------
 
 	if (ft != res_value)
-		return (free_data(&data), ft_printf(CR"RETURN VALUE DIFF. :ft:%d != %d:res_value\n"CE, ft, res_value), printntime(S3, LEN - 5), printf(FAIL), 1);
+		return (free_data(&data), ft_printf(CR"RETURN VALUE DIFF. :ft:%d != %d:res_value\n"E, ft, res_value), printntime(S3, LEN - 5), printf(FAIL), 1);
 	int	j = -1;
 	while (tab_res[++j])
 	{
@@ -161,12 +161,12 @@ int	test(char **ev, char *str_arr[], char *tab_res[], int res_value)
 				ev_found++;
 		}
 		if (!ev_found)
-			return (free_data(&data), ft_printf(CR"tab_res[%d]=<%s> NOT FOUND IN data->ev\n"CE, j, tab_res[j]), printntime(S3, LEN - 5), printf(FAIL), 1);
+			return (free_data(&data), ft_printf(CR"tab_res[%d]=<%s> NOT FOUND IN data->ev\n"E, j, tab_res[j]), printntime(S3, LEN - 5), printf(FAIL), 1);
 		// step 3.2: compare with dt->env_lst
 		int env_lst_found = 0;
 		char *act_res_key = get_aff_key(tab_res[j]);
 		if (!act_res_key)
-			return (free_data(&data), ft_printf(CR"get_aff_key()->!malloc failed\n"CE), printntime(S3, LEN - 5), printf(FAIL), 42);
+			return (free_data(&data), ft_printf(CR"get_aff_key()->!malloc failed\n"E), printntime(S3, LEN - 5), printf(FAIL), 42);
 		t_list *act = data->env_lst;
 		while (act && !env_lst_found)
 		{
@@ -176,7 +176,7 @@ int	test(char **ev, char *str_arr[], char *tab_res[], int res_value)
 			act = act->next;
 		}
 		if (!env_lst_found)
-			return (ft_free((void **)&act_res_key), free_data(&data), ft_printf(CR"tab_res[%d]=<%s> NOT FOUND IN data->env_lst\n"CE, j, tab_res[j]), printntime(S3, LEN - 5), printf(FAIL), 1);
+			return (ft_free((void **)&act_res_key), free_data(&data), ft_printf(CR"tab_res[%d]=<%s> NOT FOUND IN data->env_lst\n"E, j, tab_res[j]), printntime(S3, LEN - 5), printf(FAIL), 1);
 		ft_free((void **)&act_res_key);
 	}
 	return (free_data(&data), printntime(S3, LEN - 5), printf(PASS), 0);

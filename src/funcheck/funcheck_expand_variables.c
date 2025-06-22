@@ -7,7 +7,7 @@
 // =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "expand_variables"
-#define CE "\033[0m"      // COLOR END
+#define E "\033[0m"      // COLOR END
 #define CR "\033[0;31m"   // COLOR RED
 #define CV "\033[0;32m"   // COLOR GREEN
 #define CM "\033[0;33m"   // COLOR BROWN
@@ -17,8 +17,8 @@
 #define CT "\033[97;100m" // COLOR GREY
 #define PASS "> \033[37;42m ✓ \033[0m\n"
 #define	FAIL "> \033[30;41m ✗ \033[0m\n"
-#define	S1 CT"="CE
-#define	S2 CB"*"CE
+#define	S1 CT"="E
+#define	S2 CB"*"E
 #define	S3 "-"
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
@@ -34,7 +34,7 @@ void print_title(char *title)
 	printf(S1""CT);
 	int psf = printf("[ %s ]", title);
 	printntime(S1, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SUB_TITLE ]---------------------------------------------------------
 void print_subtitle(char *subtitle)
@@ -42,7 +42,7 @@ void print_subtitle(char *subtitle)
 	printf(S2""CB);
 	int psf = printf("( %s )", subtitle);
 	printntime(S2, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SEP ]---------------------------------------------------------------
 void print_sep(char *sep)
@@ -73,11 +73,11 @@ int	test(t_list *env_lst, char *src, char *res)
 	int print_sofar	 = printf("%s(env_lst, ", f_name);
 	printf(CB);
 	print_sofar 	+= printf("%s", src);
-	printf(CE);
+	printf(E);
 	print_sofar 	+= printf(")==");
 	printf(CV);
 	print_sofar 	+= printf("%s", res);
-	printf(CE);
+	printf(E);
 	if (src)
 	{
 		int c = count_char_in_str('\t', src);
@@ -94,11 +94,11 @@ int	test(t_list *env_lst, char *src, char *res)
 	{
 		if (!res)
 			return (printntime(S3, LEN - 5), printf(PASS), 0);
-		return (printf(CY"ft:"CR"NULL"CY" != res:"CR"%s\n"CE, res), printntime(S3, LEN - 5), printf(FAIL), 1);
+		return (printf(CY"ft:"CR"NULL"CY" != res:"CR"%s\n"E, res), printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
 	if (!strcmp(ft, res))
 		return (ft_free((void **)&ft), printntime(S3, LEN - 5), printf(PASS), 0);
-	return (printf(CY"ft :"CR"%s"CY"\nres:"CR"%s\n"CE, ft, res), ft_free((void **)&ft), printntime(S3, LEN - 5), printf(FAIL), 1);
+	return (printf(CY"ft :"CR"%s"CY"\nres:"CR"%s\n"E, ft, res), ft_free((void **)&ft), printntime(S3, LEN - 5), printf(FAIL), 1);
 }
 
 // =============================================================================

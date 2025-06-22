@@ -7,7 +7,7 @@
 // =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "build_str_arr"
-#define CE "\033[0m"      // COLOR END
+#define E "\033[0m"      // COLOR END
 #define CR "\033[0;31m"   // COLOR RED
 #define CV "\033[0;32m"   // COLOR GREEN
 #define CM "\033[0;33m"   // COLOR BROWN
@@ -17,8 +17,8 @@
 #define CT "\033[97;100m" // COLOR GREY
 #define PASS "> \033[37;42m ✓ \033[0m\n"
 #define	FAIL "> \033[30;41m ✗ \033[0m\n"
-#define	S1 CT"="CE
-#define	S2 CB"*"CE
+#define	S1 CT"="E
+#define	S2 CB"*"E
 #define	S3 "-"
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
@@ -34,7 +34,7 @@ void print_title(char *title)
 	printf(S1""CT);
 	int psf = printf("[ %s ]", title);
 	printntime(S1, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SUB_TITLE ]---------------------------------------------------------
 void print_subtitle(char *subtitle)
@@ -42,7 +42,7 @@ void print_subtitle(char *subtitle)
 	printf(S2""CB);
 	int psf = printf("( %s )", subtitle);
 	printntime(S2, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SEP ]---------------------------------------------------------------
 void print_sep(char *sep)
@@ -129,7 +129,7 @@ int	print_tab_raw(t_token tab_raw[])
 		i++;
 	}
 	psf += printf("]");
-	printf(CE);
+	printf(E);
 	return (psf);
 }
 
@@ -155,7 +155,7 @@ int	print_tab_res(t_env tab_res[])
 		i++;
 	}
 	psf += printf("]");
-	printf(CE);
+	printf(E);
 	return (psf);
 }
 
@@ -171,18 +171,18 @@ t_dlist	*create_raw_from_tab_raw(t_token tab_raw[])
 		t_token	*new_token = cpy_token(tab_raw[i]);
 		if (!new_token)
 			return (ft_dlstclear(&raw, free_token), \
-					ft_printf(CR"inside create_raw_from_tab_raw()-->cpy_token()-->FAILED\n"CE), \
+					ft_printf(CR"inside create_raw_from_tab_raw()-->cpy_token()-->FAILED\n"E), \
 					NULL);
 		t_dlist	*new_node = ft_dlstnew(new_token);
 		if (!new_node)
 			return (ft_dlstclear(&raw, free_token), \
-					ft_printf(CR"inside create_raw_from_tab_raw()-->ft_dlstnew()-->FAILED\n"CE), \
+					ft_printf(CR"inside create_raw_from_tab_raw()-->ft_dlstnew()-->FAILED\n"E), \
 					NULL);
 		if (!ft_dlstadd_back(&raw, new_node))
 			return (ft_dlstclear(&raw, free_token), \
-					ft_printf(CR"%s-->ADD BACK node {%s} FAILED\n"CE, tab_raw[i].str, ((t_token *)new_node->content)->str), \
+					ft_printf(CR"%s-->ADD BACK node {%s} FAILED\n"E, tab_raw[i].str, ((t_token *)new_node->content)->str), \
 					NULL);
-		//ft_printf(CV"%s-->ADD BACK node {%s} SUCCESS\n"CE, tab_raw[i].str, ((t_token *)new_node->content)->str);
+		//ft_printf(CV"%s-->ADD BACK node {%s} SUCCESS\n"E, tab_raw[i].str, ((t_token *)new_node->content)->str);
 		i++;
 	}
 	return (raw);
@@ -207,7 +207,7 @@ int	print_raw(t_dlist *raw)
 		act = act->next;
 	}
 	tot += printf("NULL\n");
-	printf(CE);
+	printf(E);
 	return (tot);
 }
 
@@ -244,7 +244,7 @@ int	test(char **ev, t_token tab_raw[], char **res)
 	printf(CY"\nres="CV);
 	fflush(stdout);
 	ft_print_str_array(res);
-	ft_printf("\n"CE);
+	ft_printf("\n"E);
 
 	// -[ 	STEP1: BUILD RAW FROM TAB_RAW ]-------------------------------------
 	t_dlist *raw = create_raw_from_tab_raw(tab_raw);
@@ -276,7 +276,7 @@ int	test(char **ev, t_token tab_raw[], char **res)
 		printf("\nft =");
 		fflush(stdout);
 		ft_print_str_array(ft);
-		printf("\n"CE);
+		printf("\n"E);
 		return (ft_dlstclear(&raw, free_token),free_data(&data), ft_free_str_array(&ft),printntime(S3, LEN - 5), printf(FAIL), 1);
 	}
 	return (ft_dlstclear(&raw, free_token),free_data(&data), ft_free_str_array(&ft),printntime(S3, LEN - 5), printf(PASS), 0);

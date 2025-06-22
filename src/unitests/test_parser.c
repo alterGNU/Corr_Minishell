@@ -56,7 +56,7 @@
 // =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "parser"
-#define CE "\033[0m"      // COLOR END
+#define E "\033[0m"      // COLOR END
 #define CR "\033[0;31m"   // COLOR RED
 #define CV "\033[0;32m"   // COLOR GREEN
 #define CM "\033[0;33m"   // COLOR BROWN
@@ -66,8 +66,8 @@
 #define CT "\033[97;100m" // COLOR GREY
 #define PASS "> \033[37;42m ✓ \033[0m\n"
 #define	FAIL "> \033[30;41m ✗ \033[0m\n"
-#define	S1 CT"="CE
-#define	S2 CB"*"CE
+#define	S1 CT"="E
+#define	S2 CB"*"E
 #define	S3 "-"
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
@@ -83,7 +83,7 @@ void print_title(char *title)
 	printf(S1""CT);
 	int psf = printf("[ %s ]", title);
 	printntime(S1, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SUB_TITLE ]---------------------------------------------------------
 void print_subtitle(char *subtitle)
@@ -91,7 +91,7 @@ void print_subtitle(char *subtitle)
 	printf(S2""CB);
 	int psf = printf("( %s )", subtitle);
 	printntime(S2, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SEP ]---------------------------------------------------------------
 void print_sep(char *sep)
@@ -136,11 +136,11 @@ int	compare_int(int a, int b)
 int	compare_token(t_token *a, t_token *b)
 {
 	if (!compare_int(a->type, b->type))
-		return (fprintf(stdout, CR"a->type:%d != b->type:%d <<<< "CE, a->type, b->type), 0);
+		return (fprintf(stdout, CR"a->type:%d != b->type:%d <<<< "E, a->type, b->type), 0);
 	if (strcmp(a->str, b->str) != 0)
-		return (fprintf(stdout, CR"a->str:%s != b->str:%s <<<< "CE, a->str, b->str), 0);
+		return (fprintf(stdout, CR"a->str:%s != b->str:%s <<<< "E, a->str, b->str), 0);
 	if (!compare_int(a->parenthesis, b->parenthesis))
-		return (fprintf(stdout, CR"a->par:%d != b->par:%d <<<< "CE, a->parenthesis, b->parenthesis), 0);
+		return (fprintf(stdout, CR"a->par:%d != b->par:%d <<<< "E, a->parenthesis, b->parenthesis), 0);
 	return (1);
 }
 
@@ -173,7 +173,7 @@ int	compare_tdlist(t_dlist *a, t_dlist *b)
 		b_len++;
 	}
 	if (a_len != b_len)
-		return (fprintf(stdout, CR"Diff. Size a_len=%d != b_len=%d <<<< "CE, a_len, b_len),0);
+		return (fprintf(stdout, CR"Diff. Size a_len=%d != b_len=%d <<<< "E, a_len, b_len),0);
 	// Check each node are the same
 	int	count_node=0;
 	a_act = a;
@@ -181,7 +181,7 @@ int	compare_tdlist(t_dlist *a, t_dlist *b)
 	while (a_act && b_act)
 	{
 		if (!compare_token(a_act->content, b_act->content))
-			return (fprintf(stdout, CR"ast_node:%d->diff token <<<< "CE, count_node), 0);
+			return (fprintf(stdout, CR"ast_node:%d->diff token <<<< "E, count_node), 0);
 		a_act = a_act->next;
 		b_act = b_act->next;
 		count_node++;
@@ -204,13 +204,13 @@ int compare_asn(t_asn *a, t_asn *b)
 		return (1);
 	}
 	if (!compare_tdlist(a->raw, b->raw))
-		return (fprintf(stdout, CR"Wrong Raw\n"CE), 1);
+		return (fprintf(stdout, CR"Wrong Raw\n"E), 1);
 	if (!compare_int(a->type, b->type))
-		return (fprintf(stdout, CR"Wrong Type:%d != %d\n"CE, a->type, b->type), 1);
+		return (fprintf(stdout, CR"Wrong Type:%d != %d\n"E, a->type, b->type), 1);
 	if (!compare_ptr((void *)a->print_fun, (void*)b->print_fun))
-		return (fprintf(stdout, CR"Wrong print_fun\n"CE), 1);
+		return (fprintf(stdout, CR"Wrong print_fun\n"E), 1);
 	if (!compare_ptr((void *)a->free_fun, (void *)b->free_fun))
-		return (fprintf(stdout, CR"Wrong free_fun\n"CE), 1);
+		return (fprintf(stdout, CR"Wrong free_fun\n"E), 1);
 	return (0);
 }
 
@@ -256,7 +256,7 @@ int	test(char *str, t_btree **add_res, char **ev)
 	int print_sofar = printf("%s(\"", f_name);
 	printf(CB);
 	print_sofar += printf("%s",data->line);
-	printf(CE);
+	printf(E);
 	print_sofar += printf("\")");
 	if (data->line)
 	{

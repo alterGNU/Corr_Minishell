@@ -5,7 +5,7 @@
 // =[ DEFINE ]==================================================================
 #define LEN 90
 #define f_name "build_ev_from_envp"
-#define CE "\033[0m"      // COLOR END
+#define E "\033[0m"      // COLOR END
 #define CR "\033[0;31m"   // COLOR RED
 #define CV "\033[0;32m"   // COLOR GREEN
 #define CM "\033[0;33m"   // COLOR BROWN
@@ -15,8 +15,8 @@
 #define CT "\033[97;100m" // COLOR GREY
 #define PASS "> \033[37;42m ✓ \033[0m\n"
 #define	FAIL "> \033[30;41m ✗ \033[0m\n"
-#define	S1 CT"="CE
-#define	S2 CB"*"CE
+#define	S1 CT"="E
+#define	S2 CB"*"E
 #define	S3 "-"
 // =[ UTILS FUN ]===============================================================
 // -[ PRINTNTIME ]--------------------------------------------------------------
@@ -32,7 +32,7 @@ void print_title(char *title)
 	printf(S1""CT);
 	int psf = printf("[ %s ]", title);
 	printntime(S1, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SUB_TITLE ]---------------------------------------------------------
 void print_subtitle(char *subtitle)
@@ -40,7 +40,7 @@ void print_subtitle(char *subtitle)
 	printf(S2""CB);
 	int psf = printf("( %s )", subtitle);
 	printntime(S2, LEN - psf - 1);
-	printf(CE"\n");
+	printf(E"\n");
 }
 // -[ PRINT_SEP ]---------------------------------------------------------------
 void print_sep(char *sep)
@@ -75,13 +75,13 @@ int compare_two_str_arrays(char **t1, char **t2)
 	while (t2[len_2])
 		len_2++;
 	if (len_1 != len_2)
-		return (printf(CR"in compare_two_str_array(t1,t2): len(t1):%d!=len(t2):%d\n"CE, len_1, len_2), 1);
+		return (printf(CR"in compare_two_str_array(t1,t2): len(t1):%d!=len(t2):%d\n"E, len_1, len_2), 1);
 	// test each cases
 	int i = 0;
 	while (i < len_1)
 	{
 		if (strcmp(t1[i], t2[i]))
-			return (printf(CR"in compare_two_str_array(t1,t2): t1[%d]:%s!= t2[%d]:%s\n"CE, i, t1[i], i, t2[i]), 1);
+			return (printf(CR"in compare_two_str_array(t1,t2): t1[%d]:%s!= t2[%d]:%s\n"E, i, t1[i], i, t2[i]), 1);
 		i++;
 	}
 	return (0);
@@ -156,13 +156,13 @@ int main(int AC, char **AV, char **EV)
 	char	*cwd = getcwd(buffer, buffer_size);
 	if (!cwd)
 	{
-		printf(CR"error:getcwd failed\n"CE);
+		printf(CR"error:getcwd failed\n"E);
 		free(buffer);
 		return (42);
 	}
 	res0[0] = calloc(strlen(cwd) + 5, 1);
 	if (!res0[0])
-		return (printf(CR"error:calloc failed\n"CE), 42);
+		return (printf(CR"error:calloc failed\n"E), 42);
 	strcat(res0[0], "PWD=");
 	strcat(res0[0], cwd);
 	free(buffer); // cwd == buffer
