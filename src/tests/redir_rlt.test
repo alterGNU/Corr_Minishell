@@ -1,0 +1,31 @@
+echo "TESTS 1:NO EXPAND WHEN BACKSLASH"
+v1="Hello \$USERNAME, you are here-> \$PWD"
+echo "after affectation:v1=$v1"
+<<<$v1 cat
+<<<"$v1" cat
+<<<'$v1' cat
+
+echo
+echo "TESTS 2:EXPAND IN STR"
+v2="Hello $USERNAME, you are here-> $PWD"
+echo "after affectation:v2=$v2"
+<<<$v2 cat
+<<<"$v2" cat
+<<<'$v2' cat
+
+echo
+echo "TESTS 3:EXPAND ONLY IF NO SINGLE QUOTE"
+<<<$USERNAME cat
+<<<"$USERNAME" cat
+<<<'$USERNAME' cat
+
+echo
+echo "TESTS 4:COMBOS WITH CONTIGUES QUOTED TOKEN AS STR"
+<<<"$USERNAME"$USERNAME'$USERNAME' cat
+<<<'$USERNAME'$USERNAME"$USERNAME" cat
+<<<$USERNAME'$USERNAME'"$USERNAME" cat
+<<<$USERNAME"$USERNAME"'$USERNAME' cat
+<<<''$USERNAME''"$USERNAME"""'$USERNAME'"" cat
+<<<"$USERNAME'$USERNAME'$USERNAME" cat
+<<<'$USERNAME"$USERNAME"$USERNAME' cat
+<<<""''"$USERNAME'$USERNAME'$USERNAME"''""'$USERNAME"$USERNAME"$USERNAME'""'' cat
