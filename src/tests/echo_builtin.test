@@ -1,0 +1,10 @@
+echo "TESTS 1:WITHOUT ANY OPTION"
+echo Hello world
+echo ''""''
+echo "TESTS 2:WITH -n OPTION"
+echo -n "Coucou "
+echo -n "Petite" "Perruche"
+echo ''.""
+echo 
+echo "TESTS 3:CHECK EXPAND AND CONTIGUOUS VALUE"
+echo "Hello $USERNAME", 'a'n"d you ar"e in '$PWD'=$PWD

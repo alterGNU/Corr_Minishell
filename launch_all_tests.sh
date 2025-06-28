@@ -49,6 +49,8 @@ TEST=1                                                            # ☒ Run mini
 UNIT=0                                                            # ☒ Run unitests                  
 VALG=1                                                            # ☒ Run valgrind tools            
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
+TEST_FILE=()                                                      # ☒ List of file.test to use to compare minishell's return and bash --posix return's
+for arg in $(find "${PARENT_DIR}/src/tests" -type f -name "*.test");do TEST_FILE+=( "${arg}" );done
 FUN_NAME_PATTERN=( )                                              # ☒ List of function name pattern passed as argument
 FUN_ASKED_FOR=( )                                                 # ☒ List of function matching given pattern names as argument
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
@@ -500,6 +502,36 @@ exec_binary()
         fi
     done
 }
+# -[ EXEC_TESTS() ]-------------------------------------------------------------------------------------------
+# exec minishell's tests
+exec_tests()
+{
+    local nb_err=0
+    [[ ! -d ${LOG_DIR}/tests ]] && mkdir -p ${LOG_DIR}/tests
+    for tst_file in ${TEST_FILE[@]};do
+        local filename=${tst_file##*\/}
+        local res_name=${filename%%\.test*}
+        local bash_res_name=${LOG_DIR}/tests/$res_name.bsp
+        local msll_res_name=${LOG_DIR}/tests/$res_name.msl
+        local comp_file=${LOG_DIR}/tests/$res_name.diff
+        local fun_log_file=$(print_shorter_path ${comp_file})
+        <${tst_file} bash --posix >${bash_res_name}
+        <${tst_file} $PROGRAMM >${msll_res_name}
+        RES_DIFF=$(diff ${bash_res_name} ${msll_res_name} > ${comp_file} && echo 0 || echo 1)
+        echo -en "🔹${BCU}${res_name}:${M0}"
+        pnt "." $(($LEN - ${#res_name} - 15))
+        if [[ "${RES_DIFF}" -eq 0 ]];then # PASS --> remove .diff file (empty)
+            rm ${comp_file}
+            echo "${V0} ✅ PASS${E}"
+        else                              # FAIL --> display error
+            nb_err=$(( nb_err + 1 ))
+            echo "${R0} ❌ FAIL${E}"
+            echo "  ${Y0}👉 Check log file:${M0}${fun_log_file}${E}"
+        fi
+    done
+    return $nb_err
+}
+
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
 # Display the resume of test (norminette, tests results, log files produces ...)
 # Take on optionnal argument, text to add between the <🔶 RESUME> and the <:>.
@@ -584,6 +616,22 @@ display_resume()
         args+=( "  🔸 ${YU}STEP 5-EXEC)${E}                                        ${V0} ✅ Step Enable${E}" )
     else
         args+=( "  🔸 ${YU}STEP 5-EXEC)${E}                                        ${G0} ✖️  Step Desabled${E}" )
+    fi
+    # -[ TEST ] ----------------------------------------------------------------------------------------------
+    if [[ ${TEST} -gt 0 ]];then
+        args+=( "  🔸 ${YU}STEP 6-TESTS)${E}                                       ${V0} ✅ Step Enable${E}" )
+        for filetest in ${TEST_FILE[@]};do
+            local filename=${filetest##*\/}
+            local res_name=${filename%%\.test*}
+            local path_diff=$(print_shorter_path "${LOG_DIR}/tests/${res_name}.diff")
+            if [[ -f "${LOG_DIR}/tests/${res_name}.diff" ]];then
+                args+=( "    ${R0}✘ ${res_name}:   ${Y0}👉 Check log file ${M0}${path_diff}${E}")
+            else
+                args+=( "    ${V0}✓ ${res_name}")
+            fi
+        done
+    else
+        args+=( "  🔸 ${YU}STEP 6-TESTS)${E}                                        ${G0} ✖️  Step Desabled${E}" )
     fi
     print_in_box -t 2 -c y "${args[@]}"
 }
@@ -794,6 +842,7 @@ if [[ ${TEST} -gt 0 ]];then
     " ${Y0} |  \/  | (_)  _ _   (_)  ___ | |_    ___  | | | | ( )  ___   |_   _|  ___   ___ | |_   ___${E}" \
     " ${Y0} | |\/| | | | | ' \  | | (_-< | ' \  / -_) | | | | |/  (_-<     | |   / -_) (_-< |  _| (_-<${E}" \
     " ${Y0} |_|  |_| |_| |_||_| |_| /__/ |_||_| \___| |_| |_|     /__/     |_|   \___| /__/  \__| /__/${E}"
+    exec_anim_in_box exec_tests "${Y0}Minishell VS bash --posix${E}"
 fi
 # =[ STOP ]===================================================================================================
 display_resume "Minishell's tests"
