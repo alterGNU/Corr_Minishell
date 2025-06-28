@@ -1,19 +1,30 @@
-echo return=$? last_arg=$_
+# ============================================================================================================
+# TESTS AFFECTATIONS
+# ============================================================================================================
+echo return=[$?]
 echo "TESTS 1:SIMPLE AND MULTIPLE VALID AFFECTATION"
 v1="toto"
-echo return=$? last_arg=$_
+echo return=[$?]
 v2="tata" v3="$v1 $v2" v4=
-echo return=$? last_arg=$_
-echo "\$v1=$v1" '$v2='$v2 $'v'3=$v3"but \$v4=<$v4>-->empty"
-echo return=$? last_arg=$_
-
+echo return=[$?]
+echo "\$v1=$v1" '$v2='$v2 \$v3=$v3"but \$v4=<$v4>-->empty"
+echo return=[$?]
+# ============================================================================================================
 echo 
 echo "TESTS 2:UN-VALID AFFECTATION"
 1v="wrong name"
-echo return=$? last_arg=$_
+echo return=[$?]
 ="no name"
-echo return=$? last_arg=$_
+echo return=[$?]
 v2="new1" v3="new2" v.4="wrong name too"
-echo return=$? last_arg=$_
-echo "\$v1=$v1" '$v2='$v2 $'v'3=$v3"but \$v4=<$v4>-->empty"
-echo return=$? last_arg=$_
+echo return=[$?]
+echo "\$v1=$v1" '$v2='$v2 \$v3=$v3"but \$v4=<$v4>-->empty"
+echo return=[$?]
+# ============================================================================================================
+#echo 
+#echo "TESTS 3:PROTECTED VAR-ENV AFFECTATION"
+#echo BEFORE UDERSCORE=$_
+#env | grep ^_
+#_="new_value"
+#echo AFTER  UDERSCORE=$_
+#env | grep ^_
