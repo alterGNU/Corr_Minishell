@@ -71,8 +71,8 @@ for tst_file in ${TEST_FILE[@]};do
     msll_res_name=${LOG_DIR}/tests/$res_name.msl
     comp_file=${LOG_DIR}/tests/$res_name.diff
     fun_log_file=$(print_shorter_path $comp_file)
-    <$tst_file bash --posix >$bash_res_name
-    <$tst_file $PROGRAMM >$msll_res_name
+    <$tst_file bash --posix >$bash_res_name 2>&1
+    <$tst_file $PROGRAMM >$msll_res_name 2>&1
     RES_DIFF=$(diff $bash_res_name $msll_res_name > $comp_file && echo 0 || echo 1)
     if [[ "${RES_DIFF}" -eq 0 ]];then
         # PASS --> remove .diff file (empty)

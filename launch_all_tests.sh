@@ -515,8 +515,8 @@ exec_tests()
         local msll_res_name=${LOG_DIR}/tests/$res_name.msl
         local comp_file=${LOG_DIR}/tests/$res_name.diff
         local fun_log_file=$(print_shorter_path ${comp_file})
-        <${tst_file} bash --posix >${bash_res_name}
-        <${tst_file} $PROGRAMM >${msll_res_name}
+        <${tst_file} bash --posix >${bash_res_name} 2>&1
+        <${tst_file} $PROGRAMM >${msll_res_name} 2>&1
         RES_DIFF=$(diff ${bash_res_name} ${msll_res_name} > ${comp_file} && echo 0 || echo 1)
         echo -en "🔹${BCU}${res_name}:${M0}"
         pnt "." $(($LEN - ${#res_name} - 15))
