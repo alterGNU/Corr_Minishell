@@ -1,6 +1,10 @@
+# ============================================================================================================
+# ECHO builtin tests
+# ============================================================================================================
 echo "TESTS 1:WITHOUT ANY OPTION"
 echo Hello world
 echo ''""''
+echo
 echo "TESTS 2:WITH -n OPTION"
 echo -n "Coucou "
 echo -n "Petite" "Perruche"
