@@ -15,7 +15,8 @@
 #     |$HELP | +h --help     | -h --no-help     | Display usage                 |
 #     |$NORM | +n --norm     | -n --no-norm     | Run norminette tools          |
 #     |$OPTI | +o --opti     | -o --no-opti     | Select only fun with unitests |
-#     |$UNIT | +u --unitests | -u --no-unitests | Run unitests                  |
+#     |$TEST | +t --tests    | -t --no-tests    | Run minishell's tests         |
+#     |$UNIT | +u --unitests | -u --no-unitests | Run minishell's fun. unitests |
 #     |$VALG | +v --valgrind | -v --no-valgrind | Run valgrind tools            |
 # ============================================================================================================
  
@@ -44,7 +45,8 @@ FUNC=0                                                            # ☒ Run func
 HELP=0                                                            # ☒ Display usage                 
 NORM=1                                                            # ☒ Run norminette tools          
 OPTI=0                                                            # ☒ Select only fun with unitests 
-UNIT=1                                                            # ☒ Run unitests                  
+TEST=1                                                            # ☒ Run minishell tests
+UNIT=0                                                            # ☒ Run unitests                  
 VALG=1                                                            # ☒ Run valgrind tools            
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 FUN_NAME_PATTERN=( )                                              # ☒ List of function name pattern passed as argument
@@ -121,7 +123,8 @@ script_usage()
     echo -e "    |   ${BC0}\$HELP${E}   | ${V0}+${M0}h${E}, ${V0}--${M0}help      ${E}| ${R0}-${M0}h ${E},${R0}--no-${M0}help     ${E}| Display usage                        |"
     echo -e "    |   ${BC0}\$NORM${E}   | ${V0}+${M0}n${E}, ${V0}--${M0}norm      ${E}| ${R0}-${M0}n ${E},${R0}--no-${M0}norm     ${E}| Run norminette tools                 |"
     echo -e "    |   ${BC0}\$OPTI${E}   | ${V0}+${M0}o${E}, ${V0}--${M0}opti      ${E}| ${R0}-${M0}o ${E},${R0}--no-${M0}opti     ${E}| Select only fun with unitests        |"
-    echo -e "    |   ${BC0}\$UNIT${E}   | ${V0}+${M0}u${E}, ${V0}--${M0}unitests  ${E}| ${R0}-${M0}u ${E},${R0}--no-${M0}unitests ${E}| Run unitests                         |"
+    echo -e "    |   ${BC0}\$TEST${E}   | ${V0}+${M0}t${E}, ${V0}--${M0}tests     ${E}| ${R0}-${M0}t ${E},${R0}--no-${M0}tests    ${E}| Run minishell's tests                |"
+    echo -e "    |   ${BC0}\$UNIT${E}   | ${V0}+${M0}u${E}, ${V0}--${M0}unitests  ${E}| ${R0}-${M0}u ${E},${R0}--no-${M0}unitests ${E}| Run minishell's functions unitests   |"
     echo -e "    |   ${BC0}\$VALG${E}   | ${V0}+${M0}v${E}, ${V0}--${M0}valgrind  ${E}| ${R0}-${M0}v ${E},${R0}--no-${M0}valgrind ${E}| Run valgrind tools                   |"
     exit ${exit_value}
 }
@@ -177,7 +180,8 @@ display_start()
     [[ ${HELP} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}HELP${Y0} :Display usage                 : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}HELP${Y0} :Display usage                 : ${R0}✘ Desable${E}" )
     [[ ${NORM} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}NORM${Y0} :Run norminette tools          : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}NORM${Y0} :Run norminette tools          : ${R0}✘ Desable${E}" )
     [[ ${OPTI} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}OPTI${Y0} :Select only fun with unitests : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}OPTI${Y0} :Select only fun with unitests : ${R0}✘ Desable${E}" )
-    [[ ${UNIT} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}UNIT${Y0} :Run unitests                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}UNIT${Y0} :Run unitests                  : ${R0}✘ Desable${E}" )
+    [[ ${TEST} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}TEST${Y0} :Run minishell's tests         : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}TEST${Y0} :Run minishell's tests         : ${R0}✘ Desable${E}" )
+    [[ ${UNIT} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}UNIT${Y0} :Run minishell's fun. unitests : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}UNIT${Y0} :Run minishell's fun. unitests : ${R0}✘ Desable${E}" )
     [[ ${VALG} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}VALG${Y0} :Run valgrind                  : ${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}VALG${Y0} :Run valgrind                  : ${R0}✘ Desable${E}" )
 
     print_in_box -t 2 -c y \
@@ -592,8 +596,8 @@ for arg in "${ARGS[@]}";do
     shift
     if [[ "$arg" =~ ^(\+\+|--).*$ ]];then
         case "${arg}" in
-            --[Aa]ll ) BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;VALG=1 ;;
-            --[Nn]o-[Aa]ll ) BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;VALG=0 ;;
+            --[Aa]ll ) BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;TEST=1;UNIT=1;VALG=1;;
+            --[Nn]o-[Aa]ll ) BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;TEST=0;UNIT=0;VALG=0;;
             --[Bb]uil[td]-in ) BUIN=$(( BUIN + 1 )) ;;
             --[Nn]o-[Bb]uil[td]-in ) BUIN=$(max 0 $(( BUIN - 1 ))) ;;
             --[Cc]omp ) COMP=$(( COMP + 1 )) ;;
@@ -610,6 +614,8 @@ for arg in "${ARGS[@]}";do
             --[Nn]o-[Nn]orm ) NORM=$(max 0 $(( NORM - 1 ))) ;;
             --[Oo]pti ) OPTI=$(( OPTI + 1 )) ;;
             --[Nn]o-[Oo]pti ) OPTI=$(max 0 $(( OPTI - 1 ))) ;;
+            --[Tt]ests ) TEST=$(( TEST + 1 )) ;;
+            --[Nn]o-[Tt]ests ) TEST=$(max 0 $(( TEST - 1 ))) ;;
             --[Uu]nitests ) UNIT=$(( UNIT + 1 )) ;;
             --[Nn]o-[Uu]nitests ) UNIT=$(max 0 $(( UNIT - 1 ))) ;;
             --[Vv]algrind ) VALG=$(( VALG + 1 )) ;;
@@ -621,7 +627,7 @@ for arg in "${ARGS[@]}";do
         for i in $(seq 1 $((${#arg} - 1)));do
             char="${arg:i:1}"
             case "${char}" in
-                [Aa] ) [[ "${symb}" == "+" ]] && { BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;UNIT=1;VALG=1;} || { BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;UNIT=0;VALG=0;} ;;
+                [Aa] ) [[ "${symb}" == "+" ]] && { BUIN=1;COMP=1;DLOG=1;EXEC=1;FUNC=1;NORM=1;OPTI=1;TEST=1;UNIT=1;VALG=1;} || { BUIN=0;COMP=0;DLOG=0;EXEC=0;FUNC=0;NORM=0;OPTI=0;TEST=0;UNIT=0;VALG=0;} ;;
                 [Bb] ) [[ "${symb}" == "+" ]] && BUIN=$(( BUIN + 1 )) || BUIN=$(max 0 $(( BUIN - 1 ))) ;;
                 [Cc] ) [[ "${symb}" == "+" ]] && COMP=$(( COMP + 1 )) || COMP=$(max 0 $(( COMP - 1 ))) ;;
                 [Dd] ) [[ "${symb}" == "+" ]] && DLOG=$(( DLOG + 1 )) || DLOG=$(max 0 $(( DLOG - 1 ))) ;;
@@ -630,6 +636,7 @@ for arg in "${ARGS[@]}";do
                 [Hh] ) [[ "${symb}" == "+" ]] && HELP=$(( HELP + 1 )) || HELP=$(max 0 $(( HELP - 1 ))) ;;
                 [Nn] ) [[ "${symb}" == "+" ]] && NORM=$(( NORM + 1 )) || NORM=$(max 0 $(( NORM - 1 ))) ;;
                 [Oo] ) [[ "${symb}" == "+" ]] && OPTI=$(( OPTI + 1 )) || OPTI=$(max 0 $(( OPTI - 1 ))) ;;
+                [Tt] ) [[ "${symb}" == "+" ]] && TEST=$(( TEST + 1 )) || TEST=$(max 0 $(( TEST - 1 ))) ;;
                 [Uu] ) [[ "${symb}" == "+" ]] && UNIT=$(( UNIT + 1 )) || UNIT=$(max 0 $(( UNIT - 1 ))) ;;
                 [Vv] ) [[ "${symb}" == "+" ]] && VALG=$(( VALG + 1 )) || VALG=$(max 0 $(( VALG - 1 ))) ;;
                 *) script_usage "${R0}unknown option:${RU}${symb}${char}${E}" 5 ;;
@@ -779,6 +786,14 @@ if [[ ${EXEC} -gt 0 ]];then
             exec_binary "FUN_TO_TEST"
         fi
     fi
+fi
+# -[ STEP 6 | TESTS ]-----------------------------------------------------------------------------------------
+if [[ ${TEST} -gt 0 ]];then
+    print_in_box -t 2 -c y \
+    " ${Y0}  __  __   _          _        _            _   _   _          _____              _        ${E}" \
+    " ${Y0} |  \/  | (_)  _ _   (_)  ___ | |_    ___  | | | | ( )  ___   |_   _|  ___   ___ | |_   ___${E}" \
+    " ${Y0} | |\/| | | | | ' \  | | (_-< | ' \  / -_) | | | | |/  (_-<     | |   / -_) (_-< |  _| (_-<${E}" \
+    " ${Y0} |_|  |_| |_| |_||_| |_| /__/ |_||_| \___| |_| |_|     /__/     |_|   \___| /__/  \__| /__/${E}"
 fi
 # =[ STOP ]===================================================================================================
 display_resume "Minishell's tests"
