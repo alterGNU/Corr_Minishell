@@ -80,7 +80,7 @@ for tst_file in ${TEST_FILE[@]};do
         rm $comp_file
     else
         # FAIL --> display error
-        print_in_box -t 1 -c r "🔸${YU}TESTS of ${res_name}:${R0} ❌ FAIL${E}" "    ${Y0}👉 Check log file:${M0}${fun_log_file}${E}"
-        vimdiff $bash_res_name $msll_res_name
+        print_in_box -t 1 -c r "🔸${YU}TESTS of ${res_name}:${G0} ✖️  DIFF. DETECTED${E}" "    ${Y0}👉 Check log file:${M0}${fun_log_file}${E}"
     fi
+    vimdiff $bash_res_name $msll_res_name
 done
