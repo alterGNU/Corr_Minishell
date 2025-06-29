@@ -1,0 +1,68 @@
+# ============================================================================================================
+# TESTS LEFT DOUBLE REDIR RLD << (Notes that combinaison of contiguous quotes as delimiter are UB for posix)
+# ============================================================================================================
+echo "=[ TESTS 0:SIMPLIEST CASES ] =========================================================================="
+echo "test 0.0:<<$ cat"
+<<$ cat
+coucou
+$
+echo "TESTS 0.1:<<bye cat"
+<<bye cat
+'hello $USERNAME'
+bye
+echo 'TESTS 0.2:<<"bye bob" cat'
+<<"bye bob" cat
+I AM AT $PWD
+bye
+bob
+bye bob cat
+bye bob
+echo
+# ============================================================================================================
+echo "=[ TESTS 1:EXPAND VARIABLES ] ========================================================================="
+echo "test 1.0:<<$PWD cat (EXPAND in DELIMITER and inside HEREDOC)"
+<<$USERNAME cat
+hello $USERNAME you are at $PWD
+altergnu
+$USERNAME
+echo 'TESTS 1.1:<<"bye $USERNAME" cat (NO EXPAND in DELIMITER and inside HEREDOC)'
+<<"bye $USERNAME" cat
+hello $USERNAME
+'hello $USERNAME'
+"hello $USERNAME"
+hello \$USERNAME
+bye altergnu
+bye $USERNAME
+echo "TESTS 1.2:<<'bye $USERNAME' cat (NO EXPAND in DELIMITER and inside HEREDOC)"
+<<'bye $USERNAME' cat
+hello $USERNAME
+'hello $USERNAME'
+"hello $USERNAME"
+hello \$USERNAME
+bye altergnu
+bye $USERNAME
+echo
+# ============================================================================================================
+echo "=[ TESTS 2:STR IS A VARIABLES ] ======================================================================="
+echo "TESTS 2.1:toto=''Hello $USERNAME, you are at $PWD'' && <<$toto cat"
+toto="Hello $USERNAME" && <<$toto cat
+Hello altergnu
+"Hello altergnu"
+'Hello altergnu'
+voici $toto
+$toto
+echo "TESTS 2.2:toto=''Hello $USERNAME'' && <<''$toto'' cat"
+toto="Hello $USERNAME, you are at $PWD" && <<"$toto" cat
+Hello altergnu
+"Hello altergnu"
+'Hello altergnu'
+voici $toto
+$toto
+echo "TESTS 2.3:toto=''Hello $USERNAME'' && <<'$toto' cat"
+toto="Hello $USERNAME, you are at $PWD" && <<'$toto' cat
+Hello altergnu
+"Hello altergnu"
+'Hello altergnu'
+voici $toto
+$toto
+echo
