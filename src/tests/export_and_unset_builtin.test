@@ -1,0 +1,18 @@
+# ============================================================================================================
+# EXPORT and UNSET builtins tests
+# ============================================================================================================
+echo "TESTS 1:EXPORT from one to another minishell"
+export toto=tata tata=titi $USERNAME=$toto
+echo I am $$ and for me toto=$toto, tata=$tata and you are $USERNAME.
+echo 'echo I am $$ and for me toto=$toto, tata=$tata and you are $USERNAME' > bash
+echo last bash returned $?.
+echo 'echo I am $$ and for me toto=$toto, tata=$tata and you are $USERNAME' > ./minishell
+echo last minishell returned $?.
+echo
+echo "TESTS 2:WITH -n OPTION"
+echo -n "Coucou "
+echo -n "Petite" "Perruche"
+echo ''.""
+echo 
+echo "TESTS 3:CHECK EXPAND AND CONTIGUOUS VALUE"
+echo "Hello $USERNAME", 'a'n"d you ar"e in '$PWD'=$PWD
