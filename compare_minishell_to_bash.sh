@@ -76,11 +76,13 @@ for tst_file in ${TEST_FILE[@]};do
     RES_DIFF=$(diff $bash_res_name $msll_res_name > $comp_file && echo 0 || echo 1)
     if [[ "${RES_DIFF}" -eq 0 ]];then
         # PASS --> remove .diff file (empty)
-        print_in_box -t 1 -c g "🔸${YU}TESTS of ${res_name}:${V0} ✅ PASS${E}"
+        separators=$(pnt "." $((LEN - $(get_len "🔸${YU}TESTS of ${res_name}:") - 13)))
+        print_in_box -t 1 -c g "🔸${YU}TESTS of ${res_name}:${V0} ${separators} ✅ PASS${E}"
         rm $comp_file
     else
         # FAIL --> display error
-        print_in_box -t 1 -c r "🔸${YU}TESTS of ${res_name}:${G0} ✖️  DIFF. DETECTED${E}" "    ${Y0}👉 Check log file:${M0}${fun_log_file}${E}"
+        separators=$(pnt "." $((LEN - $(get_len "🔸${YU}TESTS of ${res_name}:") - 23)))
+        print_in_box -t 1 -c w "🔸${YU}TESTS of ${res_name}${E}:${G0} ${separators} ✖️  DIFF. DETECTED${E}" "    ${Y0}👉 Check log file:${M0}${fun_log_file}${E}"
     fi
     vimdiff $bash_res_name $msll_res_name
 done
