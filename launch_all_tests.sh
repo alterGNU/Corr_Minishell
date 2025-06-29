@@ -46,7 +46,7 @@ HELP=0                                                            # ☒ Display 
 NORM=1                                                            # ☒ Run norminette tools          
 OPTI=0                                                            # ☒ Select only fun with unitests 
 TEST=1                                                            # ☒ Run minishell tests
-UNIT=0                                                            # ☒ Run unitests                  
+UNIT=1                                                            # ☒ Run unitests                  
 VALG=1                                                            # ☒ Run valgrind tools            
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 TEST_FILE=()                                                      # ☒ List of file.test to use to compare minishell's return and bash --posix return's
