@@ -1,0 +1,33 @@
+# ============================================================================================================
+# TESTS HEREDOC
+# ============================================================================================================
+echo "=[ TESTS 0:SIMPLIEST CASES ] =========================================================================="
+echo "test 0:<<a cat && echo here what I found: && ls -a /tmp | grep -o .heredoc"
+<<a cat && echo here what I found: && ls -a /tmp | grep -o .heredoc
+Hello $USERNAME,
+I am currently using an heredoc file located at /tmp/.heredoc...
+bye
+a
+echo
+# ============================================================================================================
+echo "=[ TESTS 1:MULTIPLES HEREDOC ] ========================================================================="
+echo "test 1:<<a<<b<<<''HELLO $USERNAME'' cat >f1 | <f1 cat && rm f1 | echo here what I found: && ls -a /tmp | grep -o .heredoc"
+<<a<<b<<<"HELLO $USERNAME" cat >f1 | <f1 cat && rm f1 | echo here what I found: && ls -a /tmp | grep -o .heredoc
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+a
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+b
+echo
+# ============================================================================================================
+echo "=[ TESTS 2:MULTIPLES HEREDOC ] ========================================================================="
+echo "test 2:<<a cat|<<b cat|<<c cat && <<<super<<<prima<<<toll && echo here what I found: && ls -a /tmp | grep -o .heredoc"
+<<a cat|<<b cat|<<c cat && <<<super<<<prima<<<toll && echo here what I found: && ls -a /tmp | grep -o .heredoc
+b
+a
+c
+b
+d
+c
+echo
