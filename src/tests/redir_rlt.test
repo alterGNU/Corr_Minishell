@@ -1,26 +1,51 @@
-echo "TESTS 1:NO EXPAND WHEN BACKSLASH"
+# ============================================================================================================
+# TESTS AFFECTATIONS
+# ============================================================================================================
+echo "TESTS 0:NO STR"
+echo "test 0.0:<<< cat"
+<<< cat
+echo "test 0.1:<<<\$UNKNOWN\$SAME cat"
+<<<$UNKNOWN$SAME cat
+echo "test 0.2:<<<\'$UNKNOWN\' cat"
+<<<'$UNKNOWN' cat
+echo "test 0.3:<<<$UNKNOWN$UNK$UNK1 cat"
+<<<$UNKNOWN$UNK$UNK1 cat
+echo
+# ============================================================================================================
+echo "TESTS 1:SIMPLIEST STR (NO VAR)"
+<<<hi cat
+<<<'hello world' cat
+<<<"coucou petite perruche" cat
+echo
+# ============================================================================================================
+echo "TESTS 2:WRONG COMMAND"
+<<<hello world cat
+echo
+# ============================================================================================================
+echo "TESTS 3:VAR AS STR WITH NO EXPAND WHEN BACKSLASH"
 v1="Hello \$USERNAME, you are here-> \$PWD"
-echo "after affectation:v1=$v1"
+echo "after affectation:\$v1='$v1'"
+<<<$USERNAME cat
 <<<$v1 cat
 <<<"$v1" cat
 <<<'$v1' cat
-
 echo
-echo "TESTS 2:EXPAND IN STR"
+# ============================================================================================================
+echo "TESTS 4:VAR AS STR WITH EXPAND NEEDED"
 v2="Hello $USERNAME, you are here-> $PWD"
 echo "after affectation:v2=$v2"
 <<<$v2 cat
 <<<"$v2" cat
 <<<'$v2' cat
-
 echo
-echo "TESTS 3:EXPAND ONLY IF NO SINGLE QUOTE"
+# ============================================================================================================
+echo "TESTS 5:VAR AS STR WITH QUOTES -->(expand only if NO single quote)"
 <<<$USERNAME cat
 <<<"$USERNAME" cat
 <<<'$USERNAME' cat
-
 echo
-echo "TESTS 4:COMBOS WITH CONTIGUES QUOTED TOKEN AS STR"
+# ============================================================================================================
+echo "TESTS 6:COMBOS WITH CONTIGUES QUOTED TOKEN AS STR"
 <<<"$USERNAME"$USERNAME'$USERNAME' cat
 <<<'$USERNAME'$USERNAME"$USERNAME" cat
 <<<$USERNAME'$USERNAME'"$USERNAME" cat
