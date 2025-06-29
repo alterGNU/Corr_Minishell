@@ -1,0 +1,51 @@
+# ============================================================================================================
+# exit tests
+# ============================================================================================================
+echo "exit no argument"
+echo "exit" | bash --posix
+echo bash return value = $?.
+echo "exit" | ./minishell
+echo minishell return value = $?.
+echo
+# ============================================================================================================
+echo "exit 0"
+echo "exit 0" | bash --posix
+echo bash return value = $?.
+echo "exit 0" | ./minishell
+echo minishell return value = $?.
+echo
+# ============================================================================================================
+echo "exit 1"
+echo "exit 1" | bash --posix
+echo bash return value = $?.
+echo "exit 1" | ./minishell
+echo minishell return value = $?.
+echo
+# ============================================================================================================
+echo "exit 42"
+echo "exit 42" | bash --posix
+echo bash return value = $?.
+echo "exit 42" | ./minishell
+echo minishell return value = $?.
+echo
+# ============================================================================================================
+echo "exit too many arguments : exit 1 2 3"
+echo "exit 1 2 3" | bash --posix
+echo bash return value = $?.
+echo "exit 1 2 3" | ./minishell
+echo minishell return value = $?.
+echo
+# ============================================================================================================
+echo "exit wrong argument : exit wtf"
+echo "exit wtf" | bash --posix
+echo bash return value = $?.
+echo "exit wtf" | ./minishell
+echo minishell return value = $?.
+echo
+# ============================================================================================================
+echo "exit COMBOS wrong argument : exit 1 wtf 3"
+echo "exit 1 wtf 4" | bash --posix
+echo bash return value = $?.
+echo "exit 1 wtf 4" | ./minishell
+echo minishell return value = $?.
+echo
