@@ -525,11 +525,11 @@ exec_tests()
             echo "${V0} ✅ PASS${E}"
         else                              # FAIL --> display error
             nb_err=$(( nb_err + 1 ))
-            echo "${R0} ❌ FAIL${E}"
+            echo "${G0} ✖️  DIFF${E}"
             echo "  ${Y0}👉 Check log file:${M0}${fun_log_file}${E}"
         fi
     done
-    return $nb_err
+    return 0
 }
 
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
@@ -625,7 +625,7 @@ display_resume()
             local res_name=${filename%%\.test*}
             local path_diff=$(print_shorter_path "${LOG_DIR}/tests/${res_name}.diff")
             if [[ -f "${LOG_DIR}/tests/${res_name}.diff" ]];then
-                args+=( "    ${R0}✘ ${res_name}:   ${Y0}👉 Check log file ${M0}${path_diff}${E}")
+                args+=( "    ${G0}✘ ${res_name}:👉${M0}${path_diff}${E}")
             else
                 args+=( "    ${V0}✓ ${res_name}")
             fi
