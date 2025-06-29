@@ -49,3 +49,10 @@ echo bash return value = $?.
 echo "exit 1 wtf 4" | ./minishell
 echo minishell return value = $?.
 echo
+# ============================================================================================================
+echo "exit COMBOS wrong argument : exit wtf 42"
+echo "exit wtf 42" | bash --posix
+echo bash return value = $?.
+echo "exit wtf 42" | ./minishell
+echo minishell return value = $?.
+echo
