@@ -1,0 +1,47 @@
+# ============================================================================================================
+# Check multi-pipes
+# ============================================================================================================
+# =[ SIMPLE PIP ]=============================================================================================
+echo "# =[ TESTS 1: Simple pip after successfull command ]==================================================="
+echo "start[$?]"
+/bin/echo all non builtin | cat
+echo "[$?]"
+echo only | echo builtin
+echo "[$?]"
+echo mix | /bin/echo end with not buildin
+echo "[$?]"
+/bin/echo start non builtin | echo end with buildin
+echo "[$?]"
+echo
+echo "# =[ TESTS 2: Simple pip after failed command ] ======================================================="
+wtf
+echo "start[$?]"
+/bin/echo all non builtin | cat
+echo "[$?]"
+wtf
+echo only | echo builtin
+echo "[$?]"
+wtf
+echo mix | /bin/echo end with not buildin
+echo "[$?]"
+wtf
+/bin/echo start non builtin | echo end with buildin
+echo "[$?]"
+echo
+# =[ MULTIPLE PIP ]===========================================================================================
+echo "# =[ TESTS 3: Multiple successful pip ]================================================================"
+echo toto | cat | grep .
+echo "[$?]"
+sleep 1 | sleep 1 | sleep 1
+echo "[$?]"
+echo
+echo "# =[ TESTS 4: Multiple pip with failure ]=============================================================="
+echo "$USERNAME" | failed | sleep 1 | cat && echo PASS || echo FAIL
+echo "[$?]"
+failed | sleep 1 | echo "$USERNAME" | cat && echo PASS || echo FAIL
+echo "[$?]"
+sleep 1 | echo "$USERNAME" | cat | failed && echo FAIL || echo PASS
+echo "[$?]"
+echo "$USERNAME" | cat | failed | sleep 1 && echo PASS || echo FAIL
+echo "[$?]" 
+cat | failed | sleep 1 | echo $USERNAME && echo PASS || echo FAIL
