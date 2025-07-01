@@ -50,3 +50,39 @@ echo I am PARENT=, and for me loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu..
 echo 'loc1=hello loc2=world&&echo I am CHILD: : BEFORE:loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.&&unset loc1 toto&&echo I am CHILD: : AFTER :loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.' | ./minishell
 echo last bash returned $?.
 echo I am PARENT=, and for me loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu..
+# ============================================================================================================
+echo 
+echo "TESTS 7:EXPORT UNKNOWN AND EMPTY VAR AS CMD"
+export $unknown_var
+echo return=[$?]
+export v0=""
+$v0
+echo return=[$?]
+export v1="              "
+$v1
+echo return=[$?]
+export v2="				" v3="	    		    	   "
+$v2
+echo return=[$?]
+$v3
+echo return=[$?]
+echo before unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
+unset v0 v1 v2 v3
+echo after unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
+# ============================================================================================================
+echo 
+echo "TESTS 8:EXPORT UNKNOWN AND EMPTY VAR AS CMD"
+export v0="	    		    	echo 	   " v1="   	petite		perruche	   "
+$v0
+echo return=[$?]
+$v0 coucou
+echo return=[$?]
+$v0 coucou $v1
+echo return=[$?]
+$v1 $v0
+echo return=[$?]
+$v0$v0
+echo return=[$?]
+echo before unset v0=$v0, v1=$v1.
+unset v0 v1
+echo after unset v0=$v0, v1=$v1.

@@ -1,5 +1,5 @@
 # ============================================================================================================
-# TESTS AFFECTATIONS
+# TESTS AFFECTATIONS AND EXPANSION
 # ============================================================================================================
 echo return=[$?]
 echo "TESTS 1:SIMPLE AND MULTIPLE VALID AFFECTATION"
@@ -22,17 +22,51 @@ echo "\$v1=$v1" '$v2='$v2 \$v3=$v3"but \$v4=<$v4>-->empty"
 echo return=[$?]
 # ============================================================================================================
 echo 
-echo "TESTS 3:AFFECTATION IN PIPE-->NO AFFECTATION"
-echo toto|a=b b=c c=d|echo tata
-echo return=[$?] a=$a, b=$a, c=$c.
-unset a b c
-a=b b=c c=d | echo tata | cat
-echo return=[$?] a=$a, b=$a, c=$c.
-unset a b c
-echo tata|cat|a=b b=c c=d
-echo return=[$?] a=$a, b=$a, c=$c.
-unset a b c
+echo "TESTS 3:UNKNOWN AND EMPTY VAR AS CMD"
+$unknown_var
+echo return=[$?]
+v0=""
+$v0
+echo return=[$?]
+v1="              "
+$v1
+echo return=[$?]
+v2="				"
+$v2
+echo return=[$?]
+v3="	    		    	   "
+$v3
+echo return=[$?]
+echo before unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
+unset v0 v1 v2 v3
+echo after unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
 # ============================================================================================================
+echo 
+echo "TESTS 4:UNKNOWN AND EMPTY VAR AS CMD"
+v0="	    		    	echo 	   "
+v1="   	petite		perruche	   "
+$v0
+echo return=[$?]
+$v0 coucou
+echo return=[$?]
+$v0 coucou $v1
+echo return=[$?]
+echo before unset v0=$v0, v1=$v1.
+unset v0 v1
+echo after unset v0=$v0, v1=$v1.
+## ============================================================================================================
+#echo 
+#echo "TESTS 3:AFFECTATION IN PIPE-->NO AFFECTATION"
+#echo toto|a=b b=c c=d|echo tata
+#echo return=[$?] a=$a, b=$a, c=$c.
+#unset a b c
+#a=b b=c c=d | echo tata | cat
+#echo return=[$?] a=$a, b=$a, c=$c.
+#unset a b c
+#echo tata|cat|a=b b=c c=d
+#echo return=[$?] a=$a, b=$a, c=$c.
+#unset a b c
+## ============================================================================================================
 echo 
 #echo 
 #echo "TESTS 3:PROTECTED VAR-ENV AFFECTATION"
