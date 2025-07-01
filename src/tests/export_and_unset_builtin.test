@@ -2,6 +2,30 @@
 # EXPORT and UNSET builtins tests
 # ============================================================================================================
 echo "TESTS 0:EXPORT AND UNSET UNVALID IDENTIFIER"
+empty_1=""
+empty_2="            "
+empty_3="			"
+empty_4="	   		   "
+export empty_1
+echo $?
+export empty_2
+echo $?
+export empty_3
+echo $?
+export empty_4
+echo $?
+echo before unset empty_0=$empty_0, empty_1=$empty_1, empty_2=$empty_2, empty_3=$empty_3, empty_4=$empty_4.
+unset empty_0 empty_1 empty_2 empty_3 empty_4
+echo after unset empty_0=$empty_0, empty_1=$empty_1, empty_2=$empty_2, empty_3=$empty_3, empty_4=$empty_4.
+export empty_0 empty_1 empty_2 empty_3 empty_3 empty_4
+echo $?
+echo before unset empty_0=$empty_0, empty_1=$empty_1, empty_2=$empty_2, empty_3=$empty_3, empty_4=$empty_4.
+unset empty_0 empty_1 empty_2 empty_3 empty_4
+echo after unset empty_0=$empty_0, empty_1=$empty_1, empty_2=$empty_2, empty_3=$empty_3, empty_4=$empty_4.
+export ""
+echo $?
+export "                 "
+echo $?
 export v1=valid1 to.to=tata v2=valid2
 echo $? v1=$v1, v2=$v2.
 export 'u'=tata v3=valid3
@@ -16,10 +40,21 @@ unset v3
 echo $? v1=$v1, v2=$v2, v3=$v3.
 echo
 # ============================================================================================================
+echo "TESTS 1:EXPORT WITHOUT ARG"
+export
+echo $?
+echo
+# ============================================================================================================
 echo "TESTS 2:EXPORT and LOCAL VAR AFFECTATION"
-local_1=a1 local_2=a2
-export toto=tata tata=titi titi=tutu tutu=tete
+local_1=a1 local_2=a2 local_3="super=chouette"
+export toto=tata tata=titi titi=tutu tutu=tete 
 echo I am PARENT: and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.
+export $local_3
+echo $? super=$super, local_3=$local_3.
+unset local_3
+echo $? super=$super, local_3=$local_3.
+unset super
+echo $? super=$super, local_3=$local_3.
 echo
 # ============================================================================================================
 echo "TESTS 3:UNSET for LOCAL VAR AND EXPORTED VAR-ENV"
@@ -53,9 +88,11 @@ echo I am PARENT=, and for me loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu..
 # ============================================================================================================
 echo 
 echo "TESTS 7:EXPORT UNKNOWN AND EMPTY VAR AS CMD"
-export $unknown_var
+$unknown_var
 echo return=[$?]
-export v0=""
+export v0="" v_0= 
+$v_0
+echo return=[$?]
 $v0
 echo return=[$?]
 export v1="              "
@@ -66,9 +103,9 @@ $v2
 echo return=[$?]
 $v3
 echo return=[$?]
-echo before unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
-unset v0 v1 v2 v3
-echo after unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
+echo before unset v_0=$v_0, v0=$v0, v1=$v1,v2=$v2,v3=$v3.
+unset v_0 v0 v1 v2 v3
+echo after unset v_0=$v_0, v0=$v0, v1=$v1,v2=$v2,v3=$v3.
 # ============================================================================================================
 echo 
 echo "TESTS 8:EXPORT UNKNOWN AND EMPTY VAR AS CMD"
