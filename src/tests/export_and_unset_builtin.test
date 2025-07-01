@@ -1,37 +1,52 @@
 # ============================================================================================================
 # EXPORT and UNSET builtins tests
 # ============================================================================================================
-echo "TESTS 1:EXPORT and LOCAL VAR AFFECTATION"
+echo "TESTS 0:EXPORT AND UNSET UNVALID IDENTIFIER"
+export v1=valid1 to.to=tata v2=valid2
+echo $? v1=$v1, v2=$v2.
+export 'u'=tata v3=valid3
+echo $? v3=$v3.
+export 1v=tata
+echo $? v3=$v3.
+unset v1 12 v2
+echo $? v1=$v1, v2=$v2.
+unset 1not.valid
+echo $?
+unset v3
+echo $? v1=$v1, v2=$v2, v3=$v3.
+echo
+# ============================================================================================================
+echo "TESTS 2:EXPORT and LOCAL VAR AFFECTATION"
 local_1=a1 local_2=a2
 export toto=tata tata=titi titi=tutu tutu=tete
-echo I am PARENT:$$ and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.
+echo I am PARENT: and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.
 echo
 # ============================================================================================================
-echo "TESTS 2:UNSET for LOCAL VAR AND EXPORTED VAR-ENV"
+echo "TESTS 3:UNSET for LOCAL VAR AND EXPORTED VAR-ENV"
 unset local_1 tata titi
-echo I am PARENT:$$ and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.
+echo I am PARENT: and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.
 echo
 # ============================================================================================================
-echo "TESTS 3:Check EXPORT & UNSET WORKS FROM PARENT TO CHILD"
-echo 'echo I am CHILD:$$ and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.' | bash
+echo "TESTS 4:Check EXPORT & UNSET WORKS FROM PARENT TO CHILD"
+echo 'echo I am CHILD and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.' | bash
 echo last bash returned $?.
-echo 'echo I am CHILD:$$ and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.' | ./minishell
+echo 'echo I am CHILD and for me local_1=$local_1, local_2=$local_2, toto=$toto, tata=$tata, titi=$titi, tutu=tete.' | ./minishell
 echo last minishell returned $?.
 echo
 # ============================================================================================================
-echo "TESTS 4:Check EXPORT NOT WORKING FROM CHILD TO PARENT"
-echo 'export HERE="export in child" && echo I am CHILD:$$ and for me HERE=$HERE' | bash
+echo "TESTS 5:Check EXPORT NOT WORKING FROM CHILD TO PARENT"
+echo 'export HERE="export in child" && echo I am CHILD: and for me HERE=$HERE' | bash
 echo last bash returned $?.
-echo I am PARENT=$$, and for me HERE=$HERE.
-echo 'export HERE="export in child" && echo I am CHILD:$$ and for me HERE=$HERE' | ./minishell
+echo I am PARENT=, and for me HERE=$HERE.
+echo 'export HERE="export in child" && echo I am CHILD: and for me HERE=$HERE' | ./minishell
 echo last bash returned $?.
-echo I am PARENT=$$, and for me HERE=$HERE.
+echo I am PARENT=, and for me HERE=$HERE.
 echo
 # ============================================================================================================
-echo "TESTS 5:Check UNSET NOT WORKING FROM CHILD TO PARENT"
-echo 'loc1=hello loc2=world&&echo I am CHILD:$$ : BEFORE:loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.&&unset loc1 toto&&echo I am CHILD:$$ : AFTER :loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.' | bash
+echo "TESTS 6:Check UNSET NOT WORKING FROM CHILD TO PARENT"
+echo 'loc1=hello loc2=world&&echo I am CHILD: : BEFORE:loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.&&unset loc1 toto&&echo I am CHILD: : AFTER :loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.' | bash
 echo last bash returned $?.
-echo I am PARENT=$$, and for me loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu..
-echo 'loc1=hello loc2=world&&echo I am CHILD:$$ : BEFORE:loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.&&unset loc1 toto&&echo I am CHILD:$$ : AFTER :loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.' | ./minishell
+echo I am PARENT=, and for me loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu..
+echo 'loc1=hello loc2=world&&echo I am CHILD: : BEFORE:loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.&&unset loc1 toto&&echo I am CHILD: : AFTER :loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu.' | ./minishell
 echo last bash returned $?.
-echo I am PARENT=$$, and for me loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu..
+echo I am PARENT=, and for me loc1=$loc1,loc2=$loc2,toto=$toto,tutu=$tutu..

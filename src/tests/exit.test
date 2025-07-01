@@ -58,13 +58,13 @@ echo minishell return value = $?.
 echo
 # ============================================================================================================
 echo "=[exit no argument after good command]================================================================="
-echo "echo In child \$\$ && echo coucou || exit" | ./minishell
-echo "last_value returned $?-->In PARENT $$"
+echo "echo In child && echo coucou || exit" | ./minishell
+echo "last_value returned $?-->In PARENT "
 echo
 # ============================================================================================================
 echo "=[exit no argument after wrong command]================================================================"
-echo "echo In child \$\$ && sdlk || exit" | ./minishell
-echo "last_value returned $?-->In PARENT $$"
+echo "echo In child && sdlk || exit" | ./minishell
+echo "last_value returned $?-->In PARENT "
 echo
 # ============================================================================================================
 echo "=[ EXIT 42 ]=========================================================================================="
