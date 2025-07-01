@@ -21,6 +21,19 @@ echo return=[$?]
 echo "\$v1=$v1" '$v2='$v2 \$v3=$v3"but \$v4=<$v4>-->empty"
 echo return=[$?]
 # ============================================================================================================
+echo 
+echo "TESTS 3:AFFECTATION IN PIPE-->NO AFFECTATION"
+echo toto|a=b b=c c=d|echo tata
+echo return=[$?] a=$a, b=$a, c=$c.
+unset a b c
+a=b b=c c=d | echo tata | cat
+echo return=[$?] a=$a, b=$a, c=$c.
+unset a b c
+echo tata|cat|a=b b=c c=d
+echo return=[$?] a=$a, b=$a, c=$c.
+unset a b c
+# ============================================================================================================
+echo 
 #echo 
 #echo "TESTS 3:PROTECTED VAR-ENV AFFECTATION"
 #echo BEFORE UDERSCORE=$_
