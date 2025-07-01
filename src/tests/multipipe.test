@@ -28,12 +28,10 @@ wtf
 /bin/echo start non builtin | echo end with buildin
 echo "[$?]"
 echo
-# =[ MULTIPLE PIP ]===========================================================================================
 echo "# =[ TESTS 3: Multiple successful pip ]================================================================"
 echo toto | cat | grep .
 echo "[$?]"
-sleep 1 | sleep 1 | sleep 1
-echo "[$?]"
+sleep 1 | sleep 1 | sleep 1 && echo "[$?]"
 echo
 echo "# =[ TESTS 4: Multiple pip with failure ]=============================================================="
 echo "$USERNAME" | failed | sleep 1 | cat && echo PASS || echo FAIL
@@ -44,4 +42,10 @@ sleep 1 | echo "$USERNAME" | cat | failed && echo FAIL || echo PASS
 echo "[$?]"
 echo "$USERNAME" | cat | failed | sleep 1 && echo PASS || echo FAIL
 echo "[$?]" 
-cat | failed | sleep 1 | echo $USERNAME && echo PASS || echo FAIL
+ls | failed | sleep 1 | echo "$USERNAME" && echo PASS || echo FAIL
+echo "[$?]" 
+echo 
+echo "# =[ TESTS 5: Affectation in a pip ]==================================================================="
+echo toto|a=b b=c c=d|echo a=$a, b=$b, c=$c.
+echo $?
+echo a=$a, b=$b, c=$c.

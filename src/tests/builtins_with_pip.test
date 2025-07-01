@@ -1,0 +1,110 @@
+# ============================================================================================================
+# Check that builtins and affect fork when left of pip
+# ============================================================================================================
+echo "# =[ TESTS 1: Affectation with ]======================================================================="
+echo
+echo '$> a=b|echo a=$a. && echo $? a=$a. || echo FAIL'
+a=b|echo a=$a. && echo $? a=$a. || echo FAIL
+unset a
+
+echo
+echo '$> echo toto|a=b|echo a=$a. && echo $? a=$a. || echo FAIL'
+echo toto|a=b|echo a=$a. && echo $? a=$a. || echo FAIL
+unset a
+
+echo 
+echo '$> a=b|b=c c=d|echo a=$a, b=$b, c=$c. && echo $? a=$a, b=$b, c=$c. || echo FAIL'
+a=b|b=c c=d|echo a=$a, b=$b, c=$c. && echo $? a=$a, b=$b, c=$c. || echo FAIL
+unset a b c
+
+echo
+echo '$> a=b|b=c|c=d && echo $? a=$a, b=$b, c=$c. || echo FAIL'
+a=b|b=c|c=d && echo $? a=$a, b=$b, c=$c. || echo FAIL
+unset a b c
+
+echo
+echo '$> a=b && b=c|unset a|b=new|echo end of pipa=$a, b=$b. && echo after and a=$a, b=$b. || echo FAIL'
+a=b && b=c|unset a|b=new|echo end of pip:a=$a, b=$b. && echo after and :a=$a, b=$b. || echo FAIL
+unset a b
+
+echo "# =[ TESTS 2 : cd and pwd with pip ]==================================================================="
+echo
+echo '$> (echo -n start at && pwd) && cd .. | pwd && (echo -nn end at && pwd) || echo FAIL'
+(echo -n start at && pwd) && cd .. | pwd && (echo -nn end at && pwd) || echo FAIL
+
+echo
+echo '$> (echo -n start at && pwd) && pwd | cd $HOME && (echo -nn end at && pwd) || echo FAIL'
+(echo -n start at && pwd) && pwd | cd $HOME && (echo -nn end at && pwd) || echo FAIL
+
+echo 
+echo '$> (echo -n start parent at && pwd) && cd .. | echo end pipe at $PWD && (echo -nn end parent at && pwd) || echo FAIL'
+(echo -n start parent at && pwd) && cd .. | echo end pipe at $PWD && (echo -nn end parent at && pwd) || echo FAIL
+
+echo "# =[ TESTS 3 : export and unset with pip ]============================================================="
+echo
+V1=old_v1 V2=old_v2
+export E1=old_E1 E2=old_E2
+echo '$> export | echo toto && echo PASS || echo FAIL'
+export | echo toto && echo PASS || echo FAIL
+echo
+echo '$> echo toto | export | echo tutu && echo PASS || echo FAIL'
+echo toto | export | echo tutu && echo PASS || echo FAIL
+echo
+echo '$> echo toto | export && echo PASS || echo FAIL'
+echo toto | export && echo PASS || echo FAIL
+echo
+echo '$>export V1=new_v1 | export E1=new_e1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL'
+export V1=new_v1 | export E1=new_e1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL
+echo
+echo '$> export V1=new_v1 E1=new_e1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL'
+export V1=new_v1 E1=new_e1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL
+echo
+echo '$> export V1=new_v1 | export E1=new_e1 && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL'
+export V1=new_v1 | export E1=new_e1 && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL
+echo
+echo '$>unset V1 | unset E1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL'
+unset V1 | unset E1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL
+echo
+echo '$> unset V1 E1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL'
+unset V1 E1 | echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL
+echo
+echo '$> unset V1 | unset E1 && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL'
+unset V1 | unset E1 && echo V1=$V1, V2=$V2, E1=$E1, E2=$E2. || echo FAIL
+unset V1 V2 E1 E2
+
+echo "# =[ TESTS 4 : env with pip ]=========================================================================="
+echo '$> env | echo toto && echo PASS || echo FAIL'
+env | echo toto && echo PASS || echo FAIL
+echo
+echo '$> echo toto | env | echo tutu && echo PASS || echo FAIL'
+echo toto | env | echo tutu && echo PASS || echo FAIL
+echo
+echo '$> echo toto | env && echo PASS || echo FAIL'
+echo toto | env && echo PASS || echo FAIL
+echo
+
+echo "# =[ TESTS 5 : exit with pip ]========================================================================="
+echo '$> exit | echo toto && echo $? PASS || echo $? FAIL'
+echo 'exit | echo toto && echo child $? PASS || echo child $? FAIL' | bash --posix && echo bash parent $? PASS || echo parent $? FAIL
+echo 'exit | echo toto && echo child $? PASS || echo child $? FAIL' | ./minishell &&  echo minishell parent $? PASS || echo parent $? FAIL
+echo
+echo '$> echo toto | exit | echo tutu && echo $? PASS || echo $? FAIL'
+echo 'echo toto | exit | echo tutu && echo child $? PASS || echo child $? FAIL' | bash --posix && echo bash parent $? PASS || echo parent $? FAIL
+echo 'echo toto | exit | echo tutu && echo child $? PASS || echo child $? FAIL' | ./minishell  && echo minishell parent $? PASS || echo parent $? FAIL
+echo
+echo '$> echo toto | exit && echo $? PASS || echo $? FAIL'
+echo 'echo toto | exit && echo child $? PASS || echo child $? FAIL' | bash --posix && echo bash parent $? PASS || echo parent $? FAIL
+echo 'echo toto | exit && echo child $? PASS || echo child $? FAIL' | ./minishell  && echo minishell parent $? PASS || echo parent $? FAIL
+echo
+echo '$> exit 1 | echo toto && echo $? FAIL || echo $? PASS'
+echo 'exit 1 | echo toto && echo child $? FAIL || echo child $? PASS' | bash --posix && echo bash parent $? PASS || echo parent $? FAIL
+echo 'exit 1 | echo toto && echo child $? FAIL || echo child $? PASS' | ./minishell  && echo minishell parent $? PASS || echo parent $? FAIL
+echo
+echo '$> echo toto | exit 1 | echo tutu && echo $? FAIL || echo $? PASS'
+echo 'echo toto | exit 1 | echo tutu && echo child $? FAIL || echo child $? PASS' | bash --posix && echo bash parent $? PASS || echo parent $? FAIL
+echo 'echo toto | exit 1 | echo tutu && echo child $? FAIL || echo child $? PASS' | ./minishell  && echo minishell parent $? PASS || echo parent $? FAIL
+echo
+echo '$> echo toto | exit 1 && echo $? FAIL || echo $? PASS'
+echo 'echo toto | exit 1 && echo child $? FAIL || echo child $? PASS' | bash --posix && echo bash parent $? PASS || echo parent $? FAIL
+echo 'echo toto | exit 1 && echo child $? FAIL || echo child $? PASS' | ./minishell  && echo minishell parent $? PASS || echo parent $? FAIL
+echo

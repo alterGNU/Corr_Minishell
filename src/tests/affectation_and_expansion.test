@@ -31,29 +31,44 @@ echo return=[$?]
 v1="              "
 $v1
 echo return=[$?]
-v2="				"
-$v2
-echo return=[$?]
-v3="	    		    	   "
-$v3
-echo return=[$?]
+#v2="				"
+#$v2
+#echo return=[$?]
+#v3="	    		       "
+#$v3
+#echo return=[$?]
 echo before unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
 unset v0 v1 v2 v3
 echo after unset v0=$v0, v1=$v1,v2=$v2,v3=$v3.
 # ============================================================================================================
 echo 
 echo "TESTS 4:UNKNOWN AND EMPTY VAR AS CMD"
-v0="	    		    	echo 	   "
-v1="   	petite		perruche	   "
-$v0
+#v0="	    		    	echo 	   "
+#v1="   	petite		perruche	   "
+#$v0
+#echo return=[$?]
+#$v0 coucou
+#echo return=[$?]
+#$v0 coucou $v1
+#echo return=[$?]
+v2="       echo    "
+v3="   petite   perruche   "
+$v2
 echo return=[$?]
-$v0 coucou
+$v2 coucou
 echo return=[$?]
-$v0 coucou $v1
+$v2 coucou $v3
 echo return=[$?]
-echo before unset v0=$v0, v1=$v1.
-unset v0 v1
-echo after unset v0=$v0, v1=$v1.
+echo before unset v2=$v2, v3=$v3.
+unset v0 v3
+echo after unset v2=$v2, v3=$v3.
+# ============================================================================================================
+echo 
+echo "TESTS 5:WORST CASE SCENARIO FOR EXPAND"
+super="$sldkfjlskdjf $sdkfjlsdkjf    echo      titi  $sldkfj"
+arg1="$sldkf to $sdlkf to $sldflskf"
+$sdlfkjsldj $sdlkfjlskdjfk $super $sdlfkjsldjf $arg1 $sdlfjslkdf tutu $sldkfjlskdfj
+unset super arg1
 ## ============================================================================================================
 #echo 
 #echo "TESTS 3:AFFECTATION IN PIPE-->NO AFFECTATION"
