@@ -1,8 +1,22 @@
 # ============================================================================================================
 # Check that redir interact correctly with pip
 # ============================================================================================================
-echo "# =[ TESTS 1: <<stop | export a=b ]===================================================================="
+echo "# =[ TESTS 0: <<stop | titi=tutu ]===================================================================="
+<<stop | titi=tutu && echo $? titi=$titi. PASS || echo $? FAIL
+coucou
+les
+gens
+stop
+echo
+echo "# =[ TESTS 1: <<stop | export titi=tutu ]===================================================================="
 <<stop | export titi=tutu && echo $? titi=$titi. PASS || echo $? FAIL
+coucou
+les
+gens
+stop
+echo
+echo "# =[ TESTS 3: <<stop cat | titi=tutu ]===================================================================="
+<<stop cat | titi=tutu && echo $? titi=$titi. PASS || echo $? FAIL
 coucou
 les
 gens

@@ -69,19 +69,34 @@ super="$sldkfjlskdjf $sdkfjlsdkjf    echo      titi  $sldkfj"
 arg1="$sldkf to $sdlkf to $sldflskf"
 $sdlfkjsldj $sdlkfjlskdjfk $super $sdlfkjsldjf $arg1 $sdlfjslkdf tutu $sldkfjlskdfj
 unset super arg1
-## ============================================================================================================
-#echo 
-#echo "TESTS 3:AFFECTATION IN PIPE-->NO AFFECTATION"
-#echo toto|a=b b=c c=d|echo tata
-#echo return=[$?] a=$a, b=$a, c=$c.
-#unset a b c
-#a=b b=c c=d | echo tata | cat
-#echo return=[$?] a=$a, b=$a, c=$c.
-#unset a b c
-#echo tata|cat|a=b b=c c=d
-#echo return=[$?] a=$a, b=$a, c=$c.
-#unset a b c
-## ============================================================================================================
+# ============================================================================================================
+echo 
+echo "TESTS 6:AFFECTATION IN PIPE-->NO AFFECTATION"
+echo '$> echo toto|a=b b=c c=d|echo tata && echo a=$a, b=$b, c=$c. || echo FAIL'
+echo toto|a=b b=c c=d|echo tata && echo a=$a, b=$b, c=$c. || echo FAIL
+unset a b c
+echo
+echo '$> a=b b=c c=d | echo tata | cat && echo a=$a, b=$b, c=$c. || echo FAIL'
+a=b b=c c=d | echo tata | cat && echo a=$a, b=$b, c=$c. || echo FAIL
+unset a b c
+echo
+echo '$> echo tata|cat|a=b b=c c=d && echo a=$a, b=$b, c=$c. || echo FAIL'
+echo tata|cat|a=b b=c c=d && echo a=$a, b=$b, c=$c. || echo FAIL
+unset a b c
+echo
+echo '$> a=b|b=c c=d|echo tata && echo a=$a, b=$b, c=$c. || echo FAIL'
+a=b|b=c c=d|echo tata && echo a=$a, b=$b, c=$c. || echo FAIL
+unset a b c
+echo
+echo '$> a=b|b=c|c=d && echo a=$a, b=$b, c=$c. || echo FAIL'
+a=b|b=c|c=d && echo a=$a, b=$b, c=$c. || echo FAIL
+unset a b c
+echo
+echo '$> a=b|b=c c=d|qwerty && echo FAIL || echo a=$a, b=$b, c=$c.'
+a=b|b=c c=d|qwerty && echo FAIL || echo a=$a, b=$b, c=$c.
+unset a b c
+echo
+# ============================================================================================================
 echo 
 #echo 
 #echo "TESTS 3:PROTECTED VAR-ENV AFFECTATION"
