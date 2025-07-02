@@ -49,3 +49,22 @@ echo "# =[ TESTS 5: Affectation in a pip ]======================================
 echo toto|a=b b=c c=d|echo a=$a, b=$b, c=$c.
 echo $?
 echo a=$a, b=$b, c=$c.
+echo
+echo "# =[ TESTS 6: EMPTY COMMANDE ]========================================================================="
+v="    "
+echo '$> $v|echo toto && echo PASS || echo FAIL'
+$v|echo toto && echo PASS || echo FAIL
+echo
+echo '$> echo toto|$v toto && echo PASS || echo FAIL'
+echo toto|$v toto && echo PASS || echo FAIL
+echo
+echo '$> echo toto|$v|$sldfjl && echo PASS || echo FAIL'
+echo toto|$v|$sldfjl && echo PASS || echo FAIL
+echo
+echo '$> $sldkfjsd|echo toto|$v && echo PASS || echo FAIL'
+$sldkfjsd|echo toto|$v && echo PASS || echo FAIL
+echo
+echo '$> $sldkfjsd|$v|echo toto && echo PASS || echo FAIL'
+$sldkfjsd|$v|echo toto && echo PASS || echo FAIL
+echo
+unset v

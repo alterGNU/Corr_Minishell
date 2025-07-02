@@ -19,7 +19,7 @@ echo "TESTS 1:SIMPLIEST STR (NO VAR)"
 echo
 # ============================================================================================================
 echo "TESTS 2:WRONG COMMAND"
-<<<hello world cat
+<<<hello world
 echo
 # ============================================================================================================
 echo "TESTS 3:VAR AS STR WITH NO EXPAND WHEN BACKSLASH"

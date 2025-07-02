@@ -1,22 +1,145 @@
 # ============================================================================================================
 # TESTS LEFT DOUBLE REDIR RLD << (Notes that combinaison of contiguous quotes as delimiter are UB for posix)
 # ============================================================================================================
-echo "=[ TESTS 0:SIMPLIEST CASES ] =========================================================================="
+echo "=[ TESTS 0:RLD LEAF CASES ] ==========================================================================="
+echo "test 0.0:<<a"
+<<a
+coucou
+a
+echo $? && ls -a /tmp | grep .heredoc
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 0.1:v="  " && <<$v"
+v="     " && <<$v
+coucou
+  
+$v
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 0.2:v="  " && <<$v"
+v="Hello $USERNAME" && <<$v
+coucou
+  
+$v
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v
+
+echo "=[ TESTS 1:RLD LEAF CASES ] ==========================================================================="
+echo "test 1.0:<<a cat "
+<<a cat
+coucou
+a
+echo $? && ls -a /tmp | grep .heredoc
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 1.1:v="  " && <<$v cat "
+v="     " && <<$v cat
+coucou
+  
+$v
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 1.2:v="  " && <<$v cat "
+v="Hello $USERNAME" && <<$v cat
+coucou
+  
+$v
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v
+echo "test 1.3:<<a cat"
+<<a cat
+coucou
+a
+echo $? && ls -a /tmp | grep .heredoc
+echo
+echo "=[ TESTS 2:RLD LEAF CASES ] ==========================================================================="
+echo "test 2.0:<<a<<b"
+<<a<<b
+aaaaaaaaaaaaaaaaaaaaaa
+a
+bbbbbbbbbbbbbbbbbbbbbb
+b
+echo $? && ls -a /tmp | grep .heredoc
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 2.1:v="  " && <<$v"
+v="     " w="echo" && <<$v<<$w
+coucou
+  
+$v
+salut
+echo
+$w
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v w
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 2.2:v=''Hello $USERNAME'' w=''  '' && <<$v"
+v="Hello $USERNAME" w="  " && <<$v<<$w
+echo coucou
+Hello $USERNAME
+$v
+hello
+
+$w
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v w
+echo "=[ TESTS 3:RLD LEAF CASES ] ==========================================================================="
+echo "test 3.0:<<a<<b cat "
+<<a<<b cat
+aaaaaaaaaaaaaaaaaaaaaa
+a
+bbbbbbbbbbbbbbbbbbbbbb
+b
+echo $? && ls -a /tmp | grep .heredoc
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 3.1:v="  " && <<$v<<$w cat "
+v="     " w="coucou" && <<$v<<$w cat
+coucou
+
+$v
+coucoucoucou
+
+$w
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v w
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 3.2:v="  " && <<$v cat "
+v="Hello $USERNAME" && <<$v<<$jfk cat
+coucou
+  
+$v
+hello world
+jfk
+$jfk
+echo $? && ls -a /tmp | grep .heredoc
+echo
+unset v
+
 echo "test 0.0:<<$ cat"
 <<$ cat
 coucou
 $
+
 echo "TESTS 0.1:<<bye cat"
 <<bye cat
 'hello $USERNAME'
 bye
-echo 'TESTS 0.2:<<"bye bob" cat'
-<<"bye bob" cat
+echo 'TESTS 0.2:<<"bye bob cat "'
+<<"bye bob cat"
 I AM AT $PWD
 bye
 bob
 bye bob cat
-bye bob
 echo
 # ============================================================================================================
 echo "=[ TESTS 1:EXPAND VARIABLES ] ========================================================================="
@@ -25,6 +148,8 @@ echo "test 1.0:<<$PWD cat (EXPAND in DELIMITER and inside HEREDOC)"
 hello $USERNAME you are at $PWD
 altergnu
 $USERNAME
+echo $? && ls -a /tmp | grep .heredoc || echo PASS || echo FAIL
+echo
 echo 'TESTS 1.1:<<"bye $USERNAME" cat (NO EXPAND in DELIMITER and inside HEREDOC)'
 <<"bye $USERNAME" cat
 hello $USERNAME
@@ -33,6 +158,8 @@ hello $USERNAME
 hello \$USERNAME
 bye altergnu
 bye $USERNAME
+echo $? && ls -a /tmp | grep .heredoc || echo PASS || echo FAIL
+echo
 echo "TESTS 1.2:<<'bye $USERNAME' cat (NO EXPAND in DELIMITER and inside HEREDOC)"
 <<'bye $USERNAME' cat
 hello $USERNAME
@@ -41,6 +168,7 @@ hello $USERNAME
 hello \$USERNAME
 bye altergnu
 bye $USERNAME
+echo $? && ls -a /tmp | grep .heredoc || echo PASS || echo FAIL
 echo
 # ============================================================================================================
 echo "=[ TESTS 2:STR IS A VARIABLES ] ======================================================================="
@@ -51,7 +179,7 @@ Hello altergnu
 'Hello altergnu'
 voici $toto
 $toto
-echo "TESTS 2.2:toto=''Hello $USERNAME'' && <<''$toto'' cat"
+echo 'TESTS 2.2:toto="Hello $USERNAME" && <<"$toto" cat'
 toto="Hello $USERNAME, you are at $PWD" && <<"$toto" cat
 Hello altergnu
 "Hello altergnu"
