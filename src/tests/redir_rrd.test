@@ -16,66 +16,66 @@ ls | grep f
 echo $? && cat e1 && ls | grep f
 rm e1
 echo
-## -[  ]-------------------------------------------------------------------------------------------------------
-#echo "test 0.2:>>f1 echo new_value(non existing file)"
-#ls | grep f
-#>>f1 echo new_value
-#echo $? && cat f1 && ls | grep f
-#rm f1
-#echo
-## -[  ]-------------------------------------------------------------------------------------------------------
-#echo "test 0.3:>>e1 (existing file)"
-#echo inside e1>e1
-#ls | grep f
-#>>e1 echo new_value
-#echo $? && cat e1 && ls | grep e
-#rm e1
-#echo
-#echo "=[ TESTS 1:RRS LEAF CASES ] ==========================================================================="
-#echo "test 1.0:>>f1 >>f2 (non existing file)"
-#ls | grep f
-#>>f1 >>f2
-#echo $? && ls | grep f
-#cat f1 && cat f2
-#rm f1 f2
-#echo
-## -[  ]-------------------------------------------------------------------------------------------------------
-#echo "test 1.1:>>e1 echo new_value(existing file)"
-#echo inside e1 > e1 && cat e1
-#ls | grep f
-#>>e1 echo new_value
-#echo $? && ls | grep f
-#rm e1
-#echo
-## -[  ]-------------------------------------------------------------------------------------------------------
-#echo "test 1.2:>>f1 >>f2 echo new_value(non existing file)"
-#ls | grep f
-#>>f1 >>f2 echo new_value
-#echo $? && cat f1 && cat f2 && ls | grep f
-#rm f1 f2
-#echo
-## -[  ]-------------------------------------------------------------------------------------------------------
-#echo "test 1.3:>>e1 >>e2 (existing file + not existing file)"
-#echo old_inside e1 > e1 && cat e1
-#ls | grep f
-#>>e1 >>e2 echo new_value
-#echo $? && cat e1 && cat e2 && ls | grep f
-#rm e1 e2
-#echo
-## -[  ]-------------------------------------------------------------------------------------------------------
-#echo "test 1.4:>>e2 >>e1 (not existing file + existing file)"
-#echo old_inside e1 > e1 && cat e1
-#ls | grep f
-#>>e2 >>e1 echo new_value
-#echo $? && cat e2 && cat e1 && ls | grep f
-#rm e1 e2
-#echo
-## -[  ]-------------------------------------------------------------------------------------------------------
-#echo "test 1.4:>>e1 >>e2 (existing files)"
-#echo old_inside e1 >>e1 && cat e1
-#echo olf_inside e2 >>e2 && cat e2
-#ls | grep f
-#>>e1 >>e2 echo new_value
-#echo $? &&cat e1 && cat e2 ls | grep f
-#rm e1 e2
-#echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 0.2:>>f1 echo new_value(non existing file)"
+ls | grep f
+>>f1 echo new_value
+echo $? && cat f1 && ls | grep f
+rm f1
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 0.3:>>e1 (existing file)"
+echo inside e1>e1
+ls | grep f
+>>e1 echo new_value
+echo $? && cat e1 && ls | grep e
+rm e1
+echo
+echo "=[ TESTS 1:RRS LEAF CASES ] ==========================================================================="
+echo "test 1.0:>>f1 >>f2 (non existing file)"
+ls | grep f
+>>f1 >>f2
+echo $? && ls | grep f
+cat f1 && cat f2
+rm f1 f2
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 1.1:>>e1 echo new_value(existing file)"
+echo inside e1 > e1 && cat e1
+ls | grep f
+>>e1 echo new_value
+echo $? && ls | grep f
+rm e1
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 1.2:>>f1 >>f2 echo new_value(non existing file)"
+ls | grep f
+>>f1 >>f2 echo new_value
+echo $? && cat f1 && cat f2 && ls | grep f
+rm f1 f2
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 1.3:>>e1 >>e2 (existing file + not existing file)"
+echo old_inside e1 > e1 && cat e1
+ls | grep f
+>>e1 >>e2 echo new_value
+echo $? && cat e1 && cat e2 && ls | grep f
+rm e1 e2
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 1.4:>>e2 >>e1 (not existing file + existing file)"
+echo old_inside e1 > e1 && cat e1
+ls | grep f
+>>e2 >>e1 echo new_value
+echo $? && cat e2 && cat e1 && ls | grep f
+rm e1 e2
+echo
+# -[  ]-------------------------------------------------------------------------------------------------------
+echo "test 1.4:>>e1 >>e2 (existing files)"
+echo old_inside e1 >>e1 && cat e1
+echo olf_inside e2 >>e2 && cat e2
+ls | grep f
+>>e1 >>e2 echo new_value
+echo $? &&cat e1 && cat e2 ls | grep f
+rm e1 e2
+echo
