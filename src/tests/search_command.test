@@ -49,16 +49,22 @@ echo return=[$?]
 unset v
 echo
 
-echo "$> \/b'i'n\/'e'c'h'o toto"
-v=\/b'i'n\/'e'c'h'o
+echo "$> /b'i'n\/'e'c'h'o toto"
+v=/b'i'n\/'e'c'h'o
 $v toto
 echo return=[$?]
 unset v
 echo
 
-echo "$> \/b'i'n\/'e'c'h'om toto"
-v="\/b'i'n\/'e'c'h'om toto"
+echo "$> /b'i'n\/'e'c'h'om toto"
+v="/b'i'n\/'e'c'h'om toto"
 $v
+echo return=[$?]
+unset v
+echo
+
+echo '$> $HOME'
+$HOME
 echo return=[$?]
 unset v
 echo
