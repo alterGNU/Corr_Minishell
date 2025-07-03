@@ -23,11 +23,11 @@ echo
 # ============================================================================================================
 echo "=[ TESTS 2:MULTIPLES HEREDOC ] ========================================================================="
 echo "test 2:<<a cat|<<b cat|<<c cat && <<<super<<<prima<<<toll && echo here what I found: && ls -a /tmp | grep -o .heredoc"
-<<a cat|<<b cat|<<c cat && <<<super<<<prima<<<toll && echo here what I found: && ls -a /tmp | grep -o .heredoc
-b
+<<a cat|<<b<<b|<<c cat && <<<super<<<prima<<<toll cat && echo here what I found: && ls -a /tmp | grep -o .heredoc
+inside a
 a
-c
 b
-d
+inside second b(this one is not empty)
+b
+inside c
 c
-echo
