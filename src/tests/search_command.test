@@ -1,0 +1,64 @@
+# ============================================================================================================
+# TESTS SEARCH COMMAND
+# ============================================================================================================
+echo "TESTS 1:SIMPLE CMD"
+echo '$> wrong_command'
+wrong_command
+echo return=[$?]
+echo
+
+echo '$> echo toto'
+echo toto
+echo return=[$?]
+echo
+
+echo '$> /bin/echo toto'
+/bin/echo toto
+echo return=[$?]
+echo
+
+echo "$> \/b'i'n\/'e'c'h'o toto"
+\/b'i'n\/'e'c'h'o toto
+echo return=[$?]
+echo
+
+echo "$> \/b'i'n\/'e'c'h'om toto"
+\/b'i'n\/'e'c'h'om toto
+echo return=[$?]
+echo
+
+echo "TESTS 2:SIMPLE CMD INSIDE VARIABLE"
+echo '$> wrong_command'
+v=wrong_command
+$v
+echo return=[$?]
+unset v
+echo
+
+echo '$> echo toto'
+v=echo
+$v toto
+echo return=[$?]
+unset v
+echo
+
+echo '$> /bin/echo toto'
+v=echo
+/bin/$v toto
+echo return=[$?]
+unset v
+echo
+
+echo "$> \/b'i'n\/'e'c'h'o toto"
+v=\/b'i'n\/'e'c'h'o
+$v toto
+echo return=[$?]
+unset v
+echo
+
+echo "$> \/b'i'n\/'e'c'h'om toto"
+v="\/b'i'n\/'e'c'h'om toto"
+$v
+echo return=[$?]
+unset v
+echo

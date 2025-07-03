@@ -15,11 +15,19 @@ echo "TESTS 3:cd with relatif path"
 pwd
 cd ../
 pwd
+cd $HOME
+pwd
+cd /home
+pwd
 echo
 # ============================================================================================================
 echo "TESTS 4:cd with wrong argument"
 pwd
 cd nowhere || echo $?
+pwd
+cd no where to be || echo $?
+pwd
+cd /home/slkdjf || echo $?
 pwd
 cd no where to be || echo $?
 pwd
