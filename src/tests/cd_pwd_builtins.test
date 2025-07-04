@@ -12,16 +12,36 @@ echo $?
 echo
 # ============================================================================================================
 echo "TESTS 3:cd with relatif path"
+cd $old_pwd
+pwd
+cd ./
+pwd
+cd ././././
 pwd
 cd ../
+pwd
+cd $old_pwd
+pwd
+cd ../../
+pwd
+cd $old_pwd
+pwd
+cd ./../././../
 pwd
 cd $HOME
 pwd
 cd /home
 pwd
+#cd /bin #-->pwd do not display link but real pwd
+#pwd
+cd $old_pwd
+pwd
 echo
+unset old_pwd
 # ============================================================================================================
 echo "TESTS 4:cd with wrong argument"
+pwd
+cd /bin toto && echo $? || echo $? 
 pwd
 cd nowhere || echo $?
 pwd

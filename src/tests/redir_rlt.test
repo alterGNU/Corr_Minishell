@@ -57,3 +57,6 @@ echo "TESTS 6:COMBOS WITH CONTIGUES QUOTED TOKEN AS STR"
 # ============================================================================================================
 echo "TESTS 7:MULTIPLES"
 <<<"coucou les gens" cat | <<<$USERNAME cat | <<<$sdflkj cat
+<<<"$USERNAME'$USERNAME'$USERNAME" cat | <<<"$USERNAME"$USERNAME'$USERNAME' cat
+<<<'$USERNAME"$USERNAME"$USERNAME' cat | <<<'$USERNAME'$USERNAME"$USERNAME" cat
+<<<""''"$USERNAME'$USERNAME'$USERNAME"''""'$USERNAME"$USERNAME"$USERNAME'""'' cat | <<<$USERNAME'$USERNAME'"$USERNAME" cat

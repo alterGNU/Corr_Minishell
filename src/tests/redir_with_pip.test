@@ -1,28 +1,28 @@
 # ============================================================================================================
 # Check that redir interact correctly with pip
 # ============================================================================================================
-echo "# =[ TESTS 0: <<stop | titi=tutu ]===================================================================="
+echo "# =[ TESTS 0: <<stop | titi=tutu ]====================================================================="
 <<stop | titi=tutu && echo $? titi=$titi. PASS || echo $? FAIL
 coucou
 les
 gens
 stop
 echo
-echo "# =[ TESTS 1: <<stop | export titi=tutu ]===================================================================="
+echo "# =[ TESTS 1: <<stop | export titi=tutu ]=============================================================="
 <<stop | export titi=tutu && echo $? titi=$titi. PASS || echo $? FAIL
 coucou
 les
 gens
 stop
 echo
-echo "# =[ TESTS 3: <<stop cat | titi=tutu ]===================================================================="
+echo "# =[ TESTS 3: <<stop cat | titi=tutu ]================================================================="
 <<stop cat | titi=tutu && echo $? titi=$titi. PASS || echo $? FAIL
 coucou
 les
 gens
 stop
 echo
-echo "# =[ TESTS 2: <<a<<b | <<c ]==========================================================================="
+echo "# =[ TESTS 4: <<a<<b | <<c ]==========================================================================="
 <<a<<b | <<c && echo $? PASS || echo FAIL
 aaaaaaaaaaaaaaaaaaaaaaaa
 a
@@ -30,3 +30,12 @@ bbbbbbbbbbbbbbbbbbbbbbbbb
 b
 cccccccccccccccccccccccc
 c
+echo "# =[ TESTS 5: MAXI COMBOS ]============================================================================"
+echo '$> <<a<<<"$USERNAME est un as" cat >f1 | a=b b=c sleep 5 | <<b cat >>f1 |lskdjf|f1=f2| <f1 cat && echo $? PASS || echo FAIL'
+<<a<<<"$USERNAME est un as" cat >f1 | a=b b=c sleep 5 |exit 42| <<b cat >>f1 |lskdjf|f1=f2| <f1 cat && echo $? PASS || echo FAIL
+aaaaaaaaaaaaaaaaaaaaaaaa
+a
+et $$ est mon PID!
+b
+rm f1
+echo

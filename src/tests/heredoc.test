@@ -11,8 +11,8 @@ a
 echo
 # ============================================================================================================
 echo "=[ TESTS 1:MULTIPLES HEREDOC ] ========================================================================="
-echo "test 1:<<a<<b<<<''HELLO $USERNAME'' cat >f1 | <f1 cat && rm f1 | echo here what I found: && ls -a /tmp | grep -o .heredoc"
-<<a<<b<<<"HELLO $USERNAME" cat >f1 | <f1 cat && rm f1 | echo here what I found: && ls -a /tmp | grep -o .heredoc
+echo "test 1:<<a<<b<<<''HELLO $USERNAME'' cat >f1 && <f1 cat && rm f1 | echo here what I found: && ls -a /tmp | grep -o .heredoc"
+<<a<<b<<<"HELLO $USERNAME" cat >f1>f1>f1 && <f1 cat && rm f1 | echo here what I found: && ls -a /tmp | grep -o .heredoc
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 a
