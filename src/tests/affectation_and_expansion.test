@@ -3,23 +3,20 @@
 # ============================================================================================================
 echo return=[$?]
 echo "TESTS 1:SIMPLE AND MULTIPLE VALID AFFECTATION"
-v1="toto"
-echo return=[$?]
-v2="tata" v3="$v1 $v2" v4=
-echo return=[$?]
-echo "\$v1=$v1" '$v2='$v2 \$v3=$v3"but \$v4=<$v4>-->empty"
-echo return=[$?]
+v1="toto" && echo "PASS[$?]" || echo "FAIL[$?]"
+v2="tata" v3="$v1 $v2" v4= && echo "PASS[$?]" || echo "FAIL[$?]"
+echo "before unset \$v1=$v1 \$v2=$v2 \$v3=$v3but \$v4=<$v4>-->empty"
+unset v1 v2 v3 v4
+echo "after unset \$v1=$v1 \$v2=$v2 \$v3=$v3but \$v4=<$v4>-->empty"
 # ============================================================================================================
 echo 
 echo "TESTS 2:UN-VALID AFFECTATION"
-1v="wrong name"
-echo return=[$?]
-="no name"
-echo return=[$?]
-v2="new1" v3="new2" v.4="wrong name too"
-echo return=[$?]
-echo "\$v1=$v1" '$v2='$v2 \$v3=$v3"but \$v4=<$v4>-->empty"
-echo return=[$?]
+1v="wrong name" && echo "FAIL[$?]" || echo "PASS[$?]" 
+="no name" && echo "FAIL[$?]" || echo "PASS[$?]"
+v2="new1" v3="new2" v.4="wrong name too" && echo "FAIL[$?]" || echo "PASS[$?]"
+echo "before unset \$1v=$1v \$v2=$v2 \$v3=$v3but \$v.4=<$v.4>-->empty"
+unset 1v v2 v3 v.4
+echo "after unset \$1v=$1v \$v2=$v2 \$v3=$v3but \$v.4=<$v.4>-->empty"
 # ============================================================================================================
 echo 
 echo "TESTS 3:UNKNOWN AND EMPTY VAR AS CMD"
@@ -66,9 +63,13 @@ echo after unset v2=$v2, v3=$v3.
 echo 
 echo "TESTS 5:WORST CASE SCENARIO FOR EXPAND"
 super="$sldkfjlskdjf $sdkfjlsdkjf    echo      titi  $sldkfj"
+echo return=[$?]
 arg1="$sldkf to $sdlkf to $sldflskf"
+echo return=[$?]
 $sdlfkjsldj $sdlkfjlskdjfk $super $sdlfkjsldjf $arg1 $sdlfjslkdf tutu $sldkfjlskdfj
+echo return=[$?]
 unset super arg1
+echo return=[$?]
 # ============================================================================================================
 echo 
 echo "TESTS 6:AFFECTATION IN PIPE-->NO AFFECTATION"
@@ -100,15 +101,33 @@ echo
 echo 
 echo "TESTS 7:PROTECTED VAR-ENV AFFECTATION"
 echo "-[ UNDERSCORE PROTECTION ]-----------------------------------------------------------------------------"
-_1=v1 _2=v2 v_3=v3
+_1=v1 _2=v2 v_3=v3 && echo "PASS[$?]" || echo "FAIL[$?]"
 echo "_1=$_1 _2=$_2 v_3=$v_3"
 unset _1 _2 v_3
 env | grep ^_
 echo "BEFORE UNDERSCORE=$_"
-_="new_value"
+_="new_value" && echo PASS
+echo "_=$_."
+env | grep ^_
+echo "AFTER UNDERSCORE=$_"
+echo "BEFORE UNDERSCORE=$_"
+a=b _="new_value" && echo PASS
+echo "a=$a, _=$_."
 env | grep ^_
 echo "AFTER UNDERSCORE=$_"
 echo "-[ PID DOLLAR PROTECTION ]-----------------------------------------------------------------------------"
-$=42
+$=42 && echo FAIL || echo PASS
+b=c $=42 && echo FAIL || echo PASS
 echo "-[ PID DOLLAR PROTECTION ]-----------------------------------------------------------------------------"
-?=42
+c=d ?=42 && echo FAIL || echo PASS
+unset a b c
+echo
+echo '$> echo _=$_. && a=b _c=d _=e _f_=g && echo a=$a, _c=$_c, _=$_, _f_=$_f_'
+echo _=$_. && a=b _c=d _=e _f_=g && echo a=$a, _c=$_c, _=$_, _f_=$_f_
+echo
+echo '$> echo $=$$ && $=42 && echo FAIL || echo $=$$'
+echo $=$$ && $=42 && echo FAIL || echo $=$$
+echo
+echo '$> echo ?=$? && ?=1 && echo FAIL || echo ?=$?'
+echo "?=$?" && ?=1 && echo FAIL || echo "?=$?"
+echo
