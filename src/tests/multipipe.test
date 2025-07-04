@@ -68,3 +68,8 @@ echo '$> $sldkfjsd|$v|echo toto && echo PASS || echo FAIL'
 $sldkfjsd|$v|echo toto && echo PASS || echo FAIL
 echo
 unset v
+echo "# =[ TESTS 7: 126/127 ]================================================================================"
+sleep 1|$sldkfj|sdlfksjkld|/
+sleep 1|$sldkfj|/|sldkfj
+sleep 1|$sldkfj|sdlfksjkld|$HOME
+sleep 1|$sldkfj|$HOME|sldkfj

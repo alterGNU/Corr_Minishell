@@ -68,3 +68,9 @@ $HOME
 echo return=[$?]
 unset v
 echo
+
+echo '$> /'
+/
+echo return=[$?]
+unset v
+echo
