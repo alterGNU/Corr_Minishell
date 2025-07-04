@@ -631,7 +631,7 @@ display_resume()
             fi
         done
     else
-        args+=( "  🔸 ${YU}STEP 6-TESTS)${E}                                        ${G0} ✖️  Step Desabled${E}" )
+        args+=( "  🔸 ${YU}STEP 6-TESTS)${E}                                       ${G0} ✖️  Step Desabled${E}" )
     fi
     print_in_box -t 2 -c y "${args[@]}"
 }
