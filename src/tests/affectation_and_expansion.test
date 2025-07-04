@@ -98,10 +98,17 @@ unset a b c
 echo
 # ============================================================================================================
 echo 
-#echo 
-#echo "TESTS 3:PROTECTED VAR-ENV AFFECTATION"
-#echo BEFORE UDERSCORE=$_
-#env | grep ^_
-#_="new_value"
-#echo AFTER  UDERSCORE=$_
-#env | grep ^_
+echo "TESTS 7:PROTECTED VAR-ENV AFFECTATION"
+echo "-[ UNDERSCORE PROTECTION ]-----------------------------------------------------------------------------"
+_1=v1 _2=v2 v_3=v3
+echo "_1=$_1 _2=$_2 v_3=$v_3"
+unset _1 _2 v_3
+env | grep ^_
+echo "BEFORE UNDERSCORE=$_"
+_="new_value"
+env | grep ^_
+echo "AFTER UNDERSCORE=$_"
+echo "-[ PID DOLLAR PROTECTION ]-----------------------------------------------------------------------------"
+$=42
+echo "-[ PID DOLLAR PROTECTION ]-----------------------------------------------------------------------------"
+?=42
