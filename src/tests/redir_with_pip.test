@@ -35,7 +35,7 @@ echo '$> <<a<<<"$USERNAME est un as" cat >f1 | a=b b=c sleep 5 | <<b cat >>f1 |l
 <<a<<<"$USERNAME est un as" cat >f1 | a=b b=c sleep 5 |exit 42| <<b cat >>f1 |lskdjf|f1=f2| <f1 cat && echo $? PASS || echo FAIL
 aaaaaaaaaaaaaaaaaaaaaaaa
 a
-et $$ est mon PID!
+et $HOME est ma maison!
 b
 rm f1
 echo
