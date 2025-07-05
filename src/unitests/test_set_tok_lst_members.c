@@ -99,7 +99,7 @@ void	print_t_token_type(int i)
  	else if (i == 31)
 		printf("PARC");
  	else if (i == 42)
-		printf("ERR");
+		printf("ERRR");
 	else
 		printf("???");
 }
@@ -251,18 +251,18 @@ int main(int ac, char **av, char **ev)
 	print_title("A| SET TYPE");
 	t_token a0[]={{ESP," ",0},{UNSET,"echo",0},{ESP," ",0},{UNSET,"coucou",0},{ESP," ",0},{UNSET,"petite",0},{ESP," ",0},{UNSET,"perruche",0},{ESP," ",0},{0,0,0}};
 	nb_err += test(dt, " echo coucou petite perruche ", a0);
-	t_token a1[]={{RLS,"<",0},{ESP," ",0},{RLD,"<<",0},{ESP," ",0},{RLT,"<<<",0},{ESP," ",0},{ERR,"<<<<",0},{ESP," ",0},{ERR,"<<<<<",0},{0,0,0}};
+	t_token a1[]={{RLS,"<",0},{ESP," ",0},{RLD,"<<",0},{ESP," ",0},{RLT,"<<<",0},{ESP," ",0},{ERRR,"<<<<",0},{ESP," ",0},{ERRR,"<<<<<",0},{0,0,0}};
 	nb_err += test(dt, "< << <<< <<<< <<<<<", a1);
-	t_token a2[]={{RRS,">",0},{ESP," ",0},{RRD,">>",0},{ESP," ",0},{ERR,">>>",0},{ESP," ",0},{ERR,">>>>",0},{ESP," ",0},{ERR,">>>>>",0},{0,0,0}};
+	t_token a2[]={{RRS,">",0},{ESP," ",0},{RRD,">>",0},{ESP," ",0},{ERRR,">>>",0},{ESP," ",0},{ERRR,">>>>",0},{ESP," ",0},{ERRR,">>>>>",0},{0,0,0}};
 	nb_err += test(dt, "> >> >>> >>>> >>>>>", a2);
-	t_token a3[]={{PIP,"|",0},{ESP," ",0},{OPO,"||",0},{ESP," ",0},{ERR,"|||",0},{ESP," ",0},{ERR,"||||",0},{ESP," ",0},{ERR,"|||||",0},{0,0,0}};
+	t_token a3[]={{PIP,"|",0},{ESP," ",0},{OPO,"||",0},{ESP," ",0},{ERRR,"|||",0},{ESP," ",0},{ERRR,"||||",0},{ESP," ",0},{ERRR,"|||||",0},{0,0,0}};
 	nb_err += test(dt, "| || ||| |||| |||||", a3);
-	t_token a4[]={{ERR,"&",0},{ESP," ",0},{OPA,"&&",0},{ESP," ",0},{ERR,"&&&",0},{ESP," ",0},{ERR,"&&&&",0},{ESP," ",0},{ERR,"&&&&&",0},{0,0,0}};
+	t_token a4[]={{ERRR,"&",0},{ESP," ",0},{OPA,"&&",0},{ESP," ",0},{ERRR,"&&&",0},{ESP," ",0},{ERRR,"&&&&",0},{ESP," ",0},{ERRR,"&&&&&",0},{0,0,0}};
 	nb_err += test(dt, "& && &&& &&&& &&&&&", a4);
-	t_token a5[]={{ESP," ",0},{ERR,"&",0},{RLS,"<",0},{RRS,">",0},{PIP,"|",0},\
+	t_token a5[]={{ESP," ",0},{ERRR,"&",0},{RLS,"<",0},{RRS,">",0},{PIP,"|",0},\
 				  {ESP," ",0},{OPA,"&&",0},{RLD,"<<",0},{RRD,">>",0},{OPO,"||",0},\
-				  {ESP," ",0},{ERR,"&&&",0},{RLT,"<<<",0},{ERR,">>>",0},{ERR,"|||",0},\
-				  {ESP," ",0},{ERR,"&&&&",0},{ERR,"<<<<",0},{ERR,">>>>",0},{ERR,"||||",0},\
+				  {ESP," ",0},{ERRR,"&&&",0},{RLT,"<<<",0},{ERRR,">>>",0},{ERRR,"|||",0},\
+				  {ESP," ",0},{ERRR,"&&&&",0},{ERRR,"<<<<",0},{ERRR,">>>>",0},{ERRR,"||||",0},\
 				  {ESP," ",0},{0,0,0}};
 	nb_err += test(dt, " &<>|  &&<<>>||   &&&<<<>>>|||    &&&&<<<<>>>>||||     ", a5);
 	print_sep(S1);
