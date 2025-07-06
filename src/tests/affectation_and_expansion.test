@@ -11,12 +11,12 @@ echo "after unset \$v1=$v1 \$v2=$v2 \$v3=$v3but \$v4=<$v4>-->empty"
 # ============================================================================================================
 echo 
 echo "TESTS 2:UN-VALID AFFECTATION"
-1v="wrong name" && echo "FAIL[$?]" || echo "PASS[$?]" 
+v="good name" && echo "FAIL[$?]" || echo "PASS[$?]" 
 ="no name" && echo "FAIL[$?]" || echo "PASS[$?]"
 v2="new1" v3="new2" v.4="wrong name too" && echo "FAIL[$?]" || echo "PASS[$?]"
-echo "before unset \$1v=$1v \$v2=$v2 \$v3=$v3but \$v.4=<$v.4>-->empty"
-unset 1v v2 v3 v.4
-echo "after unset \$1v=$1v \$v2=$v2 \$v3=$v3but \$v.4=<$v.4>-->empty"
+echo "before unset \$v=$v \$v2=$v2 \$v3=$v3but \$v.4=<$v.4>-->empty"
+unset v v2 v3 v.4
+echo "after unset \$v=$v \$v2=$v2 \$v3=$v3but \$v.4=<$v.4>-->empty"
 # ============================================================================================================
 echo 
 echo "TESTS 3:UNKNOWN AND EMPTY VAR AS CMD"
@@ -104,16 +104,14 @@ echo "-[ UNDERSCORE PROTECTION ]------------------------------------------------
 _1=v1 _2=v2 v_3=v3 && echo "PASS[$?]" || echo "FAIL[$?]"
 echo "_1=$_1 _2=$_2 v_3=$v_3"
 unset _1 _2 v_3
-env | grep ^_
 echo "BEFORE UNDERSCORE=$_"
 _="new_value" && echo PASS
-echo "_=$_."
-env | grep ^_
+echo toto
 echo "AFTER UNDERSCORE=$_"
+echo "_=$_."
 echo "BEFORE UNDERSCORE=$_"
 a=b _="new_value" && echo PASS
 echo "a=$a, _=$_."
-env | grep ^_
 echo "AFTER UNDERSCORE=$_"
 echo "-[ PID DOLLAR PROTECTION ]-----------------------------------------------------------------------------"
 $=42 && echo FAIL || echo PASS

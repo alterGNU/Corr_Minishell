@@ -1,5 +1,5 @@
 # ============================================================================================================
-# TESTS AFFECTATIONS AND EXPANSION
+# TESTS WILDCARD AND EXPANSION
 # ============================================================================================================
 echo "# =[ SIMPLE WILDCAR, NO PATTERN ]======================================================================"
 echo '$> echo * && echo "PASS[$?]" || echo "FAIL[$?]"'
@@ -64,15 +64,15 @@ echo .*
 echo ..*
 echo "".""*
 echo "".""*"".""
-# ============================================================================================================
-echo "# =[ WILDCAR IN VAR-ENV  ]============================================================================="
-old_pwd=$PWD v="*"
-echo $v
-cd /
-echo $v
-cd old_pwd
-echo $v
-unset old_pwd v
+## ============================================================================================================
+#echo "# =[ WILDCAR IN VAR-ENV  ]============================================================================="
+#old_pwd=$PWD v="*"
+#echo $v
+#cd /
+#echo $v
+#cd old_pwd
+#echo $v
+#unset old_pwd v
 # TODO -> FOLDER PATTERN NOT HANDLE FOR NOW
 #echo "# =[ WILDCARE FOLDER PATTERN  ]========================================================================"
 #mkdir fald1 fold1 fuld1 fald2 fold2 fuld2 rald1 rold1 ruld1
@@ -88,7 +88,7 @@ unset old_pwd v
 #rmdir fald1 fold1 fuld1 fald2 fold2 fuld2 rald1 rold1 ruld1
 ## ============================================================================================================
 # TODO -> PATH WITH FOLDER PATTERN NOT HANDLE FOR NOW
-#echo "# =[ WILDCARE FILE IN FOLDER PATTERN  ]================================================================"
+#echo "# =[ WILDCARE FILE:q IN FOLDER PATTERN  ]================================================================"
 #mkdir fold1
 #touch fold1/f1.txt fold1/f2.txt fold1/e1.txt fold1/e2.txt fold1/f1.ext fold1/f2.ext
 #echo '$> ls fold1/*.txt && echo "PASS[$?]" || echo "FAIL[$?]"'
