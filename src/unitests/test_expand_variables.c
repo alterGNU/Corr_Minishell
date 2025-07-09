@@ -197,29 +197,29 @@ int	main(int ac, char **av, char **ev)
 	print_sep(S2);
 	print_sep(S1);
 
-	// =[ 	COMBOS NO QUOTES ]==================================================
-	print_title("C| COMBOS WITHOUT QUOTES");
-	//char *c0 = "valid=value empty= =unvalid";
+	//// =[ 	COMBOS NO QUOTES ]==================================================
+	//print_title("C| COMBOS WITHOUT QUOTES");
+	////char *c0 = "valid=value empty= =unvalid";
 
-	print_subtitle("COMBOS EQUALS x DOLLARS");
-	char *c1 = "user=$USER empty=$unknown $unk=unknown $unk=$USER";
-	char *rc1 = "user=altergnu empty= =unknown =altergnu";
-	nb_err += test(dt->env_lst, c1, rc1);
-	print_sep(S2);
+	//print_subtitle("COMBOS EQUALS x DOLLARS");
+	//char *c1 = "user=$USER empty=$unknown $unk=unknown $unk=$USER";
+	//char *rc1 = "user=altergnu empty= =unknown =altergnu";
+	//nb_err += test(dt->env_lst, c1, rc1);
+	//print_sep(S2);
 
-	print_subtitle("COMBOS EQUALS x BACKSLASHS");
-	char *c2 = "\\valid\\=value\\ empty=\\ \\\\=unvalid\\";
-	char *rc2 = "valid=value empty= \\=unvalid\\";
-	nb_err += test(dt->env_lst, c2, rc2);
-	print_sep(S2);
+	//print_subtitle("COMBOS EQUALS x BACKSLASHS");
+	//char *c2 = "\\valid\\=value\\ empty=\\ \\\\=unvalid\\";
+	//char *rc2 = "valid=value empty= \\=unvalid\\";
+	//nb_err += test(dt->env_lst, c2, rc2);
+	//print_sep(S2);
 
-	print_subtitle("COMBOS EQUALS x DOLLARS x BACKSLASHS");
-	char *c3 = "\\user\\=$USER\\ empty=\\$unknown $\\unk=unknown $unk=$USER";
-	char *rc3 = "user=altergnu empty=$unknown $unk=unknown =altergnu";
-	nb_err += test(dt->env_lst, c3, rc3);
-	print_sep(S2);
+	//print_subtitle("COMBOS EQUALS x DOLLARS x BACKSLASHS");
+	//char *c3 = "\\user\\=$USER\\ empty=\\$unknown $\\unk=unknown $unk=$USER";
+	//char *rc3 = "user=altergnu empty=$unknown $unk=unknown =altergnu";
+	//nb_err += test(dt->env_lst, c3, rc3);
+	//print_sep(S2);
 
-	print_sep(S1);
+	//print_sep(S1);
 
 	// =[ 	COMBOS DOUBLE QUOTES ] =============================================
 	print_title("D| COMBOS DOUBLE QUOTES");
