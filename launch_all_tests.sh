@@ -67,7 +67,7 @@ ALLOWED_FUN+=( "readline" "rl_clear_history" "rl_on_new_line" "rl_replace_line" 
     "signal" "sigaction" "sigemptyset" "sigaddset" "kill" "exit" "getcwd" "chdir" "stat" "lstat" "fstat" \
     "unlink" "execve" "dup" "dup2" "pipe" "opendir" "readdir" "closedir" "strerror" "perror" "isatty" \
     "ttyname" "ttyslot" "ioctl" "getenv" "tcsetattr" "tcgetattr" "tgetent" "tgetflag" "tgetnum" "tgetstr" \
-    "tgoto" "tputs" )
+    "tgoto" "tputs" "memcpy")
 OBJ=( )                                                           # ☒ List of object.o (no main function in it)
 # add to OBJ list all '.o' files founded in minishell/build/ folders that do not contains a main() function
 for obj in $(find ${MS_DIR}/build -type f -name '*.o');do if ! nm "${obj}" 2>/dev/null | grep -qE 'T [_]*main';then OBJ+=( "${obj}" );fi;done
